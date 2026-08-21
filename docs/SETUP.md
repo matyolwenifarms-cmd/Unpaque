@@ -3,17 +3,69 @@
 What a human has to do by hand. Nothing here can be done from an agent
 container — Supabase is unreachable from it.
 
+**None of this can be done from an agent container.** `supabase.com` and
+`api.supabase.com` are unreachable through the policy proxy, by design. Run it
+on your own machine.
+
 ## 1. A Supabase project
 
-Create one, then from this directory:
+Create one at <https://supabase.com/dashboard>. Any region; pick the one nearest
+your users. Keep the database password somewhere safe — it is shown once, and it
+never belongs in this repository, a commit, an issue or a chat message.
+
+The **project ref** is the string in the dashboard URL:
+`https://supabase.com/dashboard/project/`**`<project-ref>`**
+
+## 2. Deploy
+
+You need the [Supabase CLI](https://supabase.com/docs/guides/cli)
+(`brew install supabase/tap/supabase`, `scoop install supabase`, or
+`npm i -g supabase`). Then, from the repository root:
+
+```bash
+./scripts/setup-supabase.sh <project-ref>
+```
+
+It links the project, applies the migrations, prompts for your Anthropic API key
+without echoing it, generates `RATE_LIMIT_SALT` itself, sets both as secrets, and
+deploys the function. It prints no secret at any point.
+
+Doing it by hand instead:
 
 ```bash
 supabase link --project-ref <ref>
 supabase db push          # applies supabase/migrations in filename order
+supabase secrets set ANTHROPIC_API_KEY=...
+supabase secrets set RATE_LIMIT_SALT="$(openssl rand -hex 32)"
 supabase functions deploy analyse
 ```
 
-## 2. Secrets
+## 3. Point the app at it
+
+Copy `.env.example` to `.env` and fill in the two public values from
+**Project Settings → API**:
+
+```
+VITE_SUPABASE_URL=https://<project-ref>.supabase.co
+VITE_SUPABASE_ANON_KEY=<anon public>
+```
+
+## 4. Prove it works
+
+```bash
+./scripts/smoke-test.sh
+```
+
+Sends a real non-apology through the deployed function and asserts the report
+has four sections, has findings, and that **every finding cites a framework from
+the closed set**. Then it prints the report so you can read whether it is any
+good — which no assertion can tell you.
+
+This is the check that has never been run. Everything in `npm test` uses an
+injected fake model: that proves the contract, the guard and the retry, and
+proves nothing about deployment.
+
+## Secrets, in detail
 
 **Public by design** — compiled into the browser bundle, safe to commit to an
 `.env` you share with the team. RLS is what protects data, not their secrecy:
@@ -38,7 +90,7 @@ rate-limit table can recognise a repeat caller without being able to name one.
 An unsalted hash of an IPv4 address is reversible by anyone willing to walk 4.3
 billion candidates.
 
-## 3. Ceilings
+## Ceilings
 
 Optional, with defaults. Set them before the endpoint is publicly reachable:
 
@@ -55,13 +107,12 @@ anyone. The two ceilings are what stand between that and an uncapped bill. The
 per-caller limit stops one visitor sitting on the button; the daily ceiling
 stops a distributed flood at a number you chose.
 
-## 4. Verifying
+## The local gates
 
 ```bash
 npm run typecheck && npm run lint && npm test && npm run build
+npm run db:verify      # migrations, three passes against a local Postgres 16
 ```
 
-Then drive the built app against the deployed function and confirm a real
-analysis returns. Nothing in this repository has yet run against a live Supabase
-project — the pipeline is tested with an injected fake model, which proves the
-contract, the guard and the retry, and proves nothing about deployment.
+Check exit codes, not output. A piped `| tail` reports the exit status of
+`tail`, which is always 0.

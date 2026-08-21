@@ -1,0 +1,15 @@
+# Minimal by design. `supabase init` writes a much longer file covering local
+# emulation — auth providers, inbucket, realtime, studio ports — none of which
+# this project uses yet. What is here is what deployment actually reads.
+
+project_id = "unpaque"
+
+[functions.analyse]
+# Left on. The anon key is a valid JWT and the browser sends it, so this costs
+# the real client nothing while rejecting unauthenticated drive-by traffic at
+# the gateway, before it reaches the rate limiter or the model.
+#
+# It is not access control — the anon key is compiled into the bundle and is
+# public by design. It is a doormat, not a lock. The ceilings in
+# claim_analysis_slot are what actually bound the spend.
+verify_jwt = true
