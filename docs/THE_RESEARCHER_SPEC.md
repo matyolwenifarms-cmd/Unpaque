@@ -462,9 +462,31 @@ as carelessness about the source, and widening can only add context the author
 wrote. `passageIsVerbatim()` re-checks the slice against the source, so the
 guarantee is a fact about each object rather than an argument about the design.
 
+**The literature pipeline is complete and needs no model.** `search.ts` runs
+query → provider fan-out → merge → verify → rank, and every step of it is
+deterministic. Every provider it uses is free. This makes the literature half
+of The Researcher a product surface that costs nothing to operate — worth
+knowing when deciding what to put in front of a first user.
+
+`merge.ts` combines the providers field by field rather than picking a winner,
+because each has standing over different facts. Crossref is the registration
+agency, so its metadata is the record and only its flag can confirm a
+retraction; OpenAlex has far better coverage of open access, citation counts
+and grey literature. Merging is order-independent by construction, since the
+order providers answer in carries no information but network timing.
+
+Works are matched on DOI only. Title matching is the obvious next idea and is a
+trap: a conference paper and its extended journal version share a title and are
+different works, and merging them attributes one's findings to the other's page
+numbers.
+
+Every degradation is reported to the researcher rather than logged. A search
+that quietly returned less because a provider was down is indistinguishable
+from a smaller literature, and nothing on screen would say which happened.
+
 Still to do: fetching and extracting the located documents (a job, not a
-request — see `ARCHITECTURE_ASSESSMENT.md` §3), and mapping a source offset to
-a page and highlight rectangle for PDFs.
+request — see `ARCHITECTURE_ASSESSMENT.md` §3), mapping a source offset to a
+page and highlight rectangle for PDFs, and a route to put this behind.
 
 **Phase 2 — Passages.** Full-text retrieval, offset storage, hover preview,
 deep link. This is where the feature becomes the thing that was asked for.
