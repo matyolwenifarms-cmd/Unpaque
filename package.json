@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "db:verify": "./scripts/verify-schema.sh",
     "smoke": "node scripts/smoke-test.mjs",
-    "research:record": "node scripts/record-fixtures.mjs"
+    "research:record": "node scripts/record-fixtures.mjs",
+    "smoke:ui": "vite build && node scripts/smoke-ui.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",
@@ -24,6 +25,7 @@
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.6",
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
@@ -41,13 +43,14 @@
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
     "jsdom": "^30.0.1",
+    "playwright": "^1.62.1",
     "postcss": "^8.4.49",
+    "supabase": "^2.111.0",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.19.1",
     "vite": "^6.0.7",
-    "vitest": "^3.0.0",
-    "supabase": "^2.111.0"
+    "vitest": "^3.0.0"
   }
 }

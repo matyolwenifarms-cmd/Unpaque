@@ -11,5 +11,11 @@ project_id = "unpaque"
 #
 # It is not access control — the anon key is compiled into the bundle and is
 # public by design. It is a doormat, not a lock. The ceilings in
-# claim_analysis_slot are what actually bound the spend.
+# claim_quota_slot are what actually bound the spend.
+verify_jwt = true
+
+[functions.research-search]
+# Same reasoning as analyse: the anon/publishable key is public and compiled
+# into the bundle, so this is a doormat rather than a lock. The ceilings in
+# claim_quota_slot are what bound the load.
 verify_jwt = true

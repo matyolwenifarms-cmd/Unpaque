@@ -7,7 +7,7 @@ import { SECTION_IDS, type DiagnosticReport } from "@shared/diagnostic/report.ts
 const requestAnalysis = vi.fn();
 vi.mock("@/lib/api.ts", () => ({ requestAnalysis: (...args: unknown[]) => requestAnalysis(...args) }));
 
-const { default: App } = await import("./App.tsx");
+const { default: Unpack } = await import("./Unpack.tsx");
 
 function report(): DiagnosticReport {
   return {
@@ -21,7 +21,7 @@ const LONG_ENOUGH =
 
 async function submit() {
   const user = userEvent.setup();
-  render(<App />);
+  render(<Unpack />);
   await user.type(screen.getByLabelText(/text to analyse/i), LONG_ENOUGH);
   await user.click(screen.getByRole("button", { name: /^analyse$/i }));
 }

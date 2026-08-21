@@ -20,6 +20,11 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+      # Drives the built app in a real browser. Component tests render pieces
+      # with mocked hooks; they cannot say whether a route is registered, a
+      # chunk resolves, or the bundle boots — which are the failures a user
+      # meets first.
+      - run: node scripts/smoke-ui.mjs
 
   # The Edge Function runs under Deno, and `npm run typecheck` does not read
   # that directory at all — tsconfig.app.json includes _shared but not the

@@ -125,7 +125,8 @@ Deno.serve(async (request: Request): Promise<Response> => {
     { auth: { persistSession: false } },
   );
 
-  const { data: slots, error: slotError } = await supabase.rpc("claim_analysis_slot", {
+  const { data: slots, error: slotError } = await supabase.rpc("claim_quota_slot", {
+    p_purpose: "analysis",
     p_fingerprint: caller,
     p_per_caller: PER_CALLER,
     p_per_day: PER_DAY,

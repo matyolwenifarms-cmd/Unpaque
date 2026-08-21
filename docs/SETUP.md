@@ -208,7 +208,14 @@ stops a distributed flood at a number you chose.
 ```bash
 npm run typecheck && npm run lint && npm test && npm run build
 npm run db:verify      # migrations, three passes against a local Postgres 16
+npm run smoke:ui       # drives the built app in a real browser
 ```
+
+`smoke:ui` is the one component tests cannot stand in for. They render pieces
+with mocked hooks and cannot tell you whether a route is registered, a chunk
+resolves, or the bundle boots at all — the failures a user meets first. It
+asserts every route returns 200, renders something, keeps the shell on an
+unknown path, and logs nothing to the console.
 
 Check exit codes, not output. A piped `| tail` reports the exit status of
 `tail`, which is always 0.
