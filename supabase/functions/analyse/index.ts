@@ -46,7 +46,10 @@ function json(body: unknown, status: number, extra: Record<string, string> = {})
  */
 async function fingerprint(request: Request): Promise<string | null> {
   const salt = Deno.env.get("RATE_LIMIT_SALT");
-  if (!salt) return null;
+  // The placeholder from .env.example is treated as absent. Copying that file
+  // and forgetting to edit it is the likeliest way to end up with a salt that
+  // is published in a public repository, which is the same as having none.
+  if (!salt || salt === "REPLACE_ME" || salt.startsWith("local-development")) return null;
   const forwarded = request.headers.get("x-forwarded-for") ?? "";
   const address = forwarded.split(",")[0]?.trim() || "unknown";
   const digest = await crypto.subtle.digest(
