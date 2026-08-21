@@ -7,6 +7,53 @@ container — Supabase is unreachable from it.
 `api.supabase.com` are unreachable through the policy proxy, by design. Run it
 on your own machine.
 
+## 0. Or skip the cloud entirely
+
+Supabase's free plan allows **two active projects per account**, and the limit
+follows the account rather than the organisation — making a new organisation
+does not work around it. If you are at the cap, you have three ways forward,
+and the first two cost nothing:
+
+- **Pause a dormant project.** Paused projects keep their data and stop
+  counting against the limit. Dashboard, project, Settings, Pause.
+- **Run the whole stack locally**, below. It needs Docker Desktop and no cloud
+  project at all.
+- **Upgrade to Pro** when the thing is earning, not before.
+
+### The local stack
+
+Postgres, the API gateway and the Deno edge runtime, all in Docker. Full
+fidelity — the same migrations, the same function, the same client code.
+
+```bash
+cp supabase/functions/.env.example supabase/functions/.env   # add a real key
+./scripts/dev-local.sh
+```
+
+Then, in a second terminal:
+
+```bash
+supabase functions serve analyse --env-file supabase/functions/.env
+```
+
+And a third:
+
+```bash
+./scripts/smoke-test.sh
+npm run dev
+```
+
+`supabase/functions/.env` is gitignored and must stay that way; the example
+beside it is committed and holds no key. `.env.local.example` carries the local
+stack's fixed anon key, which is the same on every machine and worthless
+anywhere else.
+
+Stop it with `supabase stop`. Nothing about this path is throwaway — when you
+do get a cloud project, the same migrations and the same function deploy to it
+unchanged.
+
+**On Windows: run these scripts in Git Bash, not PowerShell.**
+
 ## 1. A Supabase project
 
 Create one at <https://supabase.com/dashboard>. Any region; pick the one nearest

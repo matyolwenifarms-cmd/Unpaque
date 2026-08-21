@@ -8,3 +8,6 @@ dist-ssr
 .DS_Store
 *.tsbuildinfo
 coverage
+
+# Function secrets for local serving. The example beside it is committed.
+supabase/functions/.env
