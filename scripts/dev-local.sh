@@ -6,7 +6,11 @@
 # Windows: run this in Git Bash, not PowerShell.
 set -euo pipefail
 
-command -v supabase >/dev/null || { echo "Supabase CLI not installed. See docs/SETUP.md." >&2; exit 1; }
+if command -v supabase >/dev/null; then SUPABASE=(supabase); else SUPABASE=(npx --no-install supabase); fi
+"${SUPABASE[@]}" --version >/dev/null 2>&1 || {
+  echo "Supabase CLI not found. Run 'npm install' first — it is a devDependency." >&2
+  exit 1
+}
 docker info >/dev/null 2>&1 || {
   echo "Docker is not running. The local stack needs Docker Desktop started." >&2
   exit 1
@@ -21,10 +25,10 @@ fi
 [[ -f .env ]] || { cp .env.local.example .env; echo "Wrote .env pointing at the local stack."; }
 
 echo "==> Starting the local stack (first run pulls images; give it a few minutes)"
-supabase start
+"${SUPABASE[@]}" start
 
 echo "==> Applying migrations"
-supabase db reset --no-seed
+"${SUPABASE[@]}" db reset --no-seed
 
 echo
 echo "Stack is up. In a SECOND terminal, serve the function:"
@@ -33,7 +37,7 @@ echo "    supabase functions serve analyse --env-file supabase/functions/.env"
 echo
 echo "Then, in a third:"
 echo
-echo "    ./scripts/smoke-test.sh      # a real analysis, end to end"
+echo "    npm run smoke      # a real analysis, end to end"
 echo "    npm run dev                  # the app itself"
 echo
 echo "Stop everything later with:  supabase stop"

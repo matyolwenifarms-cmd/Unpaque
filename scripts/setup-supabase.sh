@@ -16,20 +16,20 @@ if [[ -z "$REF" ]]; then
   exit 2
 fi
 
-command -v supabase >/dev/null || {
-  echo "The Supabase CLI is not installed." >&2
-  echo "  macOS:   brew install supabase/tap/supabase" >&2
-  echo "  Windows: scoop install supabase" >&2
-  echo "  or:      npm i -g supabase" >&2
+# The CLI is a devDependency, so `npm install` is enough. A global install
+# still wins if there is one.
+if command -v supabase >/dev/null; then SUPABASE=(supabase); else SUPABASE=(npx --no-install supabase); fi
+"${SUPABASE[@]}" --version >/dev/null 2>&1 || {
+  echo "Supabase CLI not found. Run 'npm install' first — it is a devDependency." >&2
   exit 1
 }
 command -v openssl >/dev/null || { echo "openssl is required to generate the salt." >&2; exit 1; }
 
 echo "==> Linking to $REF"
-supabase link --project-ref "$REF"
+"${SUPABASE[@]}" link --project-ref "$REF"
 
 echo "==> Applying migrations"
-supabase db push
+"${SUPABASE[@]}" db push
 
 echo
 echo "==> Anthropic API key"
@@ -44,14 +44,14 @@ echo
 SALT="$(openssl rand -hex 32)"
 
 echo "==> Setting secrets"
-supabase secrets set \
+"${SUPABASE[@]}" secrets set \
   ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
   RATE_LIMIT_SALT="$SALT" >/dev/null
 unset ANTHROPIC_API_KEY SALT
 echo "    done (values not echoed)"
 
 echo "==> Deploying the analyse function"
-supabase functions deploy analyse
+"${SUPABASE[@]}" functions deploy analyse
 
 echo
 echo "Backend deployed. Two things left, both local:"
@@ -62,4 +62,4 @@ echo
 echo "       VITE_SUPABASE_URL=https://$REF.supabase.co"
 echo "       VITE_SUPABASE_ANON_KEY=<Project Settings -> API -> anon public>"
 echo
-echo "  2. Smoke-test it:  ./scripts/smoke-test.sh"
+echo "  2. Smoke-test it:  npm run smoke"

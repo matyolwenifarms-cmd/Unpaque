@@ -39,7 +39,7 @@ supabase functions serve analyse --env-file supabase/functions/.env
 And a third:
 
 ```bash
-./scripts/smoke-test.sh
+npm run smoke
 npm run dev
 ```
 
@@ -65,9 +65,12 @@ The **project ref** is the string in the dashboard URL:
 
 ## 2. Deploy
 
-You need the [Supabase CLI](https://supabase.com/docs/guides/cli)
-(`brew install supabase/tap/supabase`, `scoop install supabase`, or
-`npm i -g supabase`). Then, from the repository root:
+The Supabase CLI arrives with `npm install` as a devDependency — there is
+nothing separate to install, and the scripts fall back to `npx` automatically.
+(A global `brew install supabase/tap/supabase` still takes precedence if you
+have one. Do not try `npm i -g supabase`; Supabase does not support it.)
+
+From the repository root:
 
 ```bash
 ./scripts/setup-supabase.sh <project-ref>
@@ -100,7 +103,7 @@ VITE_SUPABASE_ANON_KEY=<anon public>
 ## 4. Prove it works
 
 ```bash
-./scripts/smoke-test.sh
+npm run smoke
 ```
 
 Sends a real non-apology through the deployed function and asserts the report
