@@ -1,7 +1,7 @@
 import type { DiagnosticReport, Mode } from "@shared/diagnostic/report.ts";
 
 export type AnalysisResponse =
-  | { status: "ok"; report: DiagnosticReport; repaired: boolean }
+  | { status: "ok"; report: DiagnosticReport; repaired: boolean; stub: boolean }
   | { status: "error"; code: string; message: string; retryAfterSeconds?: number };
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
@@ -52,6 +52,7 @@ export async function requestAnalysis(text: string, mode: Mode): Promise<Analysi
       status: "ok",
       report: body.report as DiagnosticReport,
       repaired: body.repaired === true,
+      stub: body.stub === true,
     };
   }
 

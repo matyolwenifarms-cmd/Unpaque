@@ -7,6 +7,7 @@ import {
   type ModelCaller,
 } from "../_shared/diagnostic/analyse.ts";
 import { TOOL_DESCRIPTION, TOOL_NAME } from "../_shared/diagnostic/prompt.ts";
+import { stubReport } from "../_shared/diagnostic/stub.ts";
 import type { Mode } from "../_shared/diagnostic/report.ts";
 
 // Everything in this file is the part that cannot be pure: environment,
@@ -34,6 +35,17 @@ const MODEL = Deno.env.get("UNPAQUE_MODEL") ?? "claude-opus-5";
 // which are exactly the models somebody reaches for when they want to test the
 // pipeline cheaply. Set UNPAQUE_EFFORT=none to omit output_config entirely.
 const EFFORT = Deno.env.get("UNPAQUE_EFFORT") ?? "high";
+
+// UNPAQUE_MODEL=stub returns a fixed report and calls no model at all. It
+// exists so a deployment can be checked — gateway, rate limiter, function,
+// client, rendering — by somebody who has not put money on an API account yet,
+// which is the state every new deployment starts in.
+//
+// It is a mode, not a fallback: nothing selects it automatically, an absent
+// API key still fails loudly, and the response is flagged so the interface can
+// say what it is. A stub that engaged on its own would eventually engage in
+// production, and the failure mode is a user reading fixed text as analysis.
+const STUB = MODEL === "stub";
 
 function json(body: unknown, status: number, extra: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
@@ -88,7 +100,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
   // rhetorical analysis, and a deterministic keyword pass dressed up as a
   // diagnostic would be exactly the tone-scoring the product exists not to be.
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
-  if (!apiKey || /^(your-key|changeme|x+)$/i.test(apiKey)) {
+  if (!STUB && (!apiKey || /^(your-key|changeme|x+)$/i.test(apiKey))) {
     return json(
       {
         error: "engine_unavailable",
@@ -138,7 +150,16 @@ Deno.serve(async (request: Request): Promise<Response> => {
     );
   }
 
-  const anthropic = new Anthropic({ apiKey });
+  if (STUB) {
+    console.warn("stub_mode: returning a fixed report, no model was called");
+    const text = String(body.text ?? "").trim();
+    if (text.length < MIN_INPUT_CHARS) {
+      return json({ error: "too_short", message: `Give Unpack at least ${MIN_INPUT_CHARS} characters.` }, 400);
+    }
+    return json({ report: stubReport(mode), repaired: false, stub: true }, 200);
+  }
+
+  const anthropic = new Anthropic({ apiKey: apiKey! });
 
   const callModel: ModelCaller = async ({ system, user, correction, toolSchema }) => {
     const messages: Anthropic.MessageParam[] = [{ role: "user", content: user }];

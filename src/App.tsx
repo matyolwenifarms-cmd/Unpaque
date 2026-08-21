@@ -16,6 +16,7 @@ export default function App() {
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [report, setReport] = useState<DiagnosticReport | null>(null);
+  const [stub, setStub] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const tooShort = text.trim().length > 0 && text.trim().length < MIN_INPUT_CHARS;
@@ -30,8 +31,10 @@ export default function App() {
     setReport(null);
 
     const result = await requestAnalysis(text, mode);
-    if (result.status === "ok") setReport(result.report);
-    else setError(result.message);
+    if (result.status === "ok") {
+      setReport(result.report);
+      setStub(result.stub);
+    } else setError(result.message);
     setBusy(false);
   }
 
@@ -109,6 +112,19 @@ export default function App() {
         {error && (
           <div className="rounded-lg border border-rule bg-raised p-5">
             <p className="leading-relaxed">{error}</p>
+          </div>
+        )}
+        {report && stub && (
+          // Loud on purpose. The one failure this mode can cause is somebody
+          // reading fixed text as an analysis of what they pasted, so the
+          // disclosure sits above the report rather than beneath it.
+          <div className="mb-4 rounded-lg border-2 border-accent bg-accent/10 p-4">
+            <p className="font-semibold">Stub mode — this is not an analysis.</p>
+            <p className="mt-1 text-sm leading-relaxed">
+              Unpack did not read your text. This is fixed example content, returned so the
+              interface can be checked without spending on a model call. Set a real{" "}
+              <code className="rounded bg-paper px-1">UNPAQUE_MODEL</code> to analyse anything.
+            </p>
           </div>
         )}
         {report && <ReportView report={report} />}

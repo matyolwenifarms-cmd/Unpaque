@@ -140,6 +140,28 @@ rate-limit table can recognise a repeat caller without being able to name one.
 An unsalted hash of an IPv4 address is reversible by anyone willing to walk 4.3
 billion candidates.
 
+## Seeing it work with no money at all
+
+Before there is any credit on an API account, the deployment can still be
+checked end to end:
+
+```bash
+supabase secrets set UNPAQUE_MODEL=stub
+```
+
+The function then returns a fixed report and calls no model. That exercises
+everything except the model call itself — the gateway and its JWT check, the
+rate limiter and its two ceilings, the function under Deno, the client, the
+parser and the rendering. It is most of the deployment risk, for nothing.
+
+The response is flagged `stub: true` and the interface says so above the
+report, in terms that cannot be misread. Nothing selects this mode on its own,
+and an absent API key still fails loudly rather than falling back to it — a
+stub that engaged automatically would eventually engage in production, and
+somebody would read fixed text as a diagnosis of what they wrote.
+
+Set `UNPAQUE_MODEL` back to a real model to analyse anything.
+
 ## Running it cheaply
 
 The analysis is the only thing here that costs money, and on Opus 5 it is
