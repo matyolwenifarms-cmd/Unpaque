@@ -1,0 +1,94 @@
+{
+  "meta": { "count": 4831, "page": 1, "per_page": 6 },
+  "results": [
+    {
+      "id": "https://openalex.org/W1000000001",
+      "doi": "https://doi.org/10.1000/fixture.peer-reviewed",
+      "display_name": "A peer-reviewed article with open full text",
+      "publication_year": 2024,
+      "type": "article",
+      "cited_by_count": 42,
+      "is_retracted": false,
+      "authorships": [
+        { "author": { "id": "https://openalex.org/A5000000001", "display_name": "A Researcher" } },
+        { "author": { "id": "https://openalex.org/A5000000002", "display_name": "B Colleague" } }
+      ],
+      "primary_location": {
+        "source": { "display_name": "Journal of Fixtures", "type": "journal" },
+        "landing_page_url": "https://example.org/article/1",
+        "version": "publishedVersion"
+      },
+      "open_access": { "is_oa": true, "oa_status": "gold", "oa_url": "https://example.org/pdf/1.pdf" }
+    },
+    {
+      "id": "https://openalex.org/W1000000002",
+      "doi": "https://doi.org/10.1000/fixture.paywalled",
+      "display_name": "A paywalled article, metadata only",
+      "publication_year": 2021,
+      "type": "article",
+      "cited_by_count": 310,
+      "is_retracted": false,
+      "authorships": [{ "author": { "id": "https://openalex.org/A5000000003", "display_name": "C Author" } }],
+      "primary_location": {
+        "source": { "display_name": "Closed Quarterly", "type": "journal" },
+        "landing_page_url": "https://example.org/article/2",
+        "version": "publishedVersion"
+      },
+      "open_access": { "is_oa": false, "oa_status": "closed", "oa_url": null }
+    },
+    {
+      "id": "https://openalex.org/W1000000003",
+      "doi": "https://doi.org/10.1000/fixture.preprint",
+      "display_name": "A preprint that has not been peer reviewed",
+      "publication_year": 2026,
+      "type": "preprint",
+      "cited_by_count": 3,
+      "is_retracted": false,
+      "authorships": [{ "author": { "id": "https://openalex.org/A5000000004", "display_name": "D Early" } }],
+      "primary_location": {
+        "source": { "display_name": "A Repository", "type": "repository" },
+        "landing_page_url": "https://example.org/preprint/3",
+        "version": "submittedVersion"
+      },
+      "open_access": { "is_oa": true, "oa_status": "green", "oa_url": "https://example.org/pdf/3.pdf" }
+    },
+    {
+      "id": "https://openalex.org/W1000000004",
+      "doi": "https://doi.org/10.1000/fixture.retracted",
+      "display_name": "A retracted article with open full text",
+      "publication_year": 2019,
+      "type": "article",
+      "cited_by_count": 88,
+      "is_retracted": true,
+      "authorships": [{ "author": { "id": "https://openalex.org/A5000000005", "display_name": "E Withdrawn" } }],
+      "primary_location": {
+        "source": { "display_name": "Journal of Fixtures", "type": "journal" },
+        "landing_page_url": "https://example.org/article/4",
+        "version": "publishedVersion"
+      },
+      "open_access": { "is_oa": true, "oa_status": "gold", "oa_url": "https://example.org/pdf/4.pdf" }
+    },
+    {
+      "id": "https://openalex.org/W1000000005",
+      "doi": null,
+      "display_name": "A work with no DOI but a provider id",
+      "publication_year": 2024,
+      "type": "article",
+      "cited_by_count": 0,
+      "is_retracted": false,
+      "authorships": [],
+      "primary_location": { "source": { "display_name": "Grey Literature", "type": "repository" } },
+      "open_access": { "is_oa": false }
+    },
+    {
+      "id": null,
+      "doi": null,
+      "display_name": null,
+      "publication_year": 2020,
+      "type": "article",
+      "is_retracted": false,
+      "authorships": [],
+      "open_access": { "is_oa": false }
+    }
+  ]
+}

@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "db:verify": "./scripts/verify-schema.sh",
-    "smoke": "node scripts/smoke-test.mjs"
+    "smoke": "node scripts/smoke-test.mjs",
+    "research:record": "node scripts/record-fixtures.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",

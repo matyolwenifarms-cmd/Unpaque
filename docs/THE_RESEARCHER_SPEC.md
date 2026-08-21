@@ -381,6 +381,14 @@ theory vocabulary as a closed enum with its coherence rules.
 **Phase 1 — Literature.** Provider layer, verification, ranking, the reference
 list. `METADATA_ONLY` behaviour correct from the first commit. No passages yet.
 
+*In progress.* `_shared/research/` holds the `Reference` contract — constructed
+only by `fromProvider()`, never by a model — and the OpenAlex adapter, with 45
+tests. Recorded-response tests exist and **skip** until somebody runs
+`npm run research:record` on a machine with network access; until then the
+adapter has never met the real API. Still to do: Crossref, identifier
+re-resolution before display, Unpaywall, and the retrieval that turns
+`metadata_only` into `full_text`.
+
 **Phase 2 — Passages.** Full-text retrieval, offset storage, hover preview,
 deep link. This is where the feature becomes the thing that was asked for.
 
