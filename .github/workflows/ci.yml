@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  # src/ and _shared/ — the browser and the pure diagnostic core.
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  # The Edge Function runs under Deno, and `npm run typecheck` does not read
+  # that directory at all — tsconfig.app.json includes _shared but not the
+  # function bodies, because they import npm: specifiers and touch Deno.env.
+  # Without this job supabase/functions/*/index.ts is unchecked code.
+  functions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno check supabase/functions/analyse/index.ts
+
+  # Migrations applied three times against a fresh Postgres, then the
+  # behavioural suites. `supabase db push` re-runs the directory, so a migration
+  # that only works on an empty database passes its first deploy and fails the
+  # second.
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C.utf8"
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      PGPASSWORD: postgres
+      PGPORT: 5432
+      PGHOST: 127.0.0.1
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./scripts/verify-schema.sh
+      - name: Behavioural suites
+        run: |
+          for suite in supabase/tests/*_test.sql; do
+            psql -h 127.0.0.1 -p 5432 -U postgres -d unpaque_verify \
+              -v ON_ERROR_STOP=1 -q -f "$suite"
+          done

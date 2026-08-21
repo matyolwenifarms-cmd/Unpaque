@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Unpaque — communication diagnostics engine. Names the rhetorical structure of a text, traceable to communication theory.",
+  "description": "Unpaque \u2014 communication diagnostics engine. Names the rhetorical structure of a text, traceable to communication theory.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -11,7 +11,8 @@
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:verify": "./scripts/verify-schema.sh"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",
