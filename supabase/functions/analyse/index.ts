@@ -30,6 +30,11 @@ const PER_DAY = Number(Deno.env.get("ANALYSES_PER_DAY") ?? 500);
 // for cost here; it is an operator decision, made by setting the variable.
 const MODEL = Deno.env.get("UNPAQUE_MODEL") ?? "claude-opus-5";
 
+// Effort is not universal: it is rejected outright by Haiku 4.5 and Sonnet 4.5,
+// which are exactly the models somebody reaches for when they want to test the
+// pipeline cheaply. Set UNPAQUE_EFFORT=none to omit output_config entirely.
+const EFFORT = Deno.env.get("UNPAQUE_EFFORT") ?? "high";
+
 function json(body: unknown, status: number, extra: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -151,7 +156,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
       max_tokens: 16000,
       system: [{ type: "text", text: system, cache_control: { type: "ephemeral" } }],
       messages,
-      output_config: { effort: "high" },
+      ...(EFFORT === "none" ? {} : { output_config: { effort: EFFORT as "low" | "medium" | "high" } }),
       tools: [
         {
           name: TOOL_NAME,

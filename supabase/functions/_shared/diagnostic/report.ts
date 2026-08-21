@@ -74,8 +74,12 @@ export function diagnosticToolSchema(mode: Mode): Record<string, unknown> {
   const properties: Record<string, unknown> = {
     sections: {
       type: "array",
-      minItems: SECTION_IDS.length,
-      maxItems: SECTION_IDS.length,
+      // No minItems/maxItems. Strict tool use does not support "complex array
+      // constraints" and rejects them, and the SDKs' habit of silently
+      // stripping unsupported keywords would make the schema quietly weaker
+      // than it reads. Nothing is lost: parseReport() already requires exactly
+      // these four sections and names the missing one, which is a better error
+      // than a schema violation anyway.
       items: {
         type: "object",
         additionalProperties: false,

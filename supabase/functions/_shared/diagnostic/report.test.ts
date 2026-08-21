@@ -124,9 +124,75 @@ describe("the tool schema", () => {
     expect(decode.properties.rewrite).toBeUndefined();
   });
 
-  it("asks for exactly the four sections", () => {
+  it("names exactly the four sections in the id enum", () => {
     const schema = JSON.parse(JSON.stringify(diagnosticToolSchema("decode")));
-    expect(schema.properties.sections.minItems).toBe(SECTION_IDS.length);
     expect(schema.properties.sections.items.properties.id.enum).toEqual([...SECTION_IDS]);
+  });
+
+  // The count used to be a minItems/maxItems pair on the array. Strict mode
+  // rejects those, so the requirement moved to the parser — which is where it
+  // belonged anyway, since "section \"framing\" is missing" is a better thing
+  // to read than a schema violation.
+  it("leaves the count to the parser, which names what is missing", () => {
+    const short = {
+      sections: SECTION_IDS.slice(0, 3).map((id) => ({ id, summary: "s", findings: [] })),
+    };
+    const result = parseReport(short, "decode");
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.problems).toContain(`section "${SECTION_IDS[3]}" is missing`);
+  });
+});
+
+// Strict tool use accepts a documented subset of JSON Schema and rejects the
+// rest with a 400. The SDKs strip unsupported keywords client-side, which is
+// worse than an error: the schema in the source then claims a constraint the
+// API never enforced. This walks the schema and refuses the keywords outright.
+describe("the tool schema stays inside what strict mode accepts", () => {
+  const UNSUPPORTED = [
+    "minItems", "maxItems", "uniqueItems", "contains",
+    "minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum", "multipleOf",
+    "minLength", "maxLength", "pattern",
+    "minProperties", "maxProperties", "patternProperties", "propertyNames",
+    "if", "then", "else", "not", "oneOf", "dependentSchemas",
+  ];
+
+  function walk(node: unknown, path: string, found: string[]): void {
+    if (Array.isArray(node)) {
+      node.forEach((child, i) => walk(child, `${path}[${i}]`, found));
+      return;
+    }
+    if (typeof node !== "object" || node === null) return;
+    for (const [key, value] of Object.entries(node)) {
+      if (UNSUPPORTED.includes(key)) found.push(`${path}.${key}`);
+      walk(value, `${path}.${key}`, found);
+    }
+  }
+
+  it.each([["decode"], ["draft"]] as const)("uses no unsupported keyword in %s mode", (mode) => {
+    const found: string[] = [];
+    walk(diagnosticToolSchema(mode), "schema", found);
+    expect(found).toEqual([]);
+  });
+
+  it("sets additionalProperties: false on every object, as strict mode requires", () => {
+    const missing: string[] = [];
+    function check(node: unknown, path: string): void {
+      if (Array.isArray(node)) return node.forEach((c, i) => check(c, `${path}[${i}]`));
+      if (typeof node !== "object" || node === null) return;
+      const record = node as Record<string, unknown>;
+      if (record.type === "object" && record.additionalProperties !== false) missing.push(path);
+      for (const [key, value] of Object.entries(record)) check(value, `${path}.${key}`);
+    }
+    check(diagnosticToolSchema("draft"), "schema");
+    expect(missing).toEqual([]);
+  });
+
+  // The negative control: the walker must actually find something when there
+  // is something to find, or the two tests above are decorative.
+  it("detects an unsupported keyword when one is present", () => {
+    const found: string[] = [];
+    walk({ type: "array", minItems: 4, items: { type: "string" } }, "fixture", found);
+    expect(found).toEqual(["fixture.minItems"]);
   });
 });

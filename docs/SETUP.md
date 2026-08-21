@@ -140,6 +140,29 @@ rate-limit table can recognise a repeat caller without being able to name one.
 An unsalted hash of an IPv4 address is reversible by anyone willing to walk 4.3
 billion candidates.
 
+## Running it cheaply
+
+The analysis is the only thing here that costs money, and on Opus 5 it is
+roughly 8-9 US cents a call — the output side dominates, because adaptive
+thinking plus a four-section report is a lot of generated tokens.
+
+Two ways down, in order of how much quality they cost:
+
+```bash
+supabase secrets set UNPAQUE_EFFORT=low          # same model, less thinking
+supabase secrets set UNPAQUE_MODEL=claude-haiku-4-5 UNPAQUE_EFFORT=none
+```
+
+Haiku 4.5 is about a tenth the price and supports strict tool use, so it
+exercises every part of the pipeline — the schema, the parser, the guard, the
+retry. It **rejects the `effort` parameter outright**, which is why
+`UNPAQUE_EFFORT=none` travels with it.
+
+Use it to prove the plumbing works. Do not judge the product on it: the model
+choice *is* the analysis quality here, and a cheap model will produce a report
+that validates perfectly and reads thinly. Switch back to
+`claude-opus-5` before deciding whether Unpack is any good.
+
 ## Ceilings
 
 Optional, with defaults. Set them before the endpoint is publicly reachable:
@@ -150,6 +173,7 @@ Optional, with defaults. Set them before the endpoint is publicly reachable:
 | `ANALYSIS_WINDOW` | `1 hour` | The window, as a Postgres interval |
 | `ANALYSES_PER_DAY` | 500 | Global daily ceiling |
 | `UNPAQUE_MODEL` | `claude-opus-5` | The analysis model |
+| `UNPAQUE_EFFORT` | `high` | `low`/`medium`/`high`, or `none` to omit it entirely |
 | `ALLOWED_ORIGIN` | `*` | Set to your domain before launch |
 
 Phase 1 has no accounts by design, which leaves the endpoint reachable by
