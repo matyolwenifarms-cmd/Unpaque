@@ -381,13 +381,30 @@ theory vocabulary as a closed enum with its coherence rules.
 **Phase 1 — Literature.** Provider layer, verification, ranking, the reference
 list. `METADATA_ONLY` behaviour correct from the first commit. No passages yet.
 
-*In progress.* `_shared/research/` holds the `Reference` contract — constructed
-only by `fromProvider()`, never by a model — and the OpenAlex adapter, with 45
-tests. Recorded-response tests exist and **skip** until somebody runs
-`npm run research:record` on a machine with network access; until then the
-adapter has never met the real API. Still to do: Crossref, identifier
-re-resolution before display, Unpaywall, and the retrieval that turns
-`metadata_only` into `full_text`.
+*In progress.* `_shared/research/` holds:
+
+- the `Reference` contract, constructed only by `fromProvider()` and never by a
+  model;
+- the **OpenAlex** adapter (search, open-access status, retraction, preprints);
+- the **Crossref** adapter (search plus single-DOI `resolve()`);
+- the **verification pass**, which re-resolves every DOI before display.
+
+88 tests, 13 of which **skip** until somebody runs `npm run research:record` on
+a machine with network access. Until then no adapter has met the real API, and
+the suite says so in its own output.
+
+**A departure from §3, argued.** The status table there lists `VERIFIED`,
+`FULL_TEXT`, `METADATA_ONLY` and `UNRESOLVABLE` as one set of mutually
+exclusive states. Implemented that way it does not survive contact with the
+feature: the best case a researcher can have is a reference that is *both*
+verified and readable, and a single field forces the verification pass to
+overwrite availability in order to record its own result — destroying the one
+fact the passage engine depends on. So there are two independent fields,
+`verification` and `availability`, with `retracted` a third axis again, and
+`leadingCaveat()` decides what a reader is told first.
+
+Still to do: Unpaywall, the retrieval that turns `metadata_only` into
+`full_text`, and Phase 2's passage engine.
 
 **Phase 2 — Passages.** Full-text retrieval, offset storage, hover preview,
 deep link. This is where the feature becomes the thing that was asked for.

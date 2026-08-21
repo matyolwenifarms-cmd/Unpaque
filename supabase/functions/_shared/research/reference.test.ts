@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   byRecencyThenInfluence,
   fromProvider,
+  leadingCaveat,
   normaliseDoi,
   shortProviderId,
+  type ProviderRecord,
   type Reference,
 } from "./reference.ts";
 
@@ -74,22 +76,26 @@ describe("constructing a reference", () => {
   });
 
   it("marks a reference with open full text as full_text", () => {
-    expect(fromProvider({ ...base, openAccess: true, fullTextUrl: "https://x/1.pdf" })?.status)
+    expect(fromProvider({ ...base, openAccess: true, fullTextUrl: "https://x/1.pdf" })?.availability)
       .toBe("full_text");
   });
 
   it("marks one without as metadata_only — the state where no passage may show", () => {
-    expect(fromProvider({ ...base, openAccess: false })?.status).toBe("metadata_only");
+    expect(fromProvider({ ...base, openAccess: false })?.availability).toBe("metadata_only");
   });
 
-  // Retraction outranks open access. A reader told "full text available" before
-  // "retracted" has been told the wrong thing first.
-  it("marks a retracted work as retracted even when its full text is open", () => {
+  it("starts everything at provider_only — a provider returning it is not a check", () => {
+    expect(fromProvider(base)?.verification).toBe("provider_only");
+  });
+
+  // The two axes are independent, which is the whole reason they are separate
+  // fields. A retracted paper with open full text has to be able to say both.
+  it("records retraction and availability independently", () => {
     const reference = fromProvider({
       ...base, retracted: true, openAccess: true, fullTextUrl: "https://x/1.pdf",
     });
-    expect(reference?.status).toBe("retracted");
     expect(reference?.retracted).toBe(true);
+    expect(reference?.availability).toBe("full_text");
   });
 });
 
@@ -105,5 +111,41 @@ describe("ordering", () => {
   it("breaks ties on citation count, so the foundational paper is not buried", () => {
     const sorted = [ref(2024, 3), ref(2024, 900), ref(2024, 40)].sort(byRecencyThenInfluence);
     expect(sorted.map((r) => r.citedByCount)).toEqual([900, 40, 3]);
+  });
+});
+
+describe("the caveat a reader is shown first", () => {
+  const make = (overrides: Partial<ProviderRecord>) =>
+    fromProvider({ source: "s", title: "t", providerId: "W1", ...overrides })!;
+
+  it("leads with retraction, even when the full text is open", () => {
+    const reference = make({ retracted: true, openAccess: true, fullTextUrl: "https://x/1.pdf" });
+    expect(leadingCaveat(reference)).toBe("Retracted");
+  });
+
+  it("leads with retraction even when the identifier did not resolve", () => {
+    const reference = { ...make({ retracted: true }), verification: "unresolvable" as const };
+    expect(leadingCaveat(reference)).toBe("Retracted");
+  });
+
+  it("warns about an unresolvable identifier before a missing full text", () => {
+    const reference = { ...make({}), verification: "unresolvable" as const };
+    expect(leadingCaveat(reference)).toBe("Identifier did not resolve");
+  });
+
+  it("labels a preprint", () => {
+    expect(leadingCaveat(make({ preprint: true }))).toBe("Preprint — not peer reviewed");
+  });
+
+  it("says when there is no openly available full text", () => {
+    expect(leadingCaveat(make({}))).toBe("Full text not openly available");
+  });
+
+  it("says nothing about a verified, peer-reviewed, openly readable paper", () => {
+    const reference = {
+      ...make({ openAccess: true, fullTextUrl: "https://x/1.pdf" }),
+      verification: "verified" as const,
+    };
+    expect(leadingCaveat(reference)).toBeNull();
   });
 });

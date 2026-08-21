@@ -24,6 +24,17 @@ const QUERIES = [
   { label: "preprint", params: { filter: "type:preprint", "per-page": "3" } },
 ];
 
+// Crossref's shape is entirely its own — arrays for titles, a nested tuple for
+// the year, retraction expressed as a relationship rather than a flag. Every
+// one of those is somewhere the adapter can be confidently wrong, so it gets
+// recorded too. The `updated-by` filter goes and finds an actually retracted
+// work, which a plain query would almost never return.
+const CROSSREF_QUERIES = [
+  { label: "search", params: { query: "framing theory political communication", rows: "10" } },
+  { label: "retracted", params: { filter: "update-type:retraction", rows: "3" } },
+  { label: "preprint", params: { filter: "type:posted-content", rows: "3" } },
+];
+
 async function fetchWorks({ params }) {
   const query = new URLSearchParams(params);
   if (CONTACT) query.set("mailto", CONTACT);
@@ -76,7 +87,56 @@ const path = `${OUT}openalex-recorded.json`;
 writeFileSync(path, `${JSON.stringify(merged, null, 2)}\n`);
 
 console.log(`\n==> Wrote ${merged.results.length} works to`);
-console.log(`    ${path}\n`);
+console.log(`    ${path}`);
+
+// ---- Crossref -------------------------------------------------------------
+
+async function fetchCrossref({ params }) {
+  const query = new URLSearchParams(params);
+  if (CONTACT) query.set("mailto", CONTACT);
+  const url = `https://api.crossref.org/works?${query}`;
+  const response = await fetch(url, { headers: { Accept: "application/json" } });
+  if (!response.ok) throw new Error(`${url} -> HTTP ${response.status}`);
+  return response.json();
+}
+
+console.log("\n==> Recording Crossref fixtures");
+const crossrefMerged = { status: "ok", "message-type": "work-list", message: { "total-results": 0, items: [] } };
+const crossrefSeen = new Set();
+let crossrefOk = true;
+
+for (const query of CROSSREF_QUERIES) {
+  process.stdout.write(`    ${query.label} ... `);
+  let body;
+  try {
+    body = await fetchCrossref(query);
+  } catch (error) {
+    console.log("FAILED");
+    console.error(`    ${error.message}`);
+    crossrefOk = false;
+    break;
+  }
+  const items = Array.isArray(body?.message?.items) ? body.message.items : [];
+  console.log(`${items.length} works`);
+  for (const item of items) {
+    if (item?.DOI && crossrefSeen.has(item.DOI)) continue;
+    if (item?.DOI) crossrefSeen.add(item.DOI);
+    crossrefMerged.message.items.push(item);
+  }
+  if (query.label === "search" && typeof body?.message?.["total-results"] === "number") {
+    crossrefMerged.message["total-results"] = body.message["total-results"];
+  }
+}
+
+if (crossrefOk) {
+  const crossrefPath = `${OUT}crossref-recorded.json`;
+  writeFileSync(crossrefPath, `${JSON.stringify(crossrefMerged, null, 2)}\n`);
+  console.log(`\n==> Wrote ${crossrefMerged.message.items.length} works to`);
+  console.log(`    ${crossrefPath}\n`);
+} else {
+  console.error("\n  Crossref failed. OpenAlex fixtures were still written.\n");
+  process.exitCode = 1;
+}
 console.log("Now run the suite. If it goes red, that is the adapter being wrong");
 console.log("about the real API — which is exactly what this was for:\n");
 console.log("    npm test\n");

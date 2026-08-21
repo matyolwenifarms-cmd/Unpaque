@@ -1,0 +1,73 @@
+{
+  "status": "ok",
+  "message-type": "work-list",
+  "message": {
+    "total-results": 2914,
+    "items": [
+      {
+        "DOI": "10.1000/fixture.article",
+        "title": ["A journal article with two authors"],
+        "container-title": ["Journal of Fixtures"],
+        "author": [
+          { "given": "Ada", "family": "Researcher", "ORCID": "https://orcid.org/0000-0002-1825-0097" },
+          { "given": "Bo", "family": "Colleague" }
+        ],
+        "issued": { "date-parts": [[2023, 4]] },
+        "type": "journal-article",
+        "is-referenced-by-count": 57,
+        "URL": "https://doi.org/10.1000/fixture.article"
+      },
+      {
+        "DOI": "10.1000/fixture.retracted-work",
+        "title": ["A work that has been retracted"],
+        "container-title": ["Journal of Fixtures"],
+        "author": [{ "given": "Cy", "family": "Withdrawn" }],
+        "issued": { "date-parts": [[2018]] },
+        "type": "journal-article",
+        "is-referenced-by-count": 140,
+        "updated-by": [
+          { "type": "retraction", "DOI": "10.1000/fixture.retraction-notice", "label": "Retraction" }
+        ],
+        "URL": "https://doi.org/10.1000/fixture.retracted-work"
+      },
+      {
+        "DOI": "10.1000/fixture.retraction-notice",
+        "title": ["Retraction notice for a work that has been retracted"],
+        "container-title": ["Journal of Fixtures"],
+        "author": [{ "name": "The Editors" }],
+        "issued": { "date-parts": [[2020]] },
+        "type": "journal-article",
+        "is-referenced-by-count": 2,
+        "update-to": [
+          { "type": "retraction", "DOI": "10.1000/fixture.retracted-work", "label": "Retraction" }
+        ],
+        "URL": "https://doi.org/10.1000/fixture.retraction-notice"
+      },
+      {
+        "DOI": "10.1000/fixture.posted",
+        "title": ["A preprint posted to a server"],
+        "container-title": [],
+        "author": [{ "given": "Di", "family": "Early" }],
+        "issued": { "date-parts": [[2026, 2, 11]] },
+        "type": "posted-content",
+        "subtype": "preprint",
+        "is-referenced-by-count": 1,
+        "URL": "https://doi.org/10.1000/fixture.posted"
+      },
+      {
+        "DOI": "10.1000/fixture.undated",
+        "title": ["A work with no usable issued date"],
+        "author": [],
+        "issued": { "date-parts": [[null]] },
+        "created": { "date-parts": [[2015, 6, 1]] },
+        "type": "journal-article"
+      },
+      {
+        "title": ["A record with no DOI at all"],
+        "author": [],
+        "issued": { "date-parts": [[2020]] },
+        "type": "journal-article"
+      }
+    ]
+  }
+}

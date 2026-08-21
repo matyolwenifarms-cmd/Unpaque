@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it, vi } from "vitest";
+import { leadingCaveat } from "../reference.ts";
 import { openAlex } from "./openalex.ts";
 import type { Fetcher } from "./types.ts";
 
@@ -51,7 +52,9 @@ describe("the OpenAlex adapter, against synthetic fixtures", () => {
     const outcome = await openAlex().search({ text: "x" }, fetcherReturning(fixture));
     if (!outcome.ok) return;
     const retracted = outcome.references.find((r) => r.doi === "10.1000/fixture.retracted");
-    expect(retracted?.status).toBe("retracted");
+    expect(retracted?.retracted).toBe(true);
+    // And it is what a reader is told first, ahead of the open full text.
+    expect(leadingCaveat(retracted!)).toBe("Retracted");
   });
 
   it("offers no full-text URL for a paywalled work", async () => {
@@ -59,7 +62,7 @@ describe("the OpenAlex adapter, against synthetic fixtures", () => {
     if (!outcome.ok) return;
     const paywalled = outcome.references.find((r) => r.doi === "10.1000/fixture.paywalled");
     expect(paywalled?.fullTextUrl).toBeUndefined();
-    expect(paywalled?.status).toBe("metadata_only");
+    expect(paywalled?.availability).toBe("metadata_only");
   });
 
   it("keeps a work that has a provider id but no DOI", async () => {
@@ -159,11 +162,11 @@ describe.skipIf(recorded === null)("the OpenAlex adapter, against recorded respo
     }
   });
 
-  it("never presents a retracted work as full text", async () => {
+  it("never leads with anything but retraction on a retracted work", async () => {
     const outcome = await openAlex().search({ text: "x" }, fetcherReturning(recorded));
     if (!outcome.ok) return;
     for (const reference of outcome.references) {
-      if (reference.retracted) expect(reference.status).toBe("retracted");
+      if (reference.retracted) expect(leadingCaveat(reference)).toBe("Retracted");
     }
   });
 

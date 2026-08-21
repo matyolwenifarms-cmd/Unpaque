@@ -12,17 +12,26 @@
 // already retrieved this session, and anything without a resolvable identifier
 // never reaches a screen. The model ranks and explains. It does not supply.
 
-export const REFERENCE_STATUSES = [
-  "verified",
-  "provider_only",
-  "full_text",
-  "metadata_only",
-  "unresolvable",
-  "user_supplied",
-  "retracted",
-] as const;
+// Two independent axes, deliberately not one field.
+//
+// The specification's §3 table lists VERIFIED, FULL_TEXT, METADATA_ONLY and
+// UNRESOLVABLE together as though they were mutually exclusive states, and
+// modelling them that way does not survive contact with the feature: the best
+// case a researcher can have is a reference that is *both* verified and has
+// full text, and a single field forces the verification pass to overwrite
+// availability to record its own result. That would silently destroy the one
+// fact the passage engine depends on.
+//
+// So: how well do we know this reference exists, and can we read it. A
+// reference can be verified and paywalled, provider-only and open, or any
+// other combination. `retracted` is a third axis again and stays a boolean,
+// because a retracted paper is still retracted whatever else is true of it.
 
-export type ReferenceStatus = (typeof REFERENCE_STATUSES)[number];
+export const VERIFICATIONS = ["verified", "provider_only", "unresolvable", "user_supplied"] as const;
+export type Verification = (typeof VERIFICATIONS)[number];
+
+export const AVAILABILITIES = ["full_text", "metadata_only"] as const;
+export type Availability = (typeof AVAILABILITIES)[number];
 
 export interface Author {
   name: string;
@@ -56,7 +65,14 @@ export interface Reference {
   fullTextUrl?: string;
   landingPageUrl?: string;
   citedByCount?: number;
-  status: ReferenceStatus;
+  /** How well we know this exists. Upgraded by the verification pass. */
+  verification: Verification;
+  /**
+   * Whether the full text can be retrieved. `metadata_only` is the state in
+   * which **no passage may be displayed** — the reference still lists, and the
+   * interface says why there is no quotation rather than generating one.
+   */
+  availability: Availability;
 }
 
 /** Strip the URL wrapper providers put around DOIs, and case-fold. */
@@ -140,10 +156,12 @@ export function fromProvider(record: ProviderRecord): Reference | null {
     fullTextUrl,
     landingPageUrl: typeof record.landingPageUrl === "string" ? record.landingPageUrl : undefined,
     citedByCount: typeof record.citedByCount === "number" ? record.citedByCount : undefined,
-    // Retraction outranks everything: a retracted paper with open full text is
-    // still first and foremost retracted, and a reader who sees "full text"
-    // before they see "retracted" has been told the wrong thing first.
-    status: retracted ? "retracted" : fullTextUrl ? "full_text" : "metadata_only",
+    // A provider returning something is not the same as that identifier
+    // resolving. Nothing here has been checked against the registration
+    // agency yet, so it starts at provider_only and the verification pass
+    // upgrades it.
+    verification: "provider_only",
+    availability: fullTextUrl ? "full_text" : "metadata_only",
   };
 }
 
@@ -155,4 +173,21 @@ export function fromProvider(record: ProviderRecord): Reference | null {
 export function byRecencyThenInfluence(a: Reference, b: Reference): number {
   if (a.year !== b.year) return (b.year ?? 0) - (a.year ?? 0);
   return (b.citedByCount ?? 0) - (a.citedByCount ?? 0);
+}
+
+/**
+ * How a reference should be introduced to a reader, most important first.
+ *
+ * Retraction leads, always. A reader who sees "full text available" before
+ * they see "retracted" has been told the wrong thing first, and the second
+ * fact does not undo the first impression. After that, doubt about whether the
+ * thing exists outranks convenience about reading it.
+ */
+export function leadingCaveat(reference: Reference): string | null {
+  if (reference.retracted) return "Retracted";
+  if (reference.verification === "unresolvable") return "Identifier did not resolve";
+  if (reference.preprint) return "Preprint — not peer reviewed";
+  if (reference.verification === "user_supplied") return "Added by you — not verified";
+  if (reference.availability === "metadata_only") return "Full text not openly available";
+  return null;
 }
