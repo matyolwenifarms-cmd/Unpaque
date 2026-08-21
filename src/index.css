@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Light is the adaptation here, not the default. The logo is a dark plate
+     with an amber mark, so the dark palette below is the brand at rest and
+     these values are the version that survives being printed or read in
+     sunlight. */
+  :root {
+    --paper: 247 245 241;
+    --raised: 255 255 255;
+    --ink: 28 26 23;
+    --rule: 224 219 210;
+    --muted: 116 111 104;
+    --accent: 176 122 32;
+    --accent-ink: 255 255 255;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: 28 26 23;
+      --raised: 38 35 31;
+      --ink: 242 239 233;
+      --rule: 58 54 48;
+      --muted: 138 133 128;
+      --accent: 217 160 60;
+      --accent-ink: 28 26 23;
+    }
+  }
+
+  body {
+    @apply bg-paper text-ink antialiased;
+  }
+}
