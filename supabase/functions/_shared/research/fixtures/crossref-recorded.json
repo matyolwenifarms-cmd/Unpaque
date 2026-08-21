@@ -1,0 +1,5491 @@
+{
+  "status": "ok",
+  "message-type": "work-list",
+  "message": {
+    "total-results": 4179957,
+    "items": [
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2024,
+              3,
+              1
+            ]
+          ],
+          "date-time": "2024-03-01T20:38:57Z",
+          "timestamp": 1709325537535
+        },
+        "reference-count": 0,
+        "publisher": "Oxford University Press (OUP)",
+        "issue": "4",
+        "license": [
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2015,
+                  9,
+                  1
+                ]
+              ],
+              "date-time": "2015-09-01T00:00:00Z",
+              "timestamp": 1441065600000
+            },
+            "content-version": "tdm",
+            "delay-in-days": 3591,
+            "URL": "http://doi.wiley.com/10.1002/tdm_license_1"
+          }
+        ],
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "short-container-title": [
+          "Communication Theory"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2005,
+              11,
+              1
+            ]
+          ]
+        },
+        "DOI": "10.1093/ct/15.4.414",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2005,
+              10,
+              26
+            ]
+          ],
+          "date-time": "2005-10-26T03:44:12Z",
+          "timestamp": 1130298252000
+        },
+        "page": "414-436",
+        "source": "Crossref",
+        "is-referenced-by-count": 1,
+        "title": [
+          "Framing Justice: Using the Concept of Procedural Justice to Advance Political Communication Research"
+        ],
+        "prefix": "10.1093",
+        "volume": "15",
+        "author": [
+          {
+            "given": "J. C.",
+            "family": "Besley",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "member": "286",
+        "container-title": [
+          "Communication Theory"
+        ],
+        "language": "en",
+        "link": [
+          {
+            "URL": "http://api.wiley.com/onlinelibrary/tdm/v1/articles/10.1093%2Fct%2F15.4.414",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          }
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2018,
+              1,
+              2
+            ]
+          ],
+          "date-time": "2018-01-02T11:04:19Z",
+          "timestamp": 1514891059000
+        },
+        "score": 29.500992,
+        "resource": {
+          "primary": {
+            "URL": "http://doi.wiley.com/10.1093/ct/15.4.414"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2005,
+              11,
+              1
+            ]
+          ]
+        },
+        "references-count": 0,
+        "journal-issue": {
+          "issue": "4",
+          "published-print": {
+            "date-parts": [
+              [
+                2005,
+                11,
+                1
+              ]
+            ]
+          }
+        },
+        "URL": "https://doi.org/10.1093/ct/15.4.414",
+        "ISSN": [
+          "1050-3293",
+          "1468-2885"
+        ],
+        "issn-type": [
+          {
+            "value": "1050-3293",
+            "type": "print"
+          },
+          {
+            "value": "1468-2885",
+            "type": "electronic"
+          }
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2005,
+              11,
+              1
+            ]
+          ]
+        }
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2026,
+              8,
+              8
+            ]
+          ],
+          "date-time": "2026-08-08T03:39:37Z",
+          "timestamp": 1786160377889,
+          "version": "3.56.0"
+        },
+        "edition-number": "1",
+        "reference-count": 20,
+        "publisher": "Wiley",
+        "isbn-type": [
+          {
+            "value": "9781118290750",
+            "type": "print"
+          },
+          {
+            "value": "9781118541555",
+            "type": "electronic"
+          }
+        ],
+        "license": [
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2016,
+                  1,
+                  4
+                ]
+              ],
+              "date-time": "2016-01-04T00:00:00Z",
+              "timestamp": 1451865600000
+            },
+            "content-version": "tdm",
+            "delay-in-days": 0,
+            "URL": "http://doi.wiley.com/10.1002/tdm_license_1.1"
+          }
+        ],
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "abstract": "<jats:title>Abstract</jats:title><jats:p>Political issues can be viewed from different perspectives and they can be defined differently in the news media by emphasizing some aspects and leaving others aside. This is at the core of news framing theory. Framing originates within sociology and psychology and has become one of the most used theories in political communication research.</jats:p>",
+        "DOI": "10.1002/9781118541555.wbiepc121",
+        "type": "other",
+        "created": {
+          "date-parts": [
+            [
+              2015,
+              11,
+              6
+            ]
+          ],
+          "date-time": "2015-11-06T15:30:31Z",
+          "timestamp": 1446823831000
+        },
+        "page": "1-10",
+        "source": "Crossref",
+        "is-referenced-by-count": 11,
+        "title": [
+          "Framing Theory"
+        ],
+        "prefix": "10.1002",
+        "author": [
+          {
+            "given": "Claes H.",
+            "family": "de Vreese",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Sophie",
+            "family": "Lecheler",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "311",
+        "published-online": {
+          "date-parts": [
+            [
+              2016,
+              1,
+              4
+            ]
+          ]
+        },
+        "reference": [
+          {
+            "key": "e_1_2_9_1_2_1",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.1093/oso/9780195090635.001.0001",
+            "volume-title": "Spiral of cynicism: The press and the public good",
+            "author": "Cappella J. N.",
+            "year": "1997"
+          },
+          {
+            "key": "e_1_2_9_1_3_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1146/annurev.polisci.10.072805.103054"
+          },
+          {
+            "key": "e_1_2_9_1_4_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1075/idjdd.13.1.06vre"
+          },
+          {
+            "key": "e_1_2_9_1_5_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.4135/9781446201015.n24"
+          },
+          {
+            "key": "e_1_2_9_1_6_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.1993.tb01304.x"
+          },
+          {
+            "key": "e_1_2_9_1_7_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1086/229213"
+          },
+          {
+            "key": "e_1_2_9_1_8_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.7208/chicago/9780226388533.001.0001"
+          },
+          {
+            "key": "e_1_2_9_1_9_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037/0003-066X.39.4.341"
+          },
+          {
+            "key": "e_1_2_9_1_10_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/1077699011430064"
+          },
+          {
+            "key": "e_1_2_9_1_11_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1023/A:1024834831093"
+          },
+          {
+            "key": "e_1_2_9_1_12_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/009365097024005002"
+          },
+          {
+            "key": "e_1_2_9_1_13_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.1999.tb02784.x"
+          },
+          {
+            "issue": "1",
+            "key": "e_1_2_9_1_14_1",
+            "doi-asserted-by": "crossref",
+            "first-page": "9",
+            "DOI": "10.1111/j.0021-9916.2007.00326.x",
+            "article-title": "Framing, agenda‐setting, and priming: The evolution of three media effects models",
+            "volume": "57",
+            "author": "Scheufele D. A.",
+            "year": "2007",
+            "journal-title": "Journal of Communication,"
+          },
+          {
+            "key": "e_1_2_9_1_15_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.2000.tb02843.x"
+          },
+          {
+            "key": "e_1_2_9_1_16_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1467-9221.2007.00610.x"
+          },
+          {
+            "key": "e_1_2_9_1_17_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/10584600152647083"
+          },
+          {
+            "key": "e_1_2_9_2_2_1",
+            "volume-title": "Doing news framing analysis: Empirical and theoretical perspectives",
+            "author": "D'Angelo P.",
+            "year": "2009"
+          },
+          {
+            "key": "e_1_2_9_2_3_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/009365002237829"
+          },
+          {
+            "key": "e_1_2_9_2_4_1",
+            "volume-title": "Frame analysis: An essay on the organization of experience",
+            "author": "Goffman E.",
+            "year": "1974"
+          },
+          {
+            "key": "e_1_2_9_2_5_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.4324/9781410605689"
+          }
+        ],
+        "container-title": [
+          "The International Encyclopedia of Political Communication"
+        ],
+        "language": "en",
+        "link": [
+          {
+            "URL": "http://api.wiley.com/onlinelibrary/tdm/v1/articles/10.1002%2F9781118541555.wbiepc121",
+            "content-type": "application/pdf",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          },
+          {
+            "URL": "https://onlinelibrary.wiley.com/doi/pdf/10.1002/9781118541555.wbiepc121",
+            "content-type": "application/pdf",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          },
+          {
+            "URL": "https://onlinelibrary.wiley.com/doi/full-xml/10.1002/9781118541555.wbiepc121",
+            "content-type": "application/xml",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          },
+          {
+            "URL": "https://onlinelibrary.wiley.com/doi/pdf/10.1002/9781118541555.wbiepc121",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+          }
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2024,
+              6,
+              12
+            ]
+          ],
+          "date-time": "2024-06-12T08:45:21Z",
+          "timestamp": 1718181921000
+        },
+        "score": 27.681473,
+        "resource": {
+          "primary": {
+            "URL": "https://onlinelibrary.wiley.com/doi/10.1002/9781118541555.wbiepc121"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2016,
+              1,
+              4
+            ]
+          ]
+        },
+        "ISBN": [
+          "9781118290750",
+          "9781118541555"
+        ],
+        "references-count": 20,
+        "alternative-id": [
+          "10.1002/9781118541555.wbiepc121",
+          "10.1002/9781118541555"
+        ],
+        "URL": "https://doi.org/10.1002/9781118541555.wbiepc121",
+        "archive": [
+          "Portico"
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2016,
+              1,
+              4
+            ]
+          ]
+        }
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2024,
+              9,
+              7
+            ]
+          ],
+          "date-time": "2024-09-07T04:34:32Z",
+          "timestamp": 1725683672771
+        },
+        "publisher-location": "2455 Teller Road, Thousand Oaks California 91320 United States ",
+        "reference-count": 0,
+        "publisher": "SAGE Publications, Inc.",
+        "isbn-type": [
+          {
+            "type": "print",
+            "value": "9781412917995"
+          },
+          {
+            "type": "electronic",
+            "value": "9781412953993"
+          }
+        ],
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2008
+            ]
+          ]
+        },
+        "DOI": "10.4135/9781412953993.n220",
+        "type": "reference-entry",
+        "created": {
+          "date-parts": [
+            [
+              2012,
+              5,
+              17
+            ]
+          ],
+          "date-time": "2012-05-17T13:21:43Z",
+          "timestamp": 1337260903000
+        },
+        "source": "Crossref",
+        "is-referenced-by-count": 1,
+        "title": [
+          "Framing"
+        ],
+        "prefix": "10.4135",
+        "member": "179",
+        "container-title": [
+          "Encyclopedia of Political Communication"
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2022,
+              7,
+              15
+            ]
+          ],
+          "date-time": "2022-07-15T12:21:21Z",
+          "timestamp": 1657887681000
+        },
+        "score": 27.529085,
+        "resource": {
+          "primary": {
+            "URL": "https://sk.sagepub.com/reference/politicalcommunication/n220.xml"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2008
+            ]
+          ]
+        },
+        "ISBN": [
+          "9781412917995",
+          "9781412953993"
+        ],
+        "references-count": 0,
+        "alternative-id": [
+          "10.4135/9781412953993"
+        ],
+        "URL": "https://doi.org/10.4135/9781412953993.n220",
+        "published": {
+          "date-parts": [
+            [
+              2008
+            ]
+          ]
+        }
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2026,
+              7,
+              25
+            ]
+          ],
+          "date-time": "2026-07-25T04:13:44Z",
+          "timestamp": 1784952824767,
+          "version": "3.55.0"
+        },
+        "publisher-location": "2455 Teller Road, Thousand Oaks California 91320 United States ",
+        "reference-count": 0,
+        "publisher": "SAGE Publications, Inc.",
+        "isbn-type": [
+          {
+            "value": "9781412959377",
+            "type": "print"
+          },
+          {
+            "value": "9781412959384",
+            "type": "electronic"
+          }
+        ],
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2009
+            ]
+          ]
+        },
+        "DOI": "10.4135/9781412959384.n151",
+        "type": "reference-entry",
+        "created": {
+          "date-parts": [
+            [
+              2012,
+              10,
+              5
+            ]
+          ],
+          "date-time": "2012-10-05T19:01:12Z",
+          "timestamp": 1349463672000
+        },
+        "source": "Crossref",
+        "is-referenced-by-count": 9,
+        "title": [
+          "Framing Theory"
+        ],
+        "prefix": "10.4135",
+        "member": "179",
+        "container-title": [
+          "Encyclopedia of Communication Theory"
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2022,
+              4,
+              21
+            ]
+          ],
+          "date-time": "2022-04-21T17:34:25Z",
+          "timestamp": 1650562465000
+        },
+        "score": 27.29665,
+        "resource": {
+          "primary": {
+            "URL": "https://sk.sagepub.com/reference/communicationtheory/n151.xml"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2009
+            ]
+          ]
+        },
+        "ISBN": [
+          "9781412959377",
+          "9781412959384"
+        ],
+        "references-count": 0,
+        "alternative-id": [
+          "10.4135/9781412959384"
+        ],
+        "URL": "https://doi.org/10.4135/9781412959384.n151",
+        "published": {
+          "date-parts": [
+            [
+              2009
+            ]
+          ]
+        }
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2026,
+              8,
+              21
+            ]
+          ],
+          "date-time": "2026-08-21T12:42:26Z",
+          "timestamp": 1787316146445,
+          "version": "3.56.0"
+        },
+        "reference-count": 46,
+        "publisher": "Informa UK Limited",
+        "issue": "2",
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "short-container-title": [
+          "Political Communication"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2010,
+              5,
+              14
+            ]
+          ]
+        },
+        "DOI": "10.1080/10584600903501484",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2010,
+              5,
+              15
+            ]
+          ],
+          "date-time": "2010-05-15T09:12:42Z",
+          "timestamp": 1273914762000
+        },
+        "page": "141-157",
+        "source": "Crossref",
+        "is-referenced-by-count": 102,
+        "title": [
+          "Political Framing Strategies and Their Impact on Media Framing in a Swiss Direct-Democratic Campaign"
+        ],
+        "prefix": "10.1080",
+        "volume": "27",
+        "author": [
+          {
+            "given": "Regula",
+            "family": "Hänggli",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Hanspeter",
+            "family": "Kriesi",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "301",
+        "reference": [
+          {
+            "key": "CIT0001",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1086/269431"
+          },
+          {
+            "key": "CIT0002",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/10584609.1993.9962970"
+          },
+          {
+            "key": "CIT0003",
+            "doi-asserted-by": "crossref",
+            "first-page": "366",
+            "DOI": "10.1007/978-3-322-80383-2_20",
+            "volume-title": "Öffentliche Kommunikation: Handbuch Kommunikations- und Medienwissenschaft",
+            "author": "Blum R.",
+            "year": "2003"
+          },
+          {
+            "key": "CIT0004",
+            "first-page": "115",
+            "volume-title": "Politische Kommunikation in der Schweiz",
+            "author": "Blum R.",
+            "year": "2005"
+          },
+          {
+            "key": "CIT0005",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/1354068806066792"
+          },
+          {
+            "key": "CIT0006",
+            "volume-title": "Explaining and predicting elections",
+            "author": "Budge I.",
+            "year": "1983"
+          },
+          {
+            "key": "CIT0007",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S0003055407070554"
+          },
+          {
+            "key": "CIT0008",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1146/annurev.polisci.10.072805.103054"
+          },
+          {
+            "key": "CIT0009",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.2006.00331.x"
+          },
+          {
+            "key": "CIT0010",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.4159/harvard.9780674330092",
+            "volume-title": "Direct democracy: The politics of initiative, referendum, and recall",
+            "author": "Cronin T.",
+            "year": "1989"
+          },
+          {
+            "key": "CIT0011",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1075/idjdd.13.1.06vre"
+          },
+          {
+            "key": "CIT0012",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1023/A:1015006907312"
+          },
+          {
+            "key": "CIT0013",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S0003055404041413"
+          },
+          {
+            "key": "CIT0014",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.1993.tb01304.x"
+          },
+          {
+            "key": "CIT0015",
+            "volume-title": "Projections of power: Framing news, public opinion, and U.S. foreign policy",
+            "author": "Entman R. M.",
+            "year": "2004"
+          },
+          {
+            "key": "CIT0016",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.2006.00336.x"
+          },
+          {
+            "key": "CIT0017",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/CBO9780511613685"
+          },
+          {
+            "key": "CIT0018",
+            "volume-title": "Talking politics",
+            "author": "Gamson W.",
+            "year": "1992"
+          },
+          {
+            "key": "CIT0019",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1002/9780470999103.ch11"
+          },
+          {
+            "key": "CIT0020",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1146/annurev.so.18.080192.002105"
+          },
+          {
+            "key": "CIT0021",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1086/229213"
+          },
+          {
+            "key": "CIT0022",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/CBO9780511790867"
+          },
+          {
+            "key": "CIT0023",
+            "volume-title": "Democracy in the media society: Changing media structures—Changing political communication?",
+            "author": "Imhof K.",
+            "year": "2008"
+          },
+          {
+            "key": "CIT0024",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.7208/chicago/9780226388533.001.0001",
+            "volume-title": "Is anyone responsible? How television frames political issues",
+            "author": "Iyengar S.",
+            "year": "1991"
+          },
+          {
+            "key": "CIT0025",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.7208/chicago/9780226394749.001.0001",
+            "volume-title": "Getting your way: Strategic dilemmas in the real world",
+            "volume": "9",
+            "author": "Jasper J. M.",
+            "year": "2006"
+          },
+          {
+            "key": "CIT0026",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1023/B:RYSO.0000038603.34963.de"
+          },
+          {
+            "key": "CIT0027",
+            "first-page": "381",
+            "volume-title": "Handbook of Swiss politics",
+            "author": "Marcinkowski F.",
+            "year": "2006",
+            "edition": "2"
+          },
+          {
+            "key": "CIT0028",
+            "first-page": "101",
+            "volume": "8",
+            "author": "Matthes J.",
+            "year": "2008",
+            "journal-title": "Studies in Communication Sciences"
+          },
+          {
+            "key": "CIT0029",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/105846099198613"
+          },
+          {
+            "key": "CIT0030",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/10584609.1993.9962963"
+          },
+          {
+            "key": "CIT0031",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.2307/2111797"
+          },
+          {
+            "key": "CIT0032",
+            "volume-title": "The strategy of rhetoric: Campaigning for the American Constitution",
+            "author": "Riker W. H.",
+            "year": "1996"
+          },
+          {
+            "key": "CIT0033",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/1467-9248.00228"
+          },
+          {
+            "key": "CIT0034",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.1999.tb02784.x"
+          },
+          {
+            "key": "CIT0035",
+            "volume-title": "Politische Kommunikation. Theoretische Ansätze und Ergebnisse empirischer Forschung zur Rolle der Massenmedien in der Politik [Political communication: Theoretical approaches and results of empirical research about the role of mass media in politics]",
+            "author": "Schulz W.",
+            "year": "1997"
+          },
+          {
+            "key": "CIT0036",
+            "volume-title": "Mediating the message: Theories of influences on mass media content",
+            "author": "Shoemaker P. J.",
+            "year": "1996",
+            "edition": "2"
+          },
+          {
+            "key": "CIT0037",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S0007123406000226"
+          },
+          {
+            "key": "CIT0038",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/1354068801007006004"
+          },
+          {
+            "key": "CIT0046",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.3998/mpub.11467",
+            "volume-title": "Educated by initiative: The effects of direct democracy on citizens and political organizations in the American states",
+            "author": "Smith D. A.",
+            "year": "2004"
+          },
+          {
+            "key": "CIT0039",
+            "doi-asserted-by": "crossref",
+            "first-page": "67",
+            "DOI": "10.1017/CBO9780511805813.004",
+            "volume-title": "Elements of reason: Cognition, choice, and the bounds of rationality",
+            "author": "Sniderman P. A.",
+            "year": "2000"
+          },
+          {
+            "key": "CIT0040",
+            "doi-asserted-by": "crossref",
+            "first-page": "133",
+            "DOI": "10.1515/9780691188386-007",
+            "volume-title": "Studies in public opinion: Attitudes, nonattitudes, measurement error and change",
+            "author": "Sniderman P. M.",
+            "year": "2004"
+          },
+          {
+            "key": "CIT0041",
+            "first-page": "197",
+            "volume-title": "From structure to action: Social movement participation across cultures",
+            "author": "Snow D. A.",
+            "year": "1988"
+          },
+          {
+            "key": "CIT0042",
+            "first-page": "247",
+            "volume-title": "Patterns of modern electoral campaigning and their consequences",
+            "author": "Swanson D. L.",
+            "year": "1996"
+          },
+          {
+            "key": "CIT0043",
+            "volume-title": "Making news: A study in the construction of reality",
+            "author": "Tuchman G.",
+            "year": "1978"
+          },
+          {
+            "key": "CIT0044",
+            "volume-title": "Media and political conflict: News from the Middle East",
+            "author": "Wolfsfeld G.",
+            "year": "1997"
+          },
+          {
+            "key": "CIT0045",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/10584600600808927"
+          }
+        ],
+        "container-title": [
+          "Political Communication"
+        ],
+        "language": "en",
+        "link": [
+          {
+            "URL": "http://www.tandfonline.com/doi/pdf/10.1080/10584600903501484",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+          }
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2019,
+              5,
+              29
+            ]
+          ],
+          "date-time": "2019-05-29T01:56:47Z",
+          "timestamp": 1559095007000
+        },
+        "score": 27.088238,
+        "resource": {
+          "primary": {
+            "URL": "http://www.tandfonline.com/doi/abs/10.1080/10584600903501484"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2010,
+              5,
+              14
+            ]
+          ]
+        },
+        "references-count": 46,
+        "journal-issue": {
+          "issue": "2",
+          "published-print": {
+            "date-parts": [
+              [
+                2010,
+                5,
+                14
+              ]
+            ]
+          }
+        },
+        "alternative-id": [
+          "10.1080/10584600903501484"
+        ],
+        "URL": "https://doi.org/10.1080/10584600903501484",
+        "ISSN": [
+          "1058-4609",
+          "1091-7675"
+        ],
+        "issn-type": [
+          {
+            "value": "1058-4609",
+            "type": "print"
+          },
+          {
+            "value": "1091-7675",
+            "type": "electronic"
+          }
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2010,
+              5,
+              14
+            ]
+          ]
+        }
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2026,
+              8,
+              19
+            ]
+          ],
+          "date-time": "2026-08-19T11:25:53Z",
+          "timestamp": 1787138753535,
+          "version": "3.56.0"
+        },
+        "edition-number": "1",
+        "reference-count": 69,
+        "publisher": "Oxford University PressNew York, NY",
+        "isbn-type": [
+          {
+            "value": "9780197859148",
+            "type": "electronic"
+          }
+        ],
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2019,
+              2,
+              27
+            ]
+          ]
+        },
+        "DOI": "10.1093/obo/9780199756223-0269",
+        "type": "reference-entry",
+        "created": {
+          "date-parts": [
+            [
+              2019,
+              2,
+              26
+            ]
+          ],
+          "date-time": "2019-02-26T06:33:09Z",
+          "timestamp": 1551162789000
+        },
+        "source": "Crossref",
+        "is-referenced-by-count": 1,
+        "title": [
+          "Framing Effects in Political Communication"
+        ],
+        "prefix": "10.1093",
+        "author": [
+          {
+            "given": "Sophie",
+            "family": "Lecheler",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "Professor, Communication, University of Vienna"
+              }
+            ],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "286",
+        "reference": [
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0001",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1142/9789814417358_0016",
+            "article-title": "Choices, Values, and Frames.",
+            "author": "",
+            "year": "1984",
+            "journal-title": "American Psychologist"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0002",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1023/A:1024834831093",
+            "article-title": "Toward a Psychology of Framing Effects.",
+            "author": "",
+            "year": "1997",
+            "journal-title": "Political Behavior"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0003",
+            "doi-asserted-by": "crossref",
+            "unstructured": "Scheufele, D. A., and S. Iyengar. “The State of Framing Research: A Call for New Directions.” In Oxford Handbook of Political Communication Theories. Edited by K. Kenski and K. H. Jamieson, 619–632. New York: Oxford University Press, 2017.",
+            "DOI": "10.1093/oxfordhb/9780199793471.013.47"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0004",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/CBO9780511790638",
+            "volume-title": "The Decline of the Death Penalty and the Discovery of Innocence",
+            "author": "",
+            "year": "2008"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0005",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/10584600390244176",
+            "article-title": "Cascading Activation: Contesting the White House’s Frame after 9/11.",
+            "author": "",
+            "year": "2003",
+            "journal-title": "Political Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0006",
+            "unstructured": "Gamson, W. A., and A. Modigliani. “The Changing Culture of Affirmative Action.” In Research in Political Sociology. Vol. 3. Edited by R. G. Braungart and M. M. Braungart, 137–177. Greenwich, CT: JAI Press, 1987."
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0007",
+            "volume-title": "Frame Analysis",
+            "author": "",
+            "year": "1974"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0008",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460–2466.2006.00329_3.x",
+            "article-title": "The Constructionist Approach to Framing: Bringing Culture Back.",
+            "author": "",
+            "year": "2006",
+            "journal-title": "Journal of Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0009",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/0267323111404838",
+            "article-title": "Power to the Frame: Bringing Sociology Back to Frame Analysis.",
+            "author": "",
+            "year": "2011",
+            "journal-title": "European Journal of Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0010",
+            "doi-asserted-by": "crossref",
+            "unstructured": "Busby, E., D. J. Flynn, and J. N. Druckman. “Studying Framing Effects on Political Preferences: Existing Research and Lingering Questions.” In Doing News Framing Analysis II. Edited by P. D’Angelo, 67–90. London: Routledge, 2018.",
+            "DOI": "10.4324/9781315642239-2"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0011",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/15205436.2015.1068811",
+            "article-title": "The End of Framing as We Know It . . . and the Future of Media Effects.",
+            "author": "",
+            "year": "2016",
+            "journal-title": "Mass Communication and Society"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0012",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.1993.tb01304.x",
+            "article-title": "Framing: Toward Clarification of a Fractured Paradigm.",
+            "author": "",
+            "year": "1993",
+            "journal-title": "Journal of Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0013",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.2006.00335.x",
+            "article-title": "Curmudgeonly Advice.",
+            "author": "",
+            "year": "2007",
+            "journal-title": "Journal of Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0014",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/107769900908600206",
+            "article-title": "What’s in a Frame? A Content Analysis of Media-Framing Studies in the World’s Leading Communication Journals, 1990–2005.",
+            "author": "",
+            "year": "2009",
+            "journal-title": "Journalism and Mass Communication Quarterly"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0015",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.1999.tb02784.x",
+            "article-title": "Framing as a Theory of Media Effects.",
+            "author": "",
+            "year": "1999",
+            "journal-title": "Journal of Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0016",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.2006.00326_5.x",
+            "article-title": "Framing, Agenda-Setting, and Priming: The Evolution of Three Media Effects Models.",
+            "author": "",
+            "year": "2007",
+            "journal-title": "Journal of Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0017",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1146/annurev.polisci.10.072805.103054",
+            "article-title": "Framing Theory.",
+            "author": "",
+            "year": "2007",
+            "journal-title": "Annual Review of Political Science"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0018",
+            "volume-title": "Doing News Framing Analysis II;: Empirical and Theoretical Perspectives",
+            "author": "",
+            "year": "2018"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0019",
+            "volume-title": "Doing News Framing Analysis: Empirical and Theoretical Perspectives",
+            "author": "",
+            "year": "2010"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0020",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1075/idjdd.13.1.06vre",
+            "article-title": "News Framing: Theory and Typology.",
+            "author": "",
+            "year": "2005",
+            "journal-title": "Information Design Journal + Document Design"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0021",
+            "unstructured": "Druckman, J. N. “What’s It All About? Framing in Political Science.” In Perspectives on Framing. Edited by G. Keren, 279–301. New York: Psychology Press, 2011."
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0022",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.4324/9781315208077",
+            "volume-title": "News Framing Effects",
+            "author": "",
+            "year": "2018"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0023",
+            "unstructured": "Price, V., and D. Tewksbury. News Values and Public Opinion: A Theoretical Account of Media Priming and Framing. In Progress in Communication Sciences. Edited by G. Barnett and F. Boster, 173–212. Norwood, NJ: Ablex, 1997."
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0024",
+            "volume-title": "Framing Public Life: A Bridging Model for Media Research",
+            "author": "",
+            "year": "2001"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0025",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.1999.tb02784.x",
+            "article-title": "Framing as a Theory of Media Effects.",
+            "author": "",
+            "year": "1999",
+            "journal-title": "Journal of Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0026",
+            "unstructured": "Tewksbury, D., and D. A. Scheufele. “News Framing Theory and Research.” In Media Effects: Advances in Theory and Research. Edited by J. Bryant and M. B. Oliver, 17–33. New York: Routledge, 2009."
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0027",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S0022381609990521",
+            "article-title": "Competing Rhetoric over Time: Frames versus Cues.",
+            "author": "",
+            "year": "2010",
+            "journal-title": "The Journal of Politics"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0028",
+            "unstructured": "McCombs, M., and S. I. Ghanem. “The Convergence of Agenda Setting and Framing.” In Framing Public Life. Edited by S. D. Reese, O. H. Gandy Jr., and A. E. Grant, 67–82. Mahwah, NJ: Erlbaum, 2001."
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0029",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1023/A:1024834831093",
+            "article-title": "Toward a Psychology of Framing Effects.",
+            "author": "",
+            "year": "1997",
+            "journal-title": "Political Behavior"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0030",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1207/S15327825MCS0323_07",
+            "article-title": "Agenda-Setting, Priming, and Framing Revisited: Another Look at Cognitive Effects of Political Communication.",
+            "author": "",
+            "year": "2000",
+            "journal-title": "Mass Communication and Society"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0031",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1467–9221.2008.00622.x",
+            "article-title": "Framing Persuasive Appeals: Episodic and Thematic Framing, Emotional Response, and Policy Opinion.",
+            "author": "",
+            "year": "2008",
+            "journal-title": "Political Psychology"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0032",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.2307/2669279",
+            "article-title": "Issue Framing and Public Opinion on Government Spending.",
+            "author": "",
+            "year": "2000",
+            "journal-title": "American Journal of Political Science"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0033",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.4324/9781315208077",
+            "volume-title": "News Framing Effects",
+            "author": "",
+            "year": "2018"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0034",
+            "doi-asserted-by": "crossref",
+            "unstructured": "Schuck, A. R. T., and A. Feinholdt. News Framing Effects and Emotions: Research Trends and Development. In Emerging Trends in the Social and Behavioral Sciences. Edited by R. A. Scott and M. C. Buchmann, 1–15. Hoboken, NJ: John Wiley and Sons, 2015.",
+            "DOI": "10.1002/9781118900772.etrds0241"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0035",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S0007123413000525",
+            "article-title": "Who’s Afraid of Conflict? The Mobilizing Effect of Conflict Framing in Campaign News.",
+            "author": "",
+            "year": "2016",
+            "journal-title": "British Journal of Political Science"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0036",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1468–2958.2004.tb00726.x",
+            "article-title": "The Interplay of News Frames on Cognitive Complexity.",
+            "author": "",
+            "year": "2004",
+            "journal-title": "Human Communication Research"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0037",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/009365099026005002",
+            "article-title": "The Effects of News Frames on Readers’ Thoughts and Recall.",
+            "author": "",
+            "year": "1999",
+            "journal-title": "Communication Research"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0038",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.2011.01539.x",
+            "article-title": "Conceptual Issues in Framing Theory: A Systematic Examination of a Decade’s Literature.",
+            "author": "",
+            "year": "2011",
+            "journal-title": "Journal of Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0039",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1007/s11109-008-9056",
+            "article-title": "Emotion and the Framing of Risky Choice.",
+            "author": "",
+            "year": "2008",
+            "journal-title": "Political Behavior"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0040",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/1540-5907.00051",
+            "article-title": "Framing and Deliberation: How Citizens’ Conversations Limit Elite Influence.",
+            "author": "",
+            "year": "2003",
+            "journal-title": "American Journal of Political Science"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0041",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/10584609.2012.694985",
+            "article-title": "Diachronic Framing Effects in Competitive Opinion Environments.",
+            "author": "",
+            "year": "2012",
+            "journal-title": "Political Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0042",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/0267323106060987",
+            "article-title": "Between Risk and Opportunity: News Framing and Its Effects on Public Support for EU Enlargement.",
+            "author": "",
+            "year": "2006",
+            "journal-title": "European Journal of Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0043",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460–2466.2005.tb03023.x",
+            "article-title": "Economic Individualism, Humanitarianism, and Welfare Reform: A Value-Based Account of Framing Effects.",
+            "author": "",
+            "year": "2005",
+            "journal-title": "Journal of Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0044",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S002238161000006X",
+            "article-title": "Political Parties, Motivated Reasoning, and Issue Framing Effects.",
+            "author": "",
+            "year": "2010",
+            "journal-title": "The Journal of Politics"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0045",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/10584609.2011.568041",
+            "article-title": "Investigating Frame Strength: The Case of Episodic and Thematic Frames.",
+            "author": "",
+            "year": "2011",
+            "journal-title": "Political Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0046",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S0003055410000493",
+            "article-title": "Dynamic Public Opinion: Communication Effects over Time.",
+            "author": "",
+            "year": "2010",
+            "journal-title": "American Political Science Review"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0047",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/0022–3816.00100",
+            "article-title": "On the Limits of Framing Effects: Who Can Frame?",
+            "author": "",
+            "year": "2001",
+            "journal-title": "Journal of Politics"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0048",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/1540-5907.00051",
+            "article-title": "Framing and Deliberation: How Citizens’ Conversations Limit Elite Influence.",
+            "author": "",
+            "year": "2003",
+            "journal-title": "American Journal of Political Science"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0049",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/0093650209333028",
+            "article-title": "Issue Importance as a Moderator of Framing Effects.",
+            "author": "",
+            "year": "2009",
+            "journal-title": "Communication Research"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0050",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.7208/chicago/9780226388533.001.0001",
+            "volume-title": "Is Anyone Responsible?: How Television Frames Political Issues",
+            "author": "",
+            "year": "1991"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0051",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.2307/2647553",
+            "article-title": "Issue Framing Effects on Belief Importance and Opinion.",
+            "author": "",
+            "year": "1999",
+            "journal-title": "The Journal of Politics"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0052",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1023/A:1024834831093",
+            "article-title": "Toward a Psychology of Framing Effects.",
+            "author": "",
+            "year": "1997",
+            "journal-title": "Political Behavior"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0053",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1093/pan/mps040",
+            "article-title": "Identification and Sensitivity Analysis for Multiple Causal Mechanisms: Revisiting Evidence from Framing Experiments.",
+            "author": "",
+            "year": "2013",
+            "journal-title": "Political Analysis"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0054",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/0093650213514599",
+            "article-title": "The Emotional Effects of News Frames on Information Processing and Opinion Formation.",
+            "author": "",
+            "year": "2015",
+            "journal-title": "Communication Research"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0055",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/1077699011430064",
+            "article-title": "News Framing and Public Opinion: A Mediation Analysis of Framing Effects on Political Attitudes.",
+            "author": "",
+            "year": "2012",
+            "journal-title": "Journalism & Mass Communication Quarterly"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0056",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1467-9221.2007.00610.x",
+            "article-title": "More than Weighting Cognitive Importance: A Dual Process Model of Issue Framing Effects.",
+            "author": "",
+            "year": "2008",
+            "journal-title": "Political Psychology"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0057",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S0003055410000092",
+            "article-title": "Are Survey Experiments Externally Valid?",
+            "author": "",
+            "year": "2010",
+            "journal-title": "American Political Science Review"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0058",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1540-5907.2012.00582.x",
+            "article-title": "Learning More from Political Communication Experiments: Pretreatment and Its Effects.",
+            "author": "",
+            "year": "2012",
+            "journal-title": "American Journal of Political Science"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0059",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1093/pan/mpl008",
+            "article-title": "The Logic of the Survey Experiment Reexamined.",
+            "author": "",
+            "year": "2007",
+            "journal-title": "Political Analysis"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0060",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.2006.00335.x",
+            "article-title": "Curmudgeonly Advice.",
+            "author": "",
+            "year": "2007",
+            "journal-title": "Journal of Communication"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0061",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/1522637915623965",
+            "article-title": "When Framing Matters: How Partisan and Journalistic Frames Affect Individual Opinions and Party Identification.",
+            "author": "",
+            "year": "2016",
+            "journal-title": "Journalism & Communication Monographs"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0062",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1468-2885.2012.01413.x",
+            "article-title": "Fleeting, Fading, or Far-Reaching? A Knowledge-Based Model of Persistence of Framing Effects.",
+            "author": "",
+            "year": "2012",
+            "journal-title": "Communication Theory"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0063",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S0003055410000493",
+            "article-title": "Dynamic Public Opinion: Communication Effects over Time.",
+            "author": "",
+            "year": "2010",
+            "journal-title": "American Political Science Review"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0064",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1207/s15327825mcs0702_4",
+            "article-title": "The Effects of Strategic News on Political Cynicism, Issue Evaluations, and Policy Support: A Two-Wave Experiment.",
+            "author": "",
+            "year": "2004",
+            "journal-title": "Mass Communication & Society"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0065",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/23808985.2015.11735254",
+            "article-title": "How Long Do News Framing Effects Last? A Systematic Review of Longitudinal Studies.",
+            "author": "",
+            "year": "2016",
+            "journal-title": "Annals of the International Communication Association"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0066",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/0093650212470688",
+            "article-title": "What a Difference a Day Makes? The Effects of Repetitive and Competitive News Framing over Time.",
+            "author": "",
+            "year": "2013",
+            "journal-title": "Communication Research"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0067",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1540-5907.2011.00549.x",
+            "article-title": "It’s about Time: The Lifespan of Information Effects in a Multiweek Campaign.",
+            "author": "",
+            "year": "2011",
+            "journal-title": "American Journal of Political Science"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0068",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/1077699000077004069781138632684",
+            "article-title": "The Interaction of News and Advocate Frames: Manipulating Audience Perceptions of a Local Public Policy Issue.",
+            "author": "",
+            "year": "2000",
+            "journal-title": "Journalism & Mass Communication Quarterly"
+          },
+          {
+            "key": "2026081906363810900_obo-9780199756223-0269-bibItem-0069",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/03637750902828438",
+            "article-title": "From Belief-Importance to Intention: The Impact of Framing on Technology Adoption.",
+            "author": "",
+            "year": "2009",
+            "journal-title": "Communication Monographs"
+          }
+        ],
+        "container-title": [
+          "Oxford Bibliographies in Political Science"
+        ],
+        "language": "en",
+        "link": [
+          {
+            "URL": "https://academic.oup.com/book/chapter-pdf/68457076/book_62402_section_561732708.ag.pdf",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+          }
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2026,
+              8,
+              19
+            ]
+          ],
+          "date-time": "2026-08-19T10:45:38Z",
+          "timestamp": 1787136338000
+        },
+        "score": 26.450657,
+        "resource": {
+          "primary": {
+            "URL": "https://academic.oup.com/reference/62402/reference-article/561732708"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2019,
+              2,
+              27
+            ]
+          ]
+        },
+        "ISBN": [
+          "9780197859148"
+        ],
+        "references-count": 69,
+        "URL": "https://doi.org/10.1093/obo/9780199756223-0269",
+        "published": {
+          "date-parts": [
+            [
+              2019,
+              2,
+              27
+            ]
+          ]
+        }
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2026,
+              7,
+              1
+            ]
+          ],
+          "date-time": "2026-07-01T01:15:57Z",
+          "timestamp": 1782868557221,
+          "version": "3.54.5"
+        },
+        "reference-count": 117,
+        "publisher": "Oxford University Press (OUP)",
+        "issue": "4",
+        "license": [
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2015,
+                  9,
+                  1
+                ]
+              ],
+              "date-time": "2015-09-01T00:00:00Z",
+              "timestamp": 1441065600000
+            },
+            "content-version": "tdm",
+            "delay-in-days": 3591,
+            "URL": "http://doi.wiley.com/10.1002/tdm_license_1.1"
+          }
+        ],
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "short-container-title": [
+          "Commun Theory"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2005,
+              11
+            ]
+          ]
+        },
+        "DOI": "10.1111/j.1468-2885.2005.tb00342.x",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2006,
+              10,
+              12
+            ]
+          ],
+          "date-time": "2006-10-12T04:19:12Z",
+          "timestamp": 1160626752000
+        },
+        "page": "414-436",
+        "source": "Crossref",
+        "is-referenced-by-count": 40,
+        "title": [
+          "Framing Justice: Using the Concept of Procedural Justice to Advance Political Communication Research"
+        ],
+        "prefix": "10.1093",
+        "volume": "15",
+        "author": [
+          {
+            "given": "John C.",
+            "family": "Besley",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          },
+          {
+            "given": "Katherine A.",
+            "family": "McComas",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "vocabulary": "crossref",
+                "role": "author"
+              }
+            ]
+          }
+        ],
+        "member": "286",
+        "reference": [
+          {
+            "key": "b1_264",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/1539-6924.00308"
+          },
+          {
+            "key": "b2_265",
+            "volume-title": "Democracy in practice: Public participation in environmental decisions",
+            "author": "Beierle T. C.",
+            "year": "2002"
+          },
+          {
+            "key": "b3_266",
+            "first-page": "43",
+            "volume-title": "Research on negotiations in organizations",
+            "volume": "1",
+            "author": "Bies R. J.",
+            "year": "1986"
+          },
+          {
+            "key": "b4_267",
+            "doi-asserted-by": "crossref",
+            "first-page": "747",
+            "DOI": "10.1177/0146167203029006007",
+            "volume": "29",
+            "author": "Blader S. L.",
+            "year": "2003",
+            "journal-title": "Personality and Social Psychology Bulletin"
+          },
+          {
+            "key": "b5_268",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1023/A:1006849114681"
+          },
+          {
+            "key": "b6_269",
+            "first-page": "23",
+            "volume": "7",
+            "author": "Brewer P. R.",
+            "year": "2002",
+            "journal-title": "Harvard International Journal of Press-Politics"
+          },
+          {
+            "key": "b7_270",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1468-2885.2002.tb00276.x"
+          },
+          {
+            "key": "b8_271",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.1093/oso/9780195090635.001.0001",
+            "volume-title": "Spiral of cynicism: The press and the public good",
+            "author": "Cappella J. N.",
+            "year": "1997"
+          },
+          {
+            "key": "b9_272",
+            "doi-asserted-by": "crossref",
+            "first-page": "483",
+            "DOI": "10.2307/3053626",
+            "volume": "22",
+            "author": "Casper J. D.",
+            "year": "1988",
+            "journal-title": "Law & Society Review"
+          },
+          {
+            "key": "b10_273",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1021/es980500g"
+          },
+          {
+            "key": "b11_274",
+            "first-page": "17",
+            "volume-title": "The good polity: Normative analysis of the state",
+            "author": "Cohen J.",
+            "year": "1989"
+          },
+          {
+            "key": "b12_275",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/001872678503800703"
+          },
+          {
+            "key": "b13_276",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037//0021-9010.86.3.386"
+          },
+          {
+            "key": "b14_277",
+            "doi-asserted-by": "crossref",
+            "first-page": "425",
+            "DOI": "10.1037/0021-9010.86.3.425",
+            "volume": "86",
+            "author": "Colquitt J. A.",
+            "year": "2000",
+            "journal-title": "Journal of Applied Psychology"
+          },
+          {
+            "key": "b15_278",
+            "doi-asserted-by": "crossref",
+            "first-page": "127",
+            "DOI": "10.1037/h0036451",
+            "volume": "59",
+            "author": "Cooper M. R.",
+            "year": "1974",
+            "journal-title": "Journal of Applied Psychology"
+          },
+          {
+            "key": "b16_279",
+            "volume-title": "On democracy",
+            "author": "Dahl R. A.",
+            "year": "1998"
+          },
+          {
+            "key": "b17_280",
+            "doi-asserted-by": "crossref",
+            "first-page": "107",
+            "DOI": "10.1080/105846001750322934",
+            "volume": "18",
+            "author": "Vreese C. H.",
+            "year": "2001",
+            "journal-title": "Political Communication"
+          },
+          {
+            "key": "b18_281",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1146/annurev.polisci.7.121003.091630"
+          },
+          {
+            "key": "b19_282",
+            "doi-asserted-by": "crossref",
+            "first-page": "1139",
+            "DOI": "10.1177/0002764297040008013",
+            "volume": "40",
+            "author": "Devitt J.",
+            "year": "1997",
+            "journal-title": "American Behavioral Scientist"
+          },
+          {
+            "key": "b20_283",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1088/0963-6625/11/4/301"
+          },
+          {
+            "key": "b21_284",
+            "doi-asserted-by": "crossref",
+            "first-page": "323",
+            "DOI": "10.1177/1075547000021004001",
+            "volume": "21",
+            "author": "Einsiedel E. F.",
+            "year": "2000",
+            "journal-title": "Science Communication"
+          },
+          {
+            "key": "b22_285",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1088/0963-6625/10/1/306"
+          },
+          {
+            "key": "b23_286",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1460-2466.1993.tb01304.x"
+          },
+          {
+            "key": "b24_287",
+            "volume-title": "Projections of power: Framing, public opinion, and U.S. foreign policy",
+            "author": "Entman R. M.",
+            "year": "2004"
+          },
+          {
+            "key": "b25_288",
+            "volume-title": "Breaking the news: How the media undermine American democracy",
+            "author": "Fallows J.",
+            "year": "1997"
+          },
+          {
+            "key": "b26_289",
+            "doi-asserted-by": "crossref",
+            "first-page": "891",
+            "DOI": "10.2307/2111186",
+            "volume": "29",
+            "author": "Finkel S. E.",
+            "year": "1985",
+            "journal-title": "American Journal of Political Science"
+          },
+          {
+            "key": "b27_290",
+            "volume-title": "The voice of the people: Public opinion and democracy",
+            "author": "Fishkin J. S.",
+            "year": "1997"
+          },
+          {
+            "key": "b28_291",
+            "first-page": "3",
+            "volume-title": "The poll with the human face: The National Issues Convention experiment in political communication",
+            "author": "Fishkin J. S.",
+            "year": "1999"
+          },
+          {
+            "key": "b29_292",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037//0022-3514.35.2.108"
+          },
+          {
+            "key": "b30_293",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037//0022-3514.37.12.2253"
+          },
+          {
+            "key": "b31_294",
+            "volume-title": "Talking politics",
+            "author": "Gamson W. A.",
+            "year": "1992"
+          },
+          {
+            "key": "b32_295",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1086/229213"
+          },
+          {
+            "key": "b33_296",
+            "doi-asserted-by": "crossref",
+            "first-page": "119",
+            "DOI": "10.1023/A:1023847829172",
+            "volume": "25",
+            "author": "Gangl A.",
+            "year": "2003",
+            "journal-title": "Political Behavior"
+          },
+          {
+            "key": "b34_297",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/105846099198749"
+          },
+          {
+            "key": "b35_298",
+            "doi-asserted-by": "crossref",
+            "first-page": "179",
+            "DOI": "10.1080/03634529909379168",
+            "volume": "48",
+            "author": "Gastil J.",
+            "year": "1999",
+            "journal-title": "Communication Education"
+          },
+          {
+            "key": "b36_299",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/1468-2508.00141"
+          },
+          {
+            "key": "b37_300",
+            "first-page": "123",
+            "volume-title": "The analysis of communication content: Development in scientific theories and computer techniques",
+            "author": "Gerbner G.",
+            "year": "1969"
+          },
+          {
+            "key": "b38_301",
+            "volume-title": "Communication technologies and social policy",
+            "author": "Gerbner G.",
+            "year": "1973"
+          },
+          {
+            "key": "b39_302",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1086/229213"
+          },
+          {
+            "key": "b40_303",
+            "volume-title": "The whole world is watching: Mass media in the making and unmaking of the new left",
+            "author": "Gitlin T.",
+            "year": "1980"
+          },
+          {
+            "key": "b41_304",
+            "volume-title": "Frame analysis: An essay on the organization of experience",
+            "author": "Goffman E.",
+            "year": "1974"
+          },
+          {
+            "key": "b42_305",
+            "doi-asserted-by": "crossref",
+            "first-page": "91",
+            "DOI": "10.1080/10510977309363152",
+            "volume": "24",
+            "author": "Gouran D.",
+            "year": "1973",
+            "journal-title": "Central States Speech Journal"
+          },
+          {
+            "key": "b43_306",
+            "first-page": "79",
+            "volume-title": "Justice in the workplace: Approaching fairness in human resource management",
+            "author": "Greenberg J.",
+            "year": "1993"
+          },
+          {
+            "key": "b44_307",
+            "doi-asserted-by": "crossref",
+            "first-page": "175",
+            "DOI": "10.1080/01944368408977173",
+            "author": "Gundry K. G.",
+            "year": "1984",
+            "journal-title": "Journal of the American Planning Association"
+          },
+          {
+            "key": "b45_308",
+            "doi-asserted-by": "crossref",
+            "first-page": "14",
+            "DOI": "10.1177/0739456X9801800102",
+            "volume": "18",
+            "author": "Hillier J.",
+            "year": "1998",
+            "journal-title": "Journal of Planning Education and Research"
+          },
+          {
+            "key": "b46_309",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/03637750216549"
+          },
+          {
+            "key": "b47_310",
+            "first-page": "218",
+            "volume": "21",
+            "author": "Johnson K. N.",
+            "year": "1993",
+            "journal-title": "Wildlife Society Bulletin"
+          },
+          {
+            "key": "b48_311",
+            "doi-asserted-by": "crossref",
+            "first-page": "195",
+            "DOI": "10.1088/0963-6625/4/2/006",
+            "volume": "4",
+            "author": "Joss S.",
+            "year": "1995",
+            "journal-title": "Public Understanding of Science"
+          },
+          {
+            "key": "b49_312",
+            "doi-asserted-by": "crossref",
+            "first-page": "8",
+            "DOI": "10.1177/1081180X00005004002",
+            "volume": "5",
+            "author": "Kerbel M. R.",
+            "year": "2000",
+            "journal-title": "Harvard International Journal of Press-Politics"
+          },
+          {
+            "key": "b50_313",
+            "first-page": "192",
+            "volume-title": "The handbook of group communication theory and research",
+            "author": "Keyton J.",
+            "year": "1999"
+          },
+          {
+            "key": "b51_314",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/105846099198541"
+          },
+          {
+            "key": "b52_315",
+            "doi-asserted-by": "crossref",
+            "first-page": "675",
+            "DOI": "10.1111/j.1747-4469.1986.tb00262.x",
+            "volume": "11",
+            "author": "Landis J. M.",
+            "year": "1986",
+            "journal-title": "American Bar Foundation Research Journal"
+          },
+          {
+            "key": "b53_316",
+            "first-page": "1",
+            "volume-title": "Citizen participation in America: Essays on the state of the art",
+            "author": "Langton S.",
+            "year": "1978"
+          },
+          {
+            "key": "b54_317",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037/0022-3514.36.12.1531"
+          },
+          {
+            "key": "b55_318",
+            "doi-asserted-by": "crossref",
+            "first-page": "19",
+            "DOI": "10.1080/089419299279867",
+            "volume": "12",
+            "author": "Lauber T. B.",
+            "year": "1999",
+            "journal-title": "Society & Natural Resources"
+          },
+          {
+            "key": "b56_319",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/105846000198422"
+          },
+          {
+            "key": "b57_320",
+            "volume-title": "Social exchange: Advances in theory and research",
+            "author": "Leventhal G. S.",
+            "year": "1980"
+          },
+          {
+            "key": "b58_321",
+            "first-page": "167",
+            "volume-title": "Justice and social interaction",
+            "author": "Leventhal G. S.",
+            "year": "1980"
+          },
+          {
+            "key": "b59_322",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.1007/978-1-4899-2115-4",
+            "volume-title": "The social psychology of procedural justice",
+            "author": "Lind E. A.",
+            "year": "1988"
+          },
+          {
+            "key": "b60_323",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037//0022-3514.59.5.952"
+          },
+          {
+            "key": "b61_324",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.2307/2393412"
+          },
+          {
+            "key": "b62_325",
+            "doi-asserted-by": "crossref",
+            "first-page": "338",
+            "DOI": "10.1111/j.1559-1816.1983.tb01744.x",
+            "volume": "13",
+            "author": "Lind E. A.",
+            "year": "1983",
+            "journal-title": "Journal of Applied Social Psychology"
+          },
+          {
+            "key": "b63_326",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1007/s002670010139"
+          },
+          {
+            "key": "b64_327",
+            "doi-asserted-by": "crossref",
+            "first-page": "164",
+            "DOI": "10.1080/0090988032000064605",
+            "volume": "31",
+            "author": "McComas K. A.",
+            "year": "2003",
+            "journal-title": "Journal of Applied Communication Research"
+          },
+          {
+            "key": "b65_328",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/105846099198659"
+          },
+          {
+            "key": "b66_329",
+            "doi-asserted-by": "crossref",
+            "first-page": "743",
+            "DOI": "10.1177/009365099026006005",
+            "volume": "26",
+            "author": "McLeod J. M.",
+            "year": "1999",
+            "journal-title": "Communication Research"
+          },
+          {
+            "key": "b67_330",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/105846000198468"
+          },
+          {
+            "key": "b68_331",
+            "doi-asserted-by": "crossref",
+            "first-page": "588",
+            "DOI": "10.1086/297775",
+            "volume": "60",
+            "author": "Merkle D. M.",
+            "year": "1996",
+            "journal-title": "Public Opinion Quarterly"
+          },
+          {
+            "key": "b69_332",
+            "first-page": "293",
+            "volume": "52",
+            "author": "Morrell M. E.",
+            "year": "1999",
+            "journal-title": "Political Research Quarterly"
+          },
+          {
+            "key": "b70_333",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1016/0022-1031(83)90039-2"
+          },
+          {
+            "key": "b71_334",
+            "doi-asserted-by": "crossref",
+            "first-page": "359",
+            "DOI": "10.1177/107554700202300401",
+            "volume": "23",
+            "author": "Nisbet M. C.",
+            "year": "2002",
+            "journal-title": "Science Communication"
+          },
+          {
+            "key": "b72_335",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.1017/CBO9780511720444",
+            "volume-title": "Participation and democratic theory",
+            "author": "Pateman C.",
+            "year": "1970"
+          },
+          {
+            "key": "b73_336",
+            "volume-title": "Out of order",
+            "author": "Patterson T. E.",
+            "year": "1994"
+          },
+          {
+            "key": "b74_337",
+            "doi-asserted-by": "crossref",
+            "first-page": "32",
+            "DOI": "10.1177/104649640203300102",
+            "volume": "33",
+            "author": "Phillips J. M.",
+            "year": "2002",
+            "journal-title": "Small Group Research"
+          },
+          {
+            "key": "b75_338",
+            "doi-asserted-by": "crossref",
+            "first-page": "664",
+            "DOI": "10.1017/S1049096500058856",
+            "volume": "28",
+            "author": "Putnam R. D.",
+            "year": "1995",
+            "journal-title": "PS-Political Science & Politics"
+          },
+          {
+            "key": "b76_339",
+            "volume-title": "Bowling alone: The collapse and revival of American community",
+            "author": "Putnam R. D.",
+            "year": "2000"
+          },
+          {
+            "key": "b77_340",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037//0022-3514.53.1.201"
+          },
+          {
+            "key": "b78_341",
+            "doi-asserted-by": "crossref",
+            "first-page": "386",
+            "DOI": "10.1037/0022-3514.49.2.386",
+            "volume": "49",
+            "author": "Rasinski K. A.",
+            "year": "1985",
+            "journal-title": "Journal of Personality and Social Psychology"
+          },
+          {
+            "key": "b79_342",
+            "doi-asserted-by": "crossref",
+            "first-page": "7",
+            "DOI": "10.4324/9781410605689",
+            "volume-title": "Framing public life: Perspective on media and our understanding of the social world",
+            "author": "Reese S. D.",
+            "year": "2001"
+          },
+          {
+            "key": "b80_343",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.1007/978-94-011-0131-8",
+            "volume-title": "Fairness and competence in citizen participation: Evaluating models of environmental discourse",
+            "author": "Renn O.",
+            "year": "1995"
+          },
+          {
+            "issue": "3",
+            "key": "b81_344",
+            "doi-asserted-by": "crossref",
+            "first-page": "26",
+            "DOI": "10.1111/j.1460-2466.1997.tb02715.x",
+            "volume": "47",
+            "author": "Rhee J. W.",
+            "year": "1997",
+            "journal-title": "Journal of Communication"
+          },
+          {
+            "key": "b82_345",
+            "first-page": "3",
+            "volume-title": "Relational communication: An interactional perspective to the study of process and form",
+            "author": "Rogers L. E.",
+            "year": "2004"
+          },
+          {
+            "key": "b83_346",
+            "doi-asserted-by": "crossref",
+            "first-page": "3",
+            "DOI": "10.1177/016224390002500101",
+            "volume": "25",
+            "author": "Rowe G.",
+            "year": "2000",
+            "journal-title": "Science, Technology & Human Values"
+          },
+          {
+            "key": "b84_347",
+            "doi-asserted-by": "crossref",
+            "first-page": "88",
+            "DOI": "10.1177/0162243903259194",
+            "volume": "29",
+            "author": "Rowe G.",
+            "year": "2004",
+            "journal-title": "Science Technology & Human Values"
+          },
+          {
+            "key": "b85_348",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/01957470290055547"
+          },
+          {
+            "key": "b86_349",
+            "doi-asserted-by": "crossref",
+            "first-page": "25",
+            "DOI": "10.1093/ijpor/11.1.25",
+            "volume": "11",
+            "author": "Scheufele D. A.",
+            "year": "1999",
+            "journal-title": "International Journal of Public Opinion Research"
+          },
+          {
+            "key": "b87_350",
+            "doi-asserted-by": "crossref",
+            "first-page": "727",
+            "DOI": "10.1177/107769900007700402",
+            "volume": "77",
+            "author": "Scheufele D. A.",
+            "year": "2000",
+            "journal-title": "Journalism & Mass Communication Quarterly"
+          },
+          {
+            "key": "b88_351",
+            "doi-asserted-by": "crossref",
+            "first-page": "297",
+            "DOI": "10.1207/S15327825MCS0323_07",
+            "volume": "3",
+            "author": "Scheufele D. A.",
+            "year": "2000",
+            "journal-title": "Mass Communication and Society"
+          },
+          {
+            "key": "b89_352",
+            "doi-asserted-by": "crossref",
+            "first-page": "46",
+            "DOI": "10.1177/009365020202900103",
+            "volume": "29",
+            "author": "Scheufele D. A.",
+            "year": "2002",
+            "journal-title": "Communication Research"
+          },
+          {
+            "key": "b90_353",
+            "first-page": "277",
+            "volume": "29",
+            "author": "Shanahan J.",
+            "year": "2004",
+            "journal-title": "European Journal of Communication"
+          },
+          {
+            "key": "b91_354",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.1017/CBO9780511488924",
+            "volume-title": "Television and its viewers: Cultivation theory and research",
+            "author": "Shanahan J.",
+            "year": "1999"
+          },
+          {
+            "key": "b92_355",
+            "doi-asserted-by": "crossref",
+            "first-page": "1419",
+            "DOI": "10.1177/014616702236873",
+            "volume": "28",
+            "author": "Skitka L. J.",
+            "year": "2002",
+            "journal-title": "Personality and Social Psychology Bulletin"
+          },
+          {
+            "key": "b93_356",
+            "doi-asserted-by": "crossref",
+            "first-page": "273",
+            "DOI": "10.1080/10584600152400347",
+            "volume": "18",
+            "author": "Sotirovic M.",
+            "year": "2001",
+            "journal-title": "Political Communication"
+          },
+          {
+            "key": "b94_357",
+            "volume-title": "Framing public life: Perspective on media and our understanding of the social world",
+            "author": "Tankard J. W.",
+            "year": "2001"
+          },
+          {
+            "key": "b95_358",
+            "doi-asserted-by": "crossref",
+            "first-page": "541",
+            "DOI": "10.2307/3480099",
+            "volume": "66",
+            "author": "Thibaut J.",
+            "year": "1978",
+            "journal-title": "California Law Review"
+          },
+          {
+            "key": "b96_359",
+            "volume-title": "Procedural justice: A psychological analysis",
+            "author": "Thibaut J. W.",
+            "year": "1975"
+          },
+          {
+            "key": "b97_360",
+            "first-page": "107",
+            "volume": "28",
+            "author": "Tversky A.",
+            "year": "1984",
+            "journal-title": "American Psychologist"
+          },
+          {
+            "key": "b98_361",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037//0022-3514.70.5.913"
+          },
+          {
+            "key": "b99_362",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037//0022-3514.57.5.830"
+          },
+          {
+            "key": "b100_363",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037//0022-3514.67.5.850"
+          },
+          {
+            "key": "b101_364",
+            "volume-title": "Social justice in a diverse society",
+            "author": "Tyler T. R",
+            "year": "1997"
+          },
+          {
+            "key": "b102_365",
+            "doi-asserted-by": "crossref",
+            "first-page": "642",
+            "DOI": "10.1037/0022-3514.41.4.642",
+            "volume": "41",
+            "author": "Tyler T. R.",
+            "year": "1981",
+            "journal-title": "Journal of Personality and Social Psychology"
+          },
+          {
+            "key": "b103_366",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037//0022-3514.69.3.482"
+          },
+          {
+            "key": "b104_367",
+            "doi-asserted-by": "crossref",
+            "first-page": "115",
+            "DOI": "10.1016/S0065-2601(08)60283-X",
+            "volume": "25",
+            "author": "Tyler T. R.",
+            "year": "1992",
+            "journal-title": "Advances in Experimental Social Psychology"
+          },
+          {
+            "key": "b105_368",
+            "doi-asserted-by": "crossref",
+            "first-page": "629",
+            "DOI": "10.2307/2111066",
+            "volume": "33",
+            "author": "Tyler T. R.",
+            "year": "1989",
+            "journal-title": "American Journal of Political Science"
+          },
+          {
+            "key": "b106_369",
+            "doi-asserted-by": "crossref",
+            "first-page": "970",
+            "DOI": "10.1037/0003-066X.41.9.970",
+            "volume": "41",
+            "author": "Tyler T. R.",
+            "year": "1986",
+            "journal-title": "American Psychologist"
+          },
+          {
+            "key": "b107_370",
+            "doi-asserted-by": "crossref",
+            "first-page": "700",
+            "DOI": "10.1111/j.1559-1816.1985.tb02269.x",
+            "volume": "15",
+            "author": "Tyler T. R.",
+            "year": "1985",
+            "journal-title": "Journal of Applied Social Psychology"
+          },
+          {
+            "key": "b108_371",
+            "doi-asserted-by": "crossref",
+            "first-page": "72",
+            "DOI": "10.1037/0022-3514.48.1.72",
+            "volume": "48",
+            "author": "Tyler T. R.",
+            "year": "1985",
+            "journal-title": "Journal of Personality and Social Psychology"
+          },
+          {
+            "key": "b109_372",
+            "doi-asserted-by": "crossref",
+            "first-page": "347",
+            "DOI": "10.1080/10584600152647083",
+            "volume": "18",
+            "author": "Valentino N. A.",
+            "year": "2001",
+            "journal-title": "Political Communication"
+          },
+          {
+            "key": "b110_373",
+            "doi-asserted-by": "crossref",
+            "first-page": "931",
+            "DOI": "10.1037/0022-3514.80.6.931",
+            "volume": "80",
+            "author": "Bos K.",
+            "year": "2001",
+            "journal-title": "Journal of Personality and Social Psychology"
+          },
+          {
+            "key": "b111_374",
+            "doi-asserted-by": "crossref",
+            "first-page": "355",
+            "DOI": "10.1037/0022-3514.79.3.355",
+            "volume": "79",
+            "author": "Bos K.",
+            "year": "2000",
+            "journal-title": "Journal of Personality and Social Psychology"
+          },
+          {
+            "key": "b112_375",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1037/0022-3514.72.1.95"
+          },
+          {
+            "key": "b113_376",
+            "doi-asserted-by": "crossref",
+            "first-page": "243",
+            "DOI": "10.1177/0951692800012003001",
+            "volume": "12",
+            "author": "Verba S.",
+            "year": "2000",
+            "journal-title": "Journal of Theoretical Politics"
+          },
+          {
+            "key": "b114_377",
+            "doi-asserted-by": "crossref",
+            "first-page": "31",
+            "DOI": "10.1177/104649648701800102",
+            "volume": "18",
+            "author": "Wall V.",
+            "year": "1987",
+            "journal-title": "Small Group Behavior"
+          },
+          {
+            "key": "b115_378",
+            "doi-asserted-by": "crossref",
+            "first-page": "566",
+            "DOI": "10.1177/00953990022019588",
+            "volume": "32",
+            "author": "Webler T.",
+            "year": "2000",
+            "journal-title": "Administration & Society"
+          },
+          {
+            "key": "b116_379",
+            "doi-asserted-by": "crossref",
+            "first-page": "737",
+            "DOI": "10.1177/109019802237941",
+            "volume": "29",
+            "author": "Weiner B. J.",
+            "year": "2002",
+            "journal-title": "Health Education & Behavior"
+          },
+          {
+            "key": "b117_380",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.2307/449128"
+          }
+        ],
+        "container-title": [
+          "Communication Theory"
+        ],
+        "language": "en",
+        "link": [
+          {
+            "URL": "https://api.wiley.com/onlinelibrary/tdm/v1/articles/10.1111%2Fj.1468-2885.2005.tb00342.x",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          }
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2024,
+              2,
+              7
+            ]
+          ],
+          "date-time": "2024-02-07T09:54:59Z",
+          "timestamp": 1707299699000
+        },
+        "score": 26.312763,
+        "resource": {
+          "primary": {
+            "URL": "https://academic.oup.com/ct/article/15/4/414-436/4110470"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2005,
+              11
+            ]
+          ]
+        },
+        "references-count": 117,
+        "journal-issue": {
+          "issue": "4",
+          "published-print": {
+            "date-parts": [
+              [
+                2005,
+                11
+              ]
+            ]
+          }
+        },
+        "alternative-id": [
+          "10.1111/j.1468-2885.2005.tb00342.x"
+        ],
+        "URL": "https://doi.org/10.1111/j.1468-2885.2005.tb00342.x",
+        "ISSN": [
+          "1050-3293",
+          "1468-2885"
+        ],
+        "issn-type": [
+          {
+            "value": "1050-3293",
+            "type": "print"
+          },
+          {
+            "value": "1468-2885",
+            "type": "electronic"
+          }
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2005,
+              11
+            ]
+          ]
+        }
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2022,
+              4,
+              25
+            ]
+          ],
+          "date-time": "2022-04-25T11:40:10Z",
+          "timestamp": 1650886810146
+        },
+        "publisher-location": "1 Oliver's Yard, 55 City Road, London EC1Y 1SP United Kingdom ",
+        "reference-count": 0,
+        "publisher": "SAGE Publications Ltd",
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "published-print": {
+          "date-parts": [
+            [
+              2006
+            ]
+          ]
+        },
+        "DOI": "10.4135/9781446212943.n18",
+        "type": "book-chapter",
+        "created": {
+          "date-parts": [
+            [
+              2012,
+              5,
+              15
+            ]
+          ],
+          "date-time": "2012-05-15T21:38:05Z",
+          "timestamp": 1337117885000
+        },
+        "page": "82-85",
+        "source": "Crossref",
+        "is-referenced-by-count": 0,
+        "title": [
+          "Framing"
+        ],
+        "prefix": "10.4135",
+        "member": "179",
+        "container-title": [
+          "Key Concepts in Political Communication"
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2022,
+              4,
+              25
+            ]
+          ],
+          "date-time": "2022-04-25T11:01:12Z",
+          "timestamp": 1650884472000
+        },
+        "score": 26.155117,
+        "resource": {
+          "primary": {
+            "URL": "https://sk.sagepub.com/books/key-concepts-in-political-communication/n18.xml"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2006
+            ]
+          ]
+        },
+        "references-count": 0,
+        "alternative-id": [
+          "10.4135/9781446212943"
+        ],
+        "URL": "https://doi.org/10.4135/9781446212943.n18",
+        "published": {
+          "date-parts": [
+            [
+              2006
+            ]
+          ]
+        }
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2025,
+              12,
+              3
+            ]
+          ],
+          "date-time": "2025-12-03T09:35:35Z",
+          "timestamp": 1764754535129,
+          "version": "3.46.0"
+        },
+        "reference-count": 65,
+        "publisher": "Informa UK Limited",
+        "issue": "6",
+        "funder": [
+          {
+            "name": "Indiana University Robert F. Byrnes Russian and East European Institute"
+          }
+        ],
+        "content-domain": {
+          "domain": [
+            "www.tandfonline.com"
+          ],
+          "crossmark-restriction": true
+        },
+        "short-container-title": [
+          "Political Communication"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2025,
+              11,
+              2
+            ]
+          ]
+        },
+        "DOI": "10.1080/10584609.2025.2529939",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2025,
+              7,
+              16
+            ]
+          ],
+          "date-time": "2025-07-16T09:08:40Z",
+          "timestamp": 1752656920000
+        },
+        "page": "1059-1086",
+        "update-policy": "https://doi.org/10.1080/tandf_crossmark_01",
+        "source": "Crossref",
+        "is-referenced-by-count": 1,
+        "title": [
+          "Dynamic Legitimation Theory and Populist Authoritarian Leaders: The Rhetorical Framing of International Status for Domestic Legitimacy"
+        ],
+        "prefix": "10.1080",
+        "volume": "42",
+        "author": [
+          {
+            "ORCID": "https://orcid.org/0000-0002-9934-1459",
+            "authenticated-orcid": false,
+            "given": "John C.",
+            "family": "Stanko",
+            "sequence": "first",
+            "affiliation": [
+              {
+                "name": "Indiana University",
+                "place": [
+                  "Bloomington, USA"
+                ]
+              }
+            ],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "member": "301",
+        "published-online": {
+          "date-parts": [
+            [
+              2025,
+              7,
+              16
+            ]
+          ]
+        },
+        "reference": [
+          {
+            "key": "e_1_3_6_2_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.2307/421552"
+          },
+          {
+            "key": "e_1_3_6_3_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.17813/1086-671X-20-3-301"
+          },
+          {
+            "key": "e_1_3_6_4_1",
+            "volume-title": "Enemy of the people: How Jacob Zuma stole South Africa and how the people fought back",
+            "author": "Basson A.",
+            "year": "2017",
+            "unstructured": "Basson, A., & du Toit, P. (2017). Enemy of the people: How Jacob Zuma stole South Africa and how the people fought back. Jonathan Ball Publishers."
+          },
+          {
+            "key": "e_1_3_6_5_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.21105/joss.00774"
+          },
+          {
+            "key": "e_1_3_6_6_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1146/annurev-polisci-041719-102503"
+          },
+          {
+            "key": "e_1_3_6_7_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1285/i20356609v13i1p83"
+          },
+          {
+            "key": "e_1_3_6_8_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.7551/mitpress/4292.001.0001"
+          },
+          {
+            "key": "e_1_3_6_9_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/glj.2019.20"
+          },
+          {
+            "key": "e_1_3_6_10_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1057/s41311-020-00252-6"
+          },
+          {
+            "key": "e_1_3_6_11_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1146/annurev.polisci.10.072805.103054"
+          },
+          {
+            "key": "e_1_3_6_12_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/0192512117702524"
+          },
+          {
+            "key": "e_1_3_6_13_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.23696/vdemds25"
+          },
+          {
+            "key": "e_1_3_6_14_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/10584609.2022.2025505"
+          },
+          {
+            "key": "e_1_3_6_15_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/13183222.2017.1330083"
+          },
+          {
+            "key": "e_1_3_6_16_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/j.1747-1346.2009.00200.x"
+          },
+          {
+            "issue": "1",
+            "key": "e_1_3_6_17_1",
+            "first-page": "95",
+            "article-title": "The relation between external and internal authoritarian legitimation: The religious foreign policy of Morocco and Kazakhstan",
+            "volume": "14",
+            "author": "Del Sordi A.",
+            "year": "2018",
+            "unstructured": "Del Sordi, A., & Dalmasso, E. (2018). The relation between external and internal authoritarian legitimation: The religious foreign policy of Morocco and Kazakhstan. Taiwan Journal of Democracy, 14(1), 95–116.",
+            "journal-title": "Taiwan Journal of Democracy"
+          },
+          {
+            "key": "e_1_3_6_18_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/lap.2021.22"
+          },
+          {
+            "key": "e_1_3_6_19_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/13569775.2019.1570424"
+          },
+          {
+            "key": "e_1_3_6_20_1",
+            "doi-asserted-by": "crossref",
+            "unstructured": "Dudo A. & Kahlor L. (Eds.). (2017). Strategic Communication: New Agendas in Communication. New Agendas in Communication Series. Routledge Taylor & Francis Group.",
+            "DOI": "10.4324/9781315644943"
+          },
+          {
+            "key": "e_1_3_6_21_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1111/1467-9256.12096"
+          },
+          {
+            "key": "e_1_3_6_22_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1007/s40803-019-00091-5"
+          },
+          {
+            "key": "e_1_3_6_23_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1057/9781137011718_3"
+          },
+          {
+            "key": "e_1_3_6_24_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/9781009164085"
+          },
+          {
+            "key": "e_1_3_6_25_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/13510347.2013.738860"
+          },
+          {
+            "key": "e_1_3_6_26_1",
+            "volume-title": "The right to rule: How states win and lose legitimacy",
+            "author": "Gilley B.",
+            "year": "2009",
+            "unstructured": "Gilley, B. (2009). The right to rule: How states win and lose legitimacy. Columbia University Press."
+          },
+          {
+            "key": "e_1_3_6_27_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.2307/j.ctt7zswkb"
+          },
+          {
+            "key": "e_1_3_6_28_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/0956474820910071"
+          },
+          {
+            "key": "e_1_3_6_29_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/0010414010390653"
+          },
+          {
+            "key": "e_1_3_6_30_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1257/jep.33.4.100"
+          },
+          {
+            "key": "e_1_3_6_31_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/15531180701285244"
+          },
+          {
+            "key": "e_1_3_6_32_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/10584609.2020.1723754"
+          },
+          {
+            "key": "e_1_3_6_33_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/13510340600579243"
+          },
+          {
+            "key": "e_1_3_6_34_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/01402382.2023.2275892"
+          },
+          {
+            "key": "e_1_3_6_35_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1057/jird.2014.9"
+          },
+          {
+            "key": "e_1_3_6_36_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1007/s11366-011-9142-6"
+          },
+          {
+            "key": "e_1_3_6_37_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.2307/3013584"
+          },
+          {
+            "key": "e_1_3_6_38_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.4324/9780203094440"
+          },
+          {
+            "key": "e_1_3_6_39_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1093/ia/iiaa230"
+          },
+          {
+            "issue": "3",
+            "key": "e_1_3_6_40_1",
+            "first-page": "233",
+            "article-title": "Mass media consumption in Post-Soviet Kyrgyzstan and Kazakhstan: The view from below",
+            "volume": "23",
+            "author": "Junisbai B.",
+            "year": "2015",
+            "unstructured": "Junisbai, B., Junisbai, A., & Fry, N. Y. (2015). Mass media consumption in Post-Soviet Kyrgyzstan and Kazakhstan: The view from below. Demokratizatsiya: The Journal of post-Soviet Democratization, 23(3), 233–256.",
+            "journal-title": "Demokratizatsiya: The Journal of post-Soviet Democratization"
+          },
+          {
+            "key": "e_1_3_6_41_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S002081830003160X"
+          },
+          {
+            "key": "e_1_3_6_42_1",
+            "volume-title": "On populist reason",
+            "author": "Laclau E.",
+            "year": "2007",
+            "unstructured": "Laclau, E. (2007). On populist reason. Verso."
+          },
+          {
+            "key": "e_1_3_6_43_1",
+            "volume-title": "Moral politics: What conservatives know that liberals Don’t",
+            "author": "Lakoff G.",
+            "year": "1996",
+            "unstructured": "Lakoff, G. (1996). Moral politics: What conservatives know that liberals Don’t (1st ed.). University of Chicago Press.",
+            "edition": "1"
+          },
+          {
+            "key": "e_1_3_6_44_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/0974928414524652"
+          },
+          {
+            "key": "e_1_3_6_45_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.2307/j.ctvbnm3jd"
+          },
+          {
+            "key": "e_1_3_6_46_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1525/cpcs.2024.2415754"
+          },
+          {
+            "key": "e_1_3_6_47_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1353/jod.2002.0026"
+          },
+          {
+            "key": "e_1_3_6_48_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/CBO9780511781353"
+          },
+          {
+            "key": "e_1_3_6_49_1",
+            "unstructured": "Lillis J. (2015). Kazakhstan: Nazarbayev Apologetic for lopsided election results. EurasiaNet. April 27 2015 https://eurasianet.org/kazakhstan-nazarbayev-apologetic-for-lopsided-election-results"
+          },
+          {
+            "key": "e_1_3_6_50_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/21699763.2018.1483256"
+          },
+          {
+            "key": "e_1_3_6_51_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S0043887120000301"
+          },
+          {
+            "key": "e_1_3_6_52_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/10584609.2023.2172117"
+          },
+          {
+            "key": "e_1_3_6_53_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.4324/9781003069768"
+          },
+          {
+            "key": "e_1_3_6_54_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/gov.2014.13"
+          },
+          {
+            "key": "e_1_3_6_55_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/10584609.2020.1812777"
+          },
+          {
+            "key": "e_1_3_6_56_1",
+            "unstructured": "Pemstein D. Marquardt K. L. Tzelgov E. Wang Y.-T. Medzihorsky J. Krusell J. Miri F. & von Römer J. (2025). The V-Dem measurement Model: Latent variable analysis for cross-national and cross-temporal expert-coded Data. V-Dem Working Paper No. 21. 10th. University of Gothenburg: Varieties of Democracy Institute."
+          },
+          {
+            "key": "e_1_3_6_57_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/00358533.2018.1448341"
+          },
+          {
+            "key": "e_1_3_6_58_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/01621459.2016.1141684"
+          },
+          {
+            "key": "e_1_3_6_59_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1353/jod.2002.0031"
+          },
+          {
+            "key": "e_1_3_6_60_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1057/9780230598393_7"
+          },
+          {
+            "key": "e_1_3_6_61_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1080/13510347.2021.1903881"
+          },
+          {
+            "key": "e_1_3_6_62_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1007/978-3-658-09216-0_6"
+          },
+          {
+            "key": "e_1_3_6_63_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1017/S1049096517002074"
+          },
+          {
+            "key": "e_1_3_6_64_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1515/soeu-2012-600405"
+          },
+          {
+            "key": "e_1_3_6_65_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.1177/2053168015626606"
+          },
+          {
+            "key": "e_1_3_6_66_1",
+            "doi-asserted-by": "publisher",
+            "DOI": "10.5040/9781666990812"
+          }
+        ],
+        "container-title": [
+          "Political Communication"
+        ],
+        "language": "en",
+        "link": [
+          {
+            "URL": "https://www.tandfonline.com/doi/pdf/10.1080/10584609.2025.2529939",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+          }
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2025,
+              12,
+              3
+            ]
+          ],
+          "date-time": "2025-12-03T09:33:53Z",
+          "timestamp": 1764754433000
+        },
+        "score": 25.331083,
+        "resource": {
+          "primary": {
+            "URL": "https://www.tandfonline.com/doi/full/10.1080/10584609.2025.2529939"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2025,
+              7,
+              16
+            ]
+          ]
+        },
+        "references-count": 65,
+        "journal-issue": {
+          "issue": "6",
+          "published-print": {
+            "date-parts": [
+              [
+                2025,
+                11,
+                2
+              ]
+            ]
+          }
+        },
+        "alternative-id": [
+          "10.1080/10584609.2025.2529939"
+        ],
+        "URL": "https://doi.org/10.1080/10584609.2025.2529939",
+        "ISSN": [
+          "1058-4609",
+          "1091-7675"
+        ],
+        "issn-type": [
+          {
+            "type": "print",
+            "value": "1058-4609"
+          },
+          {
+            "type": "electronic",
+            "value": "1091-7675"
+          }
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2025,
+              7,
+              16
+            ]
+          ]
+        },
+        "assertion": [
+          {
+            "value": "The publishing and review policy for this title is described in its Aims & Scope.",
+            "order": 1,
+            "name": "peerreview_statement",
+            "label": "Peer Review Statement"
+          },
+          {
+            "value": "http://www.tandfonline.com/action/journalInformation?show=aimsScope&journalCode=upcp20",
+            "URL": "http://www.tandfonline.com/action/journalInformation?show=aimsScope&journalCode=upcp20",
+            "order": 2,
+            "name": "aims_and_scope_url",
+            "label": "Aim & Scope"
+          },
+          {
+            "value": "2025-07-16",
+            "order": 3,
+            "name": "published",
+            "label": "Published",
+            "group": {
+              "name": "publication_history",
+              "label": "Publication History"
+            }
+          }
+        ]
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2025,
+              4,
+              5
+            ]
+          ],
+          "date-time": "2025-04-05T06:08:25Z",
+          "timestamp": 1743833305147
+        },
+        "reference-count": 0,
+        "publisher": "Informa UK Limited",
+        "issue": "4",
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "short-container-title": [
+          "Political Communication"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2006,
+              12
+            ]
+          ]
+        },
+        "DOI": "10.1080/10584600600977011",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2006,
+              11,
+              13
+            ]
+          ],
+          "date-time": "2006-11-13T20:30:49Z",
+          "timestamp": 1163449849000
+        },
+        "page": "461-463",
+        "source": "Crossref",
+        "is-referenced-by-count": 3,
+        "title": [
+          "A Review of: “Frames of Protest: Social Movements and the Framing Perspective Framing American Politics”"
+        ],
+        "prefix": "10.1080",
+        "volume": "23",
+        "author": [
+          {
+            "given": "Hank",
+            "family": "Johnston",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "John A.",
+            "family": "Noakes",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "William A.",
+            "family": "Gamson",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "member": "301",
+        "container-title": [
+          "Political Communication"
+        ],
+        "language": "en",
+        "link": [
+          {
+            "URL": "http://www.tandfonline.com/doi/pdf/10.1080/10584600600977011",
+            "content-type": "unspecified",
+            "content-version": "vor",
+            "intended-application": "similarity-checking"
+          }
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2016,
+              12,
+              17
+            ]
+          ],
+          "date-time": "2016-12-17T12:13:20Z",
+          "timestamp": 1481976800000
+        },
+        "score": 25.15791,
+        "resource": {
+          "primary": {
+            "URL": "http://www.tandfonline.com/doi/abs/10.1080/10584600600977011"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2006,
+              12
+            ]
+          ]
+        },
+        "references-count": 0,
+        "journal-issue": {
+          "issue": "4",
+          "published-print": {
+            "date-parts": [
+              [
+                2006,
+                12
+              ]
+            ]
+          }
+        },
+        "alternative-id": [
+          "10.1080/10584600600977011"
+        ],
+        "URL": "https://doi.org/10.1080/10584600600977011",
+        "ISSN": [
+          "1058-4609",
+          "1091-7675"
+        ],
+        "issn-type": [
+          {
+            "value": "1058-4609",
+            "type": "print"
+          },
+          {
+            "value": "1091-7675",
+            "type": "electronic"
+          }
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2006,
+              12
+            ]
+          ]
+        }
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2026,
+              1,
+              16
+            ]
+          ],
+          "date-time": "2026-01-16T05:23:52Z",
+          "timestamp": 1768541032202,
+          "version": "3.49.0"
+        },
+        "update-to": [
+          {
+            "DOI": "10.1016/j.micpro.2020.103768",
+            "type": "retraction",
+            "label": "Retraction",
+            "source": "publisher",
+            "updated": {
+              "date-parts": [
+                [
+                  2021,
+                  3,
+                  1
+                ]
+              ],
+              "date-time": "2021-03-01T00:00:00Z",
+              "timestamp": 1614556800000
+            }
+          }
+        ],
+        "reference-count": 16,
+        "publisher": "Elsevier BV",
+        "license": [
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2021,
+                  3,
+                  1
+                ]
+              ],
+              "date-time": "2021-03-01T00:00:00Z",
+              "timestamp": 1614556800000
+            },
+            "content-version": "tdm",
+            "delay-in-days": 0,
+            "URL": "https://www.elsevier.com/tdm/userlicense/1.0/"
+          },
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2021,
+                  3,
+                  1
+                ]
+              ],
+              "date-time": "2021-03-01T00:00:00Z",
+              "timestamp": 1614556800000
+            },
+            "content-version": "tdm",
+            "delay-in-days": 0,
+            "URL": "https://www.elsevier.com/legal/tdmrep-license"
+          }
+        ],
+        "funder": [
+          {
+            "DOI": "10.13039/501100003815",
+            "name": "Huaqiao University",
+            "doi-asserted-by": "publisher",
+            "award": [
+              "15SKBS316"
+            ],
+            "award-info": [
+              {
+                "award-number": [
+                  "15SKBS316"
+                ]
+              }
+            ],
+            "id": [
+              {
+                "id": "10.13039/501100003815",
+                "id-type": "DOI",
+                "asserted-by": "publisher"
+              }
+            ]
+          }
+        ],
+        "content-domain": {
+          "domain": [
+            "elsevier.com",
+            "sciencedirect.com"
+          ],
+          "crossmark-restriction": true
+        },
+        "short-container-title": [
+          "Microprocessors and Microsystems"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2021,
+              3
+            ]
+          ]
+        },
+        "DOI": "10.1016/j.micpro.2020.103768",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2020,
+              12,
+              28
+            ]
+          ],
+          "date-time": "2020-12-28T21:04:32Z",
+          "timestamp": 1609189472000
+        },
+        "page": "103768",
+        "update-policy": "https://doi.org/10.1016/elsevier_cm_policy",
+        "source": "Crossref",
+        "is-referenced-by-count": 4,
+        "special_numbering": "C",
+        "title": [
+          "RETRACTED: Cross-Cultural communication of language learning social software based on FPGA and transfer learning"
+        ],
+        "prefix": "10.1016",
+        "volume": "81",
+        "author": [
+          {
+            "given": "Shengnan",
+            "family": "Zang",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "member": "78",
+        "reference": [
+          {
+            "key": "10.1016/j.micpro.2020.103768_bib0001",
+            "doi-asserted-by": "crossref",
+            "first-page": "148489",
+            "DOI": "10.1109/ACCESS.2020.3015854",
+            "article-title": "AgglutiFiT: efficient low-resource agglutinative language model fine-tuning",
+            "volume": "8",
+            "author": "Li",
+            "year": "2020",
+            "journal-title": "IEEE Access"
+          },
+          {
+            "issue": "4",
+            "key": "10.1016/j.micpro.2020.103768_bib0002",
+            "doi-asserted-by": "crossref",
+            "first-page": "388",
+            "DOI": "10.1109/TLT.2014.2323970",
+            "article-title": "Understanding social OER environments—a quantitative study on factors influencing the motivation to share and collaborate",
+            "volume": "7",
+            "author": "Pirkkalainen",
+            "year": "2014",
+            "journal-title": "IEEE Transact Learn Technol"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103768_bib0003",
+            "doi-asserted-by": "crossref",
+            "first-page": "143848",
+            "DOI": "10.1109/ACCESS.2020.3014202",
+            "article-title": "The effects of an inductive reasoning learning strategy assisted by the GeoGebra software on students’ motivation for the functional graph II topic",
+            "volume": "8",
+            "author": "Abdullah",
+            "year": "2020",
+            "journal-title": "IEEE Access"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103768_bib0004",
+            "doi-asserted-by": "crossref",
+            "first-page": "114795",
+            "DOI": "10.1109/ACCESS.2019.2927281",
+            "article-title": "A multi-layer dual attention deep learning model with refined word embeddings for aspect-based sentiment analysis",
+            "volume": "7",
+            "author": "Rida-E-Fatima",
+            "year": "2019",
+            "journal-title": "IEEE Access"
+          },
+          {
+            "issue": "3",
+            "key": "10.1016/j.micpro.2020.103768_bib0005",
+            "doi-asserted-by": "crossref",
+            "first-page": "324",
+            "DOI": "10.1109/TNB.2019.2909094",
+            "article-title": "Serendipity—a machine-learning application for mining serendipitous drug usage from social media",
+            "volume": "18",
+            "author": "Ru",
+            "year": "2019",
+            "journal-title": "IEEE Trans Nanobioscience"
+          },
+          {
+            "issue": "4",
+            "key": "10.1016/j.micpro.2020.103768_bib0006",
+            "doi-asserted-by": "crossref",
+            "first-page": "253",
+            "DOI": "10.1109/RITA.2015.2486386",
+            "article-title": "Building a scalable game engine to teach computer science languages",
+            "volume": "10",
+            "author": "Serrano-Laguna",
+            "year": "2015",
+            "journal-title": "IEEE Revista Iberoamericana de Tecnologias del Aprendizaje"
+          },
+          {
+            "issue": "3",
+            "key": "10.1016/j.micpro.2020.103768_bib0007",
+            "doi-asserted-by": "crossref",
+            "first-page": "744",
+            "DOI": "10.1109/TCYB.2015.2414489",
+            "article-title": "Geographical topics learning of geo-tagged social images",
+            "volume": "46",
+            "author": "Zhang",
+            "year": "2016",
+            "journal-title": "IEEE Trans Cybern"
+          },
+          {
+            "issue": "3",
+            "key": "10.1016/j.micpro.2020.103768_bib0008",
+            "doi-asserted-by": "crossref",
+            "first-page": "311",
+            "DOI": "10.1109/TPC.2018.2823598",
+            "article-title": "Global technical communication in 7.5 weeks online: combining industry and academic perspectives",
+            "volume": "61",
+            "author": "Batova",
+            "year": "2018",
+            "journal-title": "IEEE Trans Prof Commun"
+          },
+          {
+            "issue": "2",
+            "key": "10.1016/j.micpro.2020.103768_bib0009",
+            "doi-asserted-by": "crossref",
+            "first-page": "201",
+            "DOI": "10.1109/TPC.2017.2656658",
+            "article-title": "Transnational business communication and identity work in Australia",
+            "volume": "60",
+            "author": "Ai",
+            "year": "2017",
+            "journal-title": "IEEE Trans Prof Commun"
+          },
+          {
+            "issue": "3",
+            "key": "10.1016/j.micpro.2020.103768_bib0010",
+            "doi-asserted-by": "crossref",
+            "first-page": "429",
+            "DOI": "10.1109/TLT.2018.2865411",
+            "article-title": "The evaluation of a serious game to improve cross-cultural competence",
+            "volume": "12",
+            "author": "An",
+            "year": "2019",
+            "journal-title": "IEEE Trans Learn Technol"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103768_bib0011",
+            "doi-asserted-by": "crossref",
+            "first-page": "64545",
+            "DOI": "10.1109/ACCESS.2019.2915174",
+            "article-title": "Interactive learning experience-driven smart communications networks for cognitive load management in grammar learning context",
+            "volume": "7",
+            "author": "Refat",
+            "year": "2019",
+            "journal-title": "IEEE Access"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103768_bib0012",
+            "series-title": "2020 IEEE Symposium on High-Performance Interconnects (HOTI)",
+            "article-title": "Communication-efficient distributed deep learning with GPU-FPGA heterogeneous computing",
+            "author": "Tanaka",
+            "year": "2020"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103768_bib0013",
+            "series-title": "2017 IEEE 25th Annual International Symposium on Field-Programmable Custom Computing Machines (FCCM)",
+            "article-title": "A configurable FPGA implementation of the tanh function using DCT interpolation",
+            "author": "Abdelsalam",
+            "year": "2017"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103768_bib0014",
+            "series-title": "2016 International Electronics Symposium (IES)",
+            "article-title": "Implementation of FPGA technology as human-machine interface to Z80 microprocessor learning module",
+            "author": "Hadi",
+            "year": "2016"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103768_bib0015",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.1016/j.micpro.2020.103017",
+            "article-title": "Molecular communication via diffusion with spherical receiver & transmitter and trapezoidal container",
+            "volume": "74",
+            "author": "Mohamed",
+            "year": "2020",
+            "journal-title": "Microprocess Microsyst"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103768_bib0016",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.1016/j.micpro.2020.103122",
+            "article-title": "SIMCom: statistical sniffing of inter-module communications for runtime hardware trojan detection",
+            "volume": "77",
+            "author": "Khalid",
+            "year": "2020",
+            "journal-title": "Microprocess Microsyst"
+          }
+        ],
+        "updated-by": [
+          {
+            "DOI": "10.1016/j.micpro.2020.103768",
+            "type": "retraction",
+            "label": "Retraction",
+            "source": "publisher",
+            "updated": {
+              "date-parts": [
+                [
+                  2021,
+                  3,
+                  1
+                ]
+              ],
+              "date-time": "2021-03-01T00:00:00Z",
+              "timestamp": 1614556800000
+            }
+          },
+          {
+            "DOI": "10.1016/j.micpro.2024.105020",
+            "type": "erratum",
+            "label": "Erratum",
+            "source": "publisher",
+            "updated": {
+              "date-parts": [
+                [
+                  2024,
+                  3,
+                  1
+                ]
+              ],
+              "date-time": "2024-03-01T00:00:00Z",
+              "timestamp": 1709251200000
+            }
+          }
+        ],
+        "container-title": [
+          "Microprocessors and Microsystems"
+        ],
+        "language": "en",
+        "link": [
+          {
+            "URL": "https://api.elsevier.com/content/article/PII:S0141933120309133?httpAccept=text/xml",
+            "content-type": "text/xml",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          },
+          {
+            "URL": "https://api.elsevier.com/content/article/PII:S0141933120309133?httpAccept=text/plain",
+            "content-type": "text/plain",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          }
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2026,
+              1,
+              15
+            ]
+          ],
+          "date-time": "2026-01-15T12:50:15Z",
+          "timestamp": 1768481415000
+        },
+        "score": 0,
+        "resource": {
+          "primary": {
+            "URL": "https://linkinghub.elsevier.com/retrieve/pii/S0141933120309133"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2021,
+              3
+            ]
+          ]
+        },
+        "references-count": 16,
+        "alternative-id": [
+          "S0141933120309133"
+        ],
+        "URL": "https://doi.org/10.1016/j.micpro.2020.103768",
+        "ISSN": [
+          "0141-9331"
+        ],
+        "issn-type": [
+          {
+            "value": "0141-9331",
+            "type": "print"
+          }
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2021,
+              3
+            ]
+          ]
+        },
+        "assertion": [
+          {
+            "value": "Elsevier",
+            "name": "publisher",
+            "label": "This article is maintained by"
+          },
+          {
+            "value": "RETRACTED: Cross-Cultural communication of language learning social software based on FPGA and transfer learning",
+            "name": "articletitle",
+            "label": "Article Title"
+          },
+          {
+            "value": "Microprocessors and Microsystems",
+            "name": "journaltitle",
+            "label": "Journal Title"
+          },
+          {
+            "value": "https://doi.org/10.1016/j.micpro.2020.103768",
+            "name": "articlelink",
+            "label": "CrossRef DOI link to publisher maintained version"
+          },
+          {
+            "value": "article",
+            "name": "content_type",
+            "label": "Content Type"
+          },
+          {
+            "value": "© 2020 Elsevier B.V. All rights reserved.",
+            "name": "copyright",
+            "label": "Copyright"
+          }
+        ],
+        "article-number": "103768"
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2026,
+              1,
+              16
+            ]
+          ],
+          "date-time": "2026-01-16T05:05:54Z",
+          "timestamp": 1768539954986,
+          "version": "3.49.0"
+        },
+        "update-to": [
+          {
+            "DOI": "10.1016/j.micpro.2020.103708",
+            "type": "retraction",
+            "label": "Retraction",
+            "source": "publisher",
+            "updated": {
+              "date-parts": [
+                [
+                  2021,
+                  3,
+                  1
+                ]
+              ],
+              "date-time": "2021-03-01T00:00:00Z",
+              "timestamp": 1614556800000
+            }
+          }
+        ],
+        "reference-count": 20,
+        "publisher": "Elsevier BV",
+        "license": [
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2021,
+                  3,
+                  1
+                ]
+              ],
+              "date-time": "2021-03-01T00:00:00Z",
+              "timestamp": 1614556800000
+            },
+            "content-version": "tdm",
+            "delay-in-days": 0,
+            "URL": "https://www.elsevier.com/tdm/userlicense/1.0/"
+          },
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2021,
+                  3,
+                  1
+                ]
+              ],
+              "date-time": "2021-03-01T00:00:00Z",
+              "timestamp": 1614556800000
+            },
+            "content-version": "tdm",
+            "delay-in-days": 0,
+            "URL": "https://www.elsevier.com/legal/tdmrep-license"
+          }
+        ],
+        "funder": [
+          {
+            "DOI": "10.13039/501100001809",
+            "name": "National Natural Science Foundation of China",
+            "doi-asserted-by": "publisher",
+            "award": [
+              "71301132"
+            ],
+            "award-info": [
+              {
+                "award-number": [
+                  "71301132"
+                ]
+              }
+            ],
+            "id": [
+              {
+                "id": "10.13039/501100001809",
+                "id-type": "DOI",
+                "asserted-by": "publisher"
+              }
+            ]
+          }
+        ],
+        "content-domain": {
+          "domain": [
+            "elsevier.com",
+            "sciencedirect.com"
+          ],
+          "crossmark-restriction": true
+        },
+        "short-container-title": [
+          "Microprocessors and Microsystems"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2021,
+              3
+            ]
+          ]
+        },
+        "DOI": "10.1016/j.micpro.2020.103708",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2020,
+              12,
+              17
+            ]
+          ],
+          "date-time": "2020-12-17T17:20:16Z",
+          "timestamp": 1608225616000
+        },
+        "page": "103708",
+        "update-policy": "https://doi.org/10.1016/elsevier_cm_policy",
+        "source": "Crossref",
+        "is-referenced-by-count": 1,
+        "special_numbering": "C",
+        "title": [
+          "RETRACTED: Development of financial option pricing system based on fpga and machine learning"
+        ],
+        "prefix": "10.1016",
+        "volume": "81",
+        "author": [
+          {
+            "given": "Xisheng",
+            "family": "Yu",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "member": "78",
+        "reference": [
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0001",
+            "series-title": "Alchemy and Artificial Intelligence",
+            "author": "Dreyfus",
+            "year": "1965"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0002",
+            "series-title": "Alchemy and Artificial Intelligence",
+            "author": "Dreyfus",
+            "year": "1965"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0003",
+            "article-title": "FPGA accelerated low-latency market data feed processing",
+            "author": "Morris",
+            "year": "2009",
+            "journal-title": "IEEE Symposium on High Performance Interconnect"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0004",
+            "first-page": "229",
+            "article-title": "Credit risk modeling using hardware-accelerated Monte-Carlo simulation",
+            "author": "Thomas",
+            "year": "2008",
+            "journal-title": "Proc. FCCM"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0005",
+            "article-title": "Exploring reconfigurable architectures for tree-based option pricing models",
+            "author": "Jin",
+            "year": "2009",
+            "journal-title": "Accepted to ACM Transactions on Reconfigurable Computing"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0006",
+            "doi-asserted-by": "crossref",
+            "unstructured": "A.H. Tse & D.B. Thomas, and W. Luk, “Option pricing with multi-dimensional quadrature architectures,” in To appear in FPT, 2009.",
+            "DOI": "10.1109/FPT.2009.5377648"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0007",
+            "article-title": "FPGA-optimised uniform random number generators using luts and shift registers",
+            "author": "Thomas",
+            "year": "2010",
+            "journal-title": "Proc. FPL"
+          },
+          {
+            "issue": "4",
+            "key": "10.1016/j.micpro.2020.103708_bib0008",
+            "doi-asserted-by": "crossref",
+            "first-page": "312",
+            "DOI": "10.1049/iet-cdt:20060188",
+            "article-title": "Non-uniform random number generation through piecewise linear approximations",
+            "volume": "1",
+            "author": "Luk",
+            "year": "2007",
+            "journal-title": "IET Computers and Digital Techniques"
+          },
+          {
+            "issue": "12",
+            "key": "10.1016/j.micpro.2020.103708_bib0009",
+            "article-title": "Multivariate Gaussian random number generation targeting reconfigurable hardware",
+            "volume": "1",
+            "year": "2008",
+            "journal-title": "and ACM Trans. on Reconfigurable Technology and Systems"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0010",
+            "first-page": "231",
+            "article-title": "Word-length optimization and error analysis of a multivariate gaussian random number generator",
+            "author": "Saiprasert",
+            "year": "2009",
+            "journal-title": "Proc. ARC"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0011",
+            "first-page": "97",
+            "article-title": "A domain-specific language for reconfigurable path-based Monte Carlo simulations",
+            "author": "Thomas",
+            "year": "2007",
+            "journal-title": "Proc.FPT"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0012",
+            "first-page": "168",
+            "article-title": "Automatic generation and optimization of reconfigurable financial Monte-Carlo simulations",
+            "author": "Thomas",
+            "year": "2007",
+            "journal-title": "Proc. ASAP"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0013",
+            "unstructured": "Math Work and Fixed-Point Toolbox [Online], 2012. Available: http://www.mathworks.com/products/fixed."
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0014",
+            "first-page": "16",
+            "article-title": "Hardware Acceleration of Pseudo-Random Number Generation for Simulation Applications",
+            "author": "McCollum",
+            "year": "2003",
+            "journal-title": "Proc. Of the 35th Southeastern Symp. on Systems Theory"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0015",
+            "series-title": "Computational Acceleration of Credit and Interest Rate Derivatives",
+            "author": "Mencer",
+            "year": "2010"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0016",
+            "article-title": "“The Heston Model: apractical Approach,”",
+            "author": "Moodley",
+            "year": "2007",
+            "journal-title": "Faculty of Science, Univ. of the Witwatersrand"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0017",
+            "first-page": "27",
+            "article-title": "Design Space Exploration of the European Option Benchmark using Hyperstreams",
+            "author": "Morris",
+            "year": "2007",
+            "journal-title": "Int. Conf. on Field Programmable Logic and Applications"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0018",
+            "unstructured": "M. Ncube Model Calibration and Simulation [Online], 2013. Available: http://www.mathworks.com/matlabcentral/fileexchange/29446- Heston-model-calibration-and-simulation."
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0019",
+            "article-title": "Michael Gladshtein & Design and simulation of quantum-dot cellular automata serial decimal pipelined processor based on Turing machine model",
+            "volume": "77",
+            "year": "2020",
+            "journal-title": "Microprocess Microsyst"
+          },
+          {
+            "key": "10.1016/j.micpro.2020.103708_bib0020",
+            "article-title": "The Multi-Dataflow ComposerTool: an open-source tool suite for Optimized Coarse-Grain Reconfigurable Hardware Accelerators and Platform Design",
+            "author": "Sau",
+            "year": "2020",
+            "journal-title": "Microprocess Microsyst"
+          }
+        ],
+        "updated-by": [
+          {
+            "DOI": "10.1016/j.micpro.2023.104902",
+            "type": "erratum",
+            "label": "Erratum",
+            "source": "publisher",
+            "updated": {
+              "date-parts": [
+                [
+                  2023,
+                  9,
+                  1
+                ]
+              ],
+              "date-time": "2023-09-01T00:00:00Z",
+              "timestamp": 1693526400000
+            }
+          },
+          {
+            "DOI": "10.1016/j.micpro.2020.103708",
+            "type": "retraction",
+            "label": "Retraction",
+            "source": "publisher",
+            "updated": {
+              "date-parts": [
+                [
+                  2021,
+                  3,
+                  1
+                ]
+              ],
+              "date-time": "2021-03-01T00:00:00Z",
+              "timestamp": 1614556800000
+            }
+          }
+        ],
+        "container-title": [
+          "Microprocessors and Microsystems"
+        ],
+        "language": "en",
+        "link": [
+          {
+            "URL": "https://api.elsevier.com/content/article/PII:S0141933120308541?httpAccept=text/xml",
+            "content-type": "text/xml",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          },
+          {
+            "URL": "https://api.elsevier.com/content/article/PII:S0141933120308541?httpAccept=text/plain",
+            "content-type": "text/plain",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          }
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2026,
+              1,
+              15
+            ]
+          ],
+          "date-time": "2026-01-15T12:13:12Z",
+          "timestamp": 1768479192000
+        },
+        "score": 0,
+        "resource": {
+          "primary": {
+            "URL": "https://linkinghub.elsevier.com/retrieve/pii/S0141933120308541"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2021,
+              3
+            ]
+          ]
+        },
+        "references-count": 20,
+        "alternative-id": [
+          "S0141933120308541"
+        ],
+        "URL": "https://doi.org/10.1016/j.micpro.2020.103708",
+        "ISSN": [
+          "0141-9331"
+        ],
+        "issn-type": [
+          {
+            "value": "0141-9331",
+            "type": "print"
+          }
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2021,
+              3
+            ]
+          ]
+        },
+        "assertion": [
+          {
+            "value": "Elsevier",
+            "name": "publisher",
+            "label": "This article is maintained by"
+          },
+          {
+            "value": "RETRACTED: Development of financial option pricing system based on fpga and machine learning",
+            "name": "articletitle",
+            "label": "Article Title"
+          },
+          {
+            "value": "Microprocessors and Microsystems",
+            "name": "journaltitle",
+            "label": "Journal Title"
+          },
+          {
+            "value": "https://doi.org/10.1016/j.micpro.2020.103708",
+            "name": "articlelink",
+            "label": "CrossRef DOI link to publisher maintained version"
+          },
+          {
+            "value": "article",
+            "name": "content_type",
+            "label": "Content Type"
+          },
+          {
+            "value": "© 2020 Elsevier B.V. All rights reserved.",
+            "name": "copyright",
+            "label": "Copyright"
+          }
+        ],
+        "article-number": "103708"
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2026,
+              1,
+              16
+            ]
+          ],
+          "date-time": "2026-01-16T06:17:33Z",
+          "timestamp": 1768544253442,
+          "version": "3.49.0"
+        },
+        "update-to": [
+          {
+            "DOI": "10.1016/j.micpro.2021.104006",
+            "type": "retraction",
+            "label": "Retraction",
+            "source": "publisher",
+            "updated": {
+              "date-parts": [
+                [
+                  2021,
+                  6,
+                  1
+                ]
+              ],
+              "date-time": "2021-06-01T00:00:00Z",
+              "timestamp": 1622505600000
+            }
+          }
+        ],
+        "reference-count": 20,
+        "publisher": "Elsevier BV",
+        "license": [
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2021,
+                  6,
+                  1
+                ]
+              ],
+              "date-time": "2021-06-01T00:00:00Z",
+              "timestamp": 1622505600000
+            },
+            "content-version": "tdm",
+            "delay-in-days": 0,
+            "URL": "https://www.elsevier.com/tdm/userlicense/1.0/"
+          },
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2021,
+                  6,
+                  1
+                ]
+              ],
+              "date-time": "2021-06-01T00:00:00Z",
+              "timestamp": 1622505600000
+            },
+            "content-version": "tdm",
+            "delay-in-days": 0,
+            "URL": "https://www.elsevier.com/legal/tdmrep-license"
+          }
+        ],
+        "funder": [
+          {
+            "DOI": "10.13039/501100004001",
+            "name": "Guizhou Science and Technology Department",
+            "doi-asserted-by": "publisher",
+            "id": [
+              {
+                "id": "10.13039/501100004001",
+                "id-type": "DOI",
+                "asserted-by": "publisher"
+              }
+            ]
+          },
+          {
+            "DOI": "10.13039/501100001809",
+            "name": "National Natural Science Foundation of China",
+            "doi-asserted-by": "publisher",
+            "award": [
+              "82060654"
+            ],
+            "award-info": [
+              {
+                "award-number": [
+                  "82060654"
+                ]
+              }
+            ],
+            "id": [
+              {
+                "id": "10.13039/501100001809",
+                "id-type": "DOI",
+                "asserted-by": "publisher"
+              }
+            ]
+          },
+          {
+            "DOI": "10.13039/501100001809",
+            "name": "National Natural Science Foundation of China",
+            "doi-asserted-by": "publisher",
+            "award": [
+              "81860653"
+            ],
+            "award-info": [
+              {
+                "award-number": [
+                  "81860653"
+                ]
+              }
+            ],
+            "id": [
+              {
+                "id": "10.13039/501100001809",
+                "id-type": "DOI",
+                "asserted-by": "publisher"
+              }
+            ]
+          }
+        ],
+        "content-domain": {
+          "domain": [
+            "elsevier.com",
+            "sciencedirect.com"
+          ],
+          "crossmark-restriction": true
+        },
+        "short-container-title": [
+          "Microprocessors and Microsystems"
+        ],
+        "published-print": {
+          "date-parts": [
+            [
+              2021,
+              6
+            ]
+          ]
+        },
+        "DOI": "10.1016/j.micpro.2021.104006",
+        "type": "journal-article",
+        "created": {
+          "date-parts": [
+            [
+              2021,
+              1,
+              14
+            ]
+          ],
+          "date-time": "2021-01-14T02:05:51Z",
+          "timestamp": 1610589951000
+        },
+        "page": "104006",
+        "update-policy": "https://doi.org/10.1016/elsevier_cm_policy",
+        "source": "Crossref",
+        "is-referenced-by-count": 1,
+        "special_numbering": "C",
+        "title": [
+          "RETRACTED: Microprocessor in vitro simulation system applied to the separation of intestinal flora and fermented food microorganisms"
+        ],
+        "prefix": "10.1016",
+        "volume": "83",
+        "author": [
+          {
+            "given": "Yuhong",
+            "family": "Lyu",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "Lanlin",
+            "family": "Wang",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "Rui",
+            "family": "Sun",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "Zexin",
+            "family": "Li",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "Xuemi",
+            "family": "Wang",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "Ruirui",
+            "family": "Guo",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "Changwu",
+            "family": "Yue",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "member": "78",
+        "reference": [
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0001",
+            "series-title": "Conference Proceedings IT IS-ITAB ’99. Joint Meeting. Second International Workshop on the Telemedical Information Society (ITIS ‘99)/Second IEEE EMBS International Workshop on Information Technology",
+            "first-page": "31",
+            "article-title": "Using Web technologies and meta-computing to visualize a simplified simulation model of tumor growth in vitro",
+            "author": "Stamatakos",
+            "year": "1999"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0002",
+            "series-title": "2010 4th International Conference on Bioinformatics and Biomedical Engineering",
+            "first-page": "1",
+            "article-title": "Simulation of Elbow and Forearm Motion In Vitro Using an Active Controlled Testing System",
+            "author": "Zhang",
+            "year": "2010"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0003",
+            "series-title": "2009 36th Annual Computers in Cardiology Conference (CinC)",
+            "first-page": "497",
+            "article-title": "A new Fuzzy Controlled extracorporeal circulation system. First results of an in-vitro investigation",
+            "author": "Schreiber",
+            "year": "2009"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0004",
+            "series-title": "SENSORS, 2006 IEEE",
+            "first-page": "62",
+            "article-title": "Diffuse Optical Tomography in a Spinal Cage: Monte Carlo Simulation and in-Vitro Studies",
+            "author": "Margallo-Balbas",
+            "year": "2006"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0005",
+            "series-title": "2010 Annual International Conference of the IEEE Engineering in Medicine and Biology",
+            "first-page": "3261",
+            "article-title": "From in vitro to in silico and back again: Using biological and mathematical synergy to decipher breast cancer cell motility",
+            "author": "Rosenthal",
+            "year": "2010"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0006",
+            "series-title": "2011 International Conference on Remote Sensing, Environment and Transportation Engineering",
+            "first-page": "7500",
+            "article-title": "Effect of adding salt-tolerant microorganisms on the flavor of soy-sauce mash",
+            "author": "Wan",
+            "year": "2011"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0007",
+            "series-title": "2007 IEEE 34th International Conference on Plasma Science (ICOPS)",
+            "article-title": "Cold Plasma Treatment of Spoilage Microorganisms on Model Food Surface and Real Fruit Tissues",
+            "author": "Perni",
+            "year": "2007"
+          },
+          {
+            "issue": "1",
+            "key": "10.1016/j.micpro.2021.104006_bib0008",
+            "doi-asserted-by": "crossref",
+            "first-page": "43",
+            "DOI": "10.1109/28.658715",
+            "article-title": "Inactivating microorganisms using a pulsed electric field continuous treatment system",
+            "volume": "34",
+            "author": "Qin",
+            "year": "1998",
+            "journal-title": "IEEE Transactions on Industry Applications"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0009",
+            "series-title": "2013 Seventh International Conference Sensing Technology (ICST)",
+            "first-page": "699",
+            "article-title": "Detection of microorganisms in water and different food matrix by Electronic Nose",
+            "author": "Carmona",
+            "year": "2013"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0010",
+            "series-title": "2015 IEEE 15th Mediterranean Microwave Symposium (MMS)",
+            "first-page": "1",
+            "article-title": "Application of microwave and RF in food processing, microorganisms and pest control",
+            "author": "Poltronieri",
+            "year": "2015"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0011",
+            "series-title": "SENSORS, 2014 IEEE",
+            "first-page": "1376",
+            "article-title": "MOX-NW Electronic Nose for detection of food microbial contamination",
+            "author": "Sberveglieri",
+            "year": "2014"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0012",
+            "series-title": "2015 2nd International Symposium Physics and Technology of Sensors (ISPTS)",
+            "first-page": "pp",
+            "article-title": "IT16. Applications of bio-sensors in the agri-food industry and mitigation of bio-threat paradigm",
+            "author": "Shah",
+            "year": "2015"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0013",
+            "series-title": "2018 4th International Conference on Universal Village (UV)",
+            "first-page": "1",
+            "article-title": "Use of Effective Microorganisms® (EM®) for Sustainable Pathogen Control in Food Safety",
+            "author": "Gibby",
+            "year": "2018"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0014",
+            "series-title": "2000 Annual Report Conference on Electrical Insulation and Dielectric Phenomena (Cat. No.00CH37132)",
+            "first-page": "296",
+            "article-title": "Effect of different treatments on the dielectric behavior of microorganisms",
+            "volume": "1",
+            "author": "Chohan",
+            "year": "2000"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0015",
+            "series-title": "2001 Microelectromechanical Systems Conference (Cat. No. 01EX521)",
+            "first-page": "11",
+            "article-title": "Applications of micro-systems technology for characterization and detection of microorganisms",
+            "author": "Bashir",
+            "year": "2001"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0016",
+            "series-title": "2014 IEEE 41st International Conference on Plasma Sciences (ICOPS) held with 2014 IEEE International Conference on High-Power Particle Beams (BEAMS)",
+            "article-title": "Prolonged preservation and inactivation of surface-borne microorganisms of fresh fruits by non-thermal plasma-activated water",
+            "author": "Ma",
+            "year": "2014"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0017",
+            "series-title": "Proceedings of the Second International Conference on Intelligent Processing and Manufacturing of Materials. IPMM’99 (Cat. No.99EX296)",
+            "first-page": "151",
+            "article-title": "Intelligent quality control for manufacturing in the food industry using a new fuzzy-fractal approach",
+            "volume": "1",
+            "author": "Castillo",
+            "year": "1999"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0018",
+            "series-title": "2013 Abstracts IEEE International Conference Plasma Science (ICOPS)",
+            "article-title": "Investigation of selective sterilization of unnecessary microorganisms on pulsed electric field sterilization",
+            "author": "Saito",
+            "year": "2013"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0019",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.1016/j.micpro.2020.103250",
+            "article-title": "Besir Dandil DC-link voltage control of three-phase PWM rectifier using artificial bee colony based type-2 fuzzy neural network",
+            "volume": "78",
+            "author": "Acikgoz",
+            "year": "2020",
+            "journal-title": "Microprocessors and Microsystems"
+          },
+          {
+            "key": "10.1016/j.micpro.2021.104006_bib0020",
+            "doi-asserted-by": "crossref",
+            "DOI": "10.1016/j.micpro.2020.103112",
+            "article-title": "efficient regional multi-feature similarity measure based emotion detection system in web portal using artificial neural network",
+            "volume": "77",
+            "author": "Dinakaran",
+            "year": "2020",
+            "journal-title": "Microprocessors and Microsystems"
+          }
+        ],
+        "updated-by": [
+          {
+            "DOI": "10.1016/j.micpro.2023.104901",
+            "type": "erratum",
+            "label": "Erratum",
+            "source": "publisher",
+            "updated": {
+              "date-parts": [
+                [
+                  2023,
+                  9,
+                  1
+                ]
+              ],
+              "date-time": "2023-09-01T00:00:00Z",
+              "timestamp": 1693526400000
+            }
+          },
+          {
+            "DOI": "10.1016/j.micpro.2021.104006",
+            "type": "retraction",
+            "label": "Retraction",
+            "source": "publisher",
+            "updated": {
+              "date-parts": [
+                [
+                  2021,
+                  6,
+                  1
+                ]
+              ],
+              "date-time": "2021-06-01T00:00:00Z",
+              "timestamp": 1622505600000
+            }
+          },
+          {
+            "DOI": "10.1016/j.micpro.2023.104901",
+            "type": "retraction",
+            "label": "Retraction",
+            "source": "retraction-watch",
+            "updated": {
+              "date-parts": [
+                [
+                  2023,
+                  7,
+                  1
+                ]
+              ],
+              "date-time": "2023-07-01T00:00:00Z",
+              "timestamp": 1688169600000
+            },
+            "record-id": "46150"
+          }
+        ],
+        "container-title": [
+          "Microprocessors and Microsystems"
+        ],
+        "language": "en",
+        "link": [
+          {
+            "URL": "https://api.elsevier.com/content/article/PII:S0141933121001794?httpAccept=text/xml",
+            "content-type": "text/xml",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          },
+          {
+            "URL": "https://api.elsevier.com/content/article/PII:S0141933121001794?httpAccept=text/plain",
+            "content-type": "text/plain",
+            "content-version": "vor",
+            "intended-application": "text-mining"
+          }
+        ],
+        "deposited": {
+          "date-parts": [
+            [
+              2026,
+              1,
+              15
+            ]
+          ],
+          "date-time": "2026-01-15T12:33:58Z",
+          "timestamp": 1768480438000
+        },
+        "score": 0,
+        "resource": {
+          "primary": {
+            "URL": "https://linkinghub.elsevier.com/retrieve/pii/S0141933121001794"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2021,
+              6
+            ]
+          ]
+        },
+        "references-count": 20,
+        "alternative-id": [
+          "S0141933121001794"
+        ],
+        "URL": "https://doi.org/10.1016/j.micpro.2021.104006",
+        "ISSN": [
+          "0141-9331"
+        ],
+        "issn-type": [
+          {
+            "value": "0141-9331",
+            "type": "print"
+          }
+        ],
+        "published": {
+          "date-parts": [
+            [
+              2021,
+              6
+            ]
+          ]
+        },
+        "assertion": [
+          {
+            "value": "Elsevier",
+            "name": "publisher",
+            "label": "This article is maintained by"
+          },
+          {
+            "value": "RETRACTED: Microprocessor in vitro simulation system applied to the separation of intestinal flora and fermented food microorganisms",
+            "name": "articletitle",
+            "label": "Article Title"
+          },
+          {
+            "value": "Microprocessors and Microsystems",
+            "name": "journaltitle",
+            "label": "Journal Title"
+          },
+          {
+            "value": "https://doi.org/10.1016/j.micpro.2021.104006",
+            "name": "articlelink",
+            "label": "CrossRef DOI link to publisher maintained version"
+          },
+          {
+            "value": "article",
+            "name": "content_type",
+            "label": "Content Type"
+          },
+          {
+            "value": "© 2021 Elsevier B.V. All rights reserved.",
+            "name": "copyright",
+            "label": "Copyright"
+          }
+        ],
+        "article-number": "104006"
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2023,
+              7,
+              21
+            ]
+          ],
+          "date-time": "2023-07-21T05:17:01Z",
+          "timestamp": 1689916621019
+        },
+        "posted": {
+          "date-parts": [
+            [
+              2023
+            ]
+          ]
+        },
+        "group-title": "SSRN",
+        "reference-count": 0,
+        "publisher": "Elsevier BV",
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "DOI": "10.2139/ssrn.4516499",
+        "type": "posted-content",
+        "created": {
+          "date-parts": [
+            [
+              2023,
+              7,
+              20
+            ]
+          ],
+          "date-time": "2023-07-20T17:24:44Z",
+          "timestamp": 1689873884000
+        },
+        "source": "Crossref",
+        "is-referenced-by-count": 0,
+        "title": [
+          "Microfabric, 3d-Strain Geometry and Kinematic Vorticity Analysis of Au-Bearing Shear Zone, Central Domain of the Borborema Province, Ne Brazil"
+        ],
+        "prefix": "10.2139",
+        "author": [
+          {
+            "given": "Harrizon  Lima",
+            "family": "Almeida",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "Carlos  Echeverri",
+            "family": "Misas",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "Guilherme  Santos",
+            "family": "Teles",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "member": "78",
+        "deposited": {
+          "date-parts": [
+            [
+              2023,
+              7,
+              20
+            ]
+          ],
+          "date-time": "2023-07-20T17:24:44Z",
+          "timestamp": 1689873884000
+        },
+        "score": 0,
+        "resource": {
+          "primary": {
+            "URL": "https://www.ssrn.com/abstract=4516499"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2023
+            ]
+          ]
+        },
+        "references-count": 0,
+        "URL": "https://doi.org/10.2139/ssrn.4516499",
+        "published": {
+          "date-parts": [
+            [
+              2023
+            ]
+          ]
+        },
+        "subtype": "preprint"
+      },
+      {
+        "indexed": {
+          "date-parts": [
+            [
+              2023,
+              7,
+              21
+            ]
+          ],
+          "date-time": "2023-07-21T05:14:13Z",
+          "timestamp": 1689916453362
+        },
+        "posted": {
+          "date-parts": [
+            [
+              2023
+            ]
+          ]
+        },
+        "group-title": "SSRN",
+        "reference-count": 0,
+        "publisher": "Elsevier BV",
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "DOI": "10.2139/ssrn.4510604",
+        "type": "posted-content",
+        "created": {
+          "date-parts": [
+            [
+              2023,
+              7,
+              20
+            ]
+          ],
+          "date-time": "2023-07-20T17:49:08Z",
+          "timestamp": 1689875348000
+        },
+        "source": "Crossref",
+        "is-referenced-by-count": 0,
+        "title": [
+          "The Reward System Plays a Role in Natural Story Comprehension"
+        ],
+        "prefix": "10.2139",
+        "author": [
+          {
+            "given": "Oren",
+            "family": "Kobo",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "Yaara",
+            "family": "Yeshurun",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          },
+          {
+            "given": "Tom",
+            "family": "Schonberg",
+            "sequence": "additional",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "member": "78",
+        "deposited": {
+          "date-parts": [
+            [
+              2023,
+              7,
+              20
+            ]
+          ],
+          "date-time": "2023-07-20T17:49:08Z",
+          "timestamp": 1689875348000
+        },
+        "score": 0,
+        "resource": {
+          "primary": {
+            "URL": "https://www.ssrn.com/abstract=4510604"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2023
+            ]
+          ]
+        },
+        "references-count": 0,
+        "URL": "https://doi.org/10.2139/ssrn.4510604",
+        "published": {
+          "date-parts": [
+            [
+              2023
+            ]
+          ]
+        },
+        "subtype": "preprint"
+      },
+      {
+        "institution": [
+          {
+            "name": "Toronto Metropolitan University"
+          }
+        ],
+        "indexed": {
+          "date-parts": [
+            [
+              2023,
+              6,
+              5
+            ]
+          ],
+          "date-time": "2023-06-05T18:11:15Z",
+          "timestamp": 1685988675175
+        },
+        "posted": {
+          "date-parts": [
+            [
+              2021,
+              5,
+              25
+            ]
+          ]
+        },
+        "reference-count": 0,
+        "publisher": "Ryerson University Library and Archives",
+        "license": [
+          {
+            "start": {
+              "date-parts": [
+                [
+                  2021,
+                  5,
+                  25
+                ]
+              ],
+              "date-time": "2021-05-25T00:00:00Z",
+              "timestamp": 1621900800000
+            },
+            "content-version": "unspecified",
+            "delay-in-days": 0,
+            "URL": "http://rightsstatements.org/vocab/InC/1.0/"
+          }
+        ],
+        "content-domain": {
+          "domain": [],
+          "crossmark-restriction": false
+        },
+        "abstract": "<jats:p>Planning started as a profession to maintain a better quality of life by managing the negative effects of human settlement. Anticipated improvements in health derived from the adoption of single-family dwellings have failed to materialize across North America. Attainment of this better quality of life can only come from life in urban environments. The only way to ensure society's survival is to refine our means of living, shifting away from one that consumes resources beyond the Earth's carrying capacity. Our society must begin to question the path of development selected by articulating the need for a drastically different development paradigm. Without this discussion, our society will inevitably use more resources to sustain our lifestyle than our planet can allow.</jats:p>",
+        "DOI": "10.32920/ryerson.14653704.v1",
+        "type": "posted-content",
+        "created": {
+          "date-parts": [
+            [
+              2021,
+              5,
+              25
+            ]
+          ],
+          "date-time": "2021-05-25T07:15:51Z",
+          "timestamp": 1621926951000
+        },
+        "source": "Crossref",
+        "is-referenced-by-count": 0,
+        "title": [
+          "Defining the need for a new paradigm for the redevelopment of suburban form"
+        ],
+        "prefix": "10.32920",
+        "author": [
+          {
+            "given": "Christopher Roland",
+            "family": "Correia",
+            "sequence": "first",
+            "affiliation": [],
+            "role": [
+              {
+                "role": "author",
+                "vocabulary": "crossref"
+              }
+            ]
+          }
+        ],
+        "member": "18300",
+        "deposited": {
+          "date-parts": [
+            [
+              2023,
+              6,
+              5
+            ]
+          ],
+          "date-time": "2023-06-05T17:28:30Z",
+          "timestamp": 1685986110000
+        },
+        "score": 0,
+        "resource": {
+          "primary": {
+            "URL": "https://rshare.library.torontomu.ca/articles/thesis/Defining_the_need_for_a_new_paradigm_for_the_redevelopment_of_suburban_form/14653704/1"
+          }
+        },
+        "issued": {
+          "date-parts": [
+            [
+              2021,
+              5,
+              25
+            ]
+          ]
+        },
+        "references-count": 0,
+        "URL": "https://doi.org/10.32920/ryerson.14653704.v1",
+        "published": {
+          "date-parts": [
+            [
+              2021,
+              5,
+              25
+            ]
+          ]
+        },
+        "subtype": "dissertation"
+      }
+    ]
+  }
+}
