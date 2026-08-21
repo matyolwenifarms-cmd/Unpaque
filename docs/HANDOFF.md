@@ -54,6 +54,11 @@ The distinction matters more than the totals.
 - **`/research` has never run against the deployed function.** The logic is
   tested; the endpoint has not been exercised in anger.
 - **The Detective has no interface.** Schema, engines and tests only.
+- **Auth has never run against a real Supabase project.** The session hook, the
+  gate and the sign-in page are component-tested against a mocked client, and
+  the routes boot in a browser — but no magic link has ever been sent or
+  redeemed. Enabling email auth in the Supabase dashboard is a manual step
+  nobody has taken.
 
 ---
 
@@ -113,7 +118,10 @@ could be written into**.
    seconds, closes the last four skipped tests.
 3. **Deploy both functions** (`analyse` and `research-search`) and run
    `npm run smoke` and the `/research` route against them.
-4. **The Detective's interface**, or **The Researcher's document retrieval**.
+4. **Enable email auth** in the Supabase dashboard (Authentication → Providers →
+   Email, with magic links on) and sign in once. Nothing that belongs to a
+   person works until that is done.
+5. **The Detective's interface**, or **The Researcher's document retrieval**.
    The latter needs the job worker described in
    `ARCHITECTURE_ASSESSMENT.md` §3, and is the first thing here that cannot be
    fully tested offline.

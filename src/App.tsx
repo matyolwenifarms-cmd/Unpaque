@@ -1,6 +1,8 @@
 import { NavLink, Route, Routes } from "react-router-dom";
 import Research from "@/pages/Research.tsx";
+import SignIn from "@/pages/SignIn.tsx";
 import Unpack from "@/pages/Unpack.tsx";
+import { useSession } from "@/hooks/useSession.ts";
 import { cn } from "@/lib/utils.ts";
 
 const TABS = [
@@ -9,6 +11,8 @@ const TABS = [
 ];
 
 export default function App() {
+  const { session, configured } = useSession();
+
   return (
     <div className="mx-auto min-h-screen max-w-3xl px-5 py-10">
       <header className="mb-8">
@@ -35,11 +39,27 @@ export default function App() {
             </NavLink>
           ))}
         </nav>
+        {configured && (
+          <p className="mt-3 text-xs text-muted">
+            {session ? (
+              <>Signed in as {session.user.email}.</>
+            ) : (
+              <>
+                Not signed in.{" "}
+                <NavLink to="/sign-in" className="text-accent hover:underline">
+                  Sign in
+                </NavLink>{" "}
+                to keep your work.
+              </>
+            )}
+          </p>
+        )}
       </header>
 
       <Routes>
         <Route path="/" element={<Unpack />} />
         <Route path="/research" element={<Research />} />
+        <Route path="/sign-in" element={<SignIn />} />
       </Routes>
     </div>
   );
