@@ -44,8 +44,19 @@ function loadEnv() {
 function fail(message, detail) {
   console.error(`\n  FAIL: ${message}`);
   if (detail !== undefined) console.error(typeof detail === "string" ? detail : JSON.stringify(detail, null, 2));
-  process.exit(1);
+  // exitCode + throw, never process.exit(): forcing exit while a fetch handle
+  // is mid-close trips a libuv assertion on Windows, and the abort message can
+  // swallow the diagnostic printed immediately above it.
+  process.exitCode = 1;
+  throw new SmokeFailure(message);
 }
+
+class SmokeFailure extends Error {}
+
+process.on("uncaughtException", (error) => {
+  if (!(error instanceof SmokeFailure)) throw error;
+  process.exitCode = 1;
+});
 
 function ok(message) {
   console.log(`  ok: ${message}`);

@@ -211,7 +211,21 @@ Deno.serve(async (request: Request): Promise<Response> => {
     }
     if (error instanceof Anthropic.APIError) {
       console.error("anthropic_error", error.status, error.message);
-      return json({ error: "upstream", message: "The analysis engine returned an error." }, 502);
+      // The upstream status and message are forwarded rather than swallowed.
+      // "The analysis engine returned an error" is unactionable for everybody:
+      // an operator cannot tell an exhausted credit balance from a rejected
+      // schema without going and reading logs, and the person who most needs
+      // to know is usually the one who just deployed it. Anthropic's error
+      // messages describe the request, not the account, so there is nothing
+      // here worth hiding.
+      return json(
+        {
+          error: "upstream",
+          message: "The analysis engine returned an error.",
+          upstream: { status: error.status, detail: error.message },
+        },
+        502,
+      );
     }
     console.error("unhandled", error);
     return json({ error: "unhandled" }, 500);
