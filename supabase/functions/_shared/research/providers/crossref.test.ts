@@ -84,7 +84,7 @@ describe("the Crossref adapter", () => {
     const { references } = await search();
     for (const reference of references) {
       expect(reference.availability).toBe("metadata_only");
-      expect(reference.fullTextUrl).toBeUndefined();
+      expect(reference.fullText).toBeUndefined();
     }
   });
 

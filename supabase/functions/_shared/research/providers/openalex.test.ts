@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it, vi } from "vitest";
-import { leadingCaveat } from "../reference.ts";
+import { leadingCaveat, quotationCaveat } from "../reference.ts";
 import { openAlex } from "./openalex.ts";
 import type { Fetcher } from "./types.ts";
 
@@ -63,7 +63,7 @@ describe("the OpenAlex adapter, against synthetic fixtures", () => {
     const outcome = await openAlex().search({ text: "x" }, fetcherReturning(fixture));
     if (!outcome.ok) return;
     const paywalled = outcome.references.find((r) => r.doi === "10.1000/fixture.paywalled");
-    expect(paywalled?.fullTextUrl).toBeUndefined();
+    expect(paywalled?.fullText).toBeUndefined();
     expect(paywalled?.availability).toBe("metadata_only");
   });
 
@@ -202,5 +202,30 @@ describe.skipIf(recorded === null)("the OpenAlex adapter, against recorded respo
     if (!outcome.ok) return;
     const ids = outcome.references.map((r) => r.id);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe("full-text provenance from OpenAlex", () => {
+  it("carries the version through rather than defaulting it to unknown", async () => {
+    const outcome = await openAlex().search({ text: "x" }, fetcherReturning(fixture));
+    if (!outcome.ok) return;
+    const published = outcome.references.find((r) => r.doi === "10.1000/fixture.peer-reviewed");
+    expect(published?.fullText?.version).toBe("published");
+  });
+
+  it("marks a repository copy of a preprint as a submitted version", async () => {
+    const outcome = await openAlex().search({ text: "x" }, fetcherReturning(fixture));
+    if (!outcome.ok) return;
+    const preprint = outcome.references.find((r) => r.doi === "10.1000/fixture.preprint");
+    expect(preprint?.fullText?.version).toBe("submitted");
+    expect(preprint?.fullText?.host).toBe("repository");
+  });
+
+  it("attaches no full text at all to a paywalled work", async () => {
+    const outcome = await openAlex().search({ text: "x" }, fetcherReturning(fixture));
+    if (!outcome.ok) return;
+    const paywalled = outcome.references.find((r) => r.doi === "10.1000/fixture.paywalled");
+    expect(paywalled?.fullText).toBeUndefined();
+    expect(quotationCaveat(paywalled!)).toMatch(/no passage can be shown/);
   });
 });

@@ -4,7 +4,10 @@ import {
   fromProvider,
   leadingCaveat,
   normaliseDoi,
+  quotationCaveat,
   shortProviderId,
+  withFullText,
+  type FullTextVersion,
   type ProviderRecord,
   type Reference,
 } from "./reference.ts";
@@ -76,7 +79,7 @@ describe("constructing a reference", () => {
   });
 
   it("marks a reference with open full text as full_text", () => {
-    expect(fromProvider({ ...base, openAccess: true, fullTextUrl: "https://x/1.pdf" })?.availability)
+    expect(fromProvider({ ...base, openAccess: true, fullText: { url: "https://x/1.pdf" } })?.availability)
       .toBe("full_text");
   });
 
@@ -92,7 +95,7 @@ describe("constructing a reference", () => {
   // fields. A retracted paper with open full text has to be able to say both.
   it("records retraction and availability independently", () => {
     const reference = fromProvider({
-      ...base, retracted: true, openAccess: true, fullTextUrl: "https://x/1.pdf",
+      ...base, retracted: true, openAccess: true, fullText: { url: "https://x/1.pdf" },
     });
     expect(reference?.retraction).toBe("contested");
     expect(reference?.availability).toBe("full_text");
@@ -142,7 +145,7 @@ describe("the caveat a reader is shown first", () => {
 
   it("leads with a confirmed retraction, even when the full text is open", () => {
     const reference = make({
-      retracted: true, retractionAuthority: true, openAccess: true, fullTextUrl: "https://x/1.pdf",
+      retracted: true, retractionAuthority: true, openAccess: true, fullText: { url: "https://x/1.pdf" },
     });
     expect(leadingCaveat(reference)).toBe("Retracted");
   });
@@ -184,9 +187,69 @@ describe("the caveat a reader is shown first", () => {
 
   it("says nothing about a verified, peer-reviewed, openly readable paper", () => {
     const reference = {
-      ...make({ openAccess: true, fullTextUrl: "https://x/1.pdf" }),
+      ...make({ openAccess: true, fullText: { url: "https://x/1.pdf", version: "published" } }),
       verification: "verified" as const,
     };
     expect(leadingCaveat(reference)).toBeNull();
+  });
+});
+
+describe("attaching an open copy found after the fact", () => {
+  const paywalled = fromProvider({ source: "openalex", title: "t", doi: "10.1000/abc" })!;
+
+  it("starts as metadata_only, where no passage may be shown", () => {
+    expect(paywalled.availability).toBe("metadata_only");
+    expect(quotationCaveat(paywalled)).toMatch(/no passage can be shown/);
+  });
+
+  it("upgrades availability when a copy is found", () => {
+    const upgraded = withFullText(paywalled, {
+      url: "https://x/1.pdf", version: "published", licence: "cc-by",
+    });
+    expect(upgraded.availability).toBe("full_text");
+    expect(upgraded.fullText?.url).toBe("https://x/1.pdf");
+  });
+
+  // Returning a new reference is what stops a caller half-applying this and
+  // ending up with availability: "full_text" and nothing to read.
+  it("does not mutate the reference it was given", () => {
+    withFullText(paywalled, { url: "https://x/1.pdf", version: "published" });
+    expect(paywalled.availability).toBe("metadata_only");
+    expect(paywalled.fullText).toBeUndefined();
+  });
+});
+
+describe("what a reader is told about a quotation", () => {
+  const withVersion = (version: FullTextVersion) =>
+    withFullText(fromProvider({ source: "s", title: "t", doi: "10.1000/abc" })!, {
+      url: "https://x/1.pdf",
+      version,
+    });
+
+  it("says nothing when the copy is the version of record", () => {
+    expect(quotationCaveat(withVersion("published"))).toBeNull();
+  });
+
+  // The one that matters most. An accepted manuscript is post-review and
+  // pre-typesetting: wording can differ and pagination almost always does, so a
+  // quotation cited against the published record can send a marker to a page
+  // where the sentence is not.
+  it("warns that an accepted manuscript may differ from the published version", () => {
+    expect(quotationCaveat(withVersion("accepted")))
+      .toBe("Accepted manuscript — wording and pagination may differ from the published version");
+  });
+
+  it("says a submitted manuscript has not been peer reviewed", () => {
+    expect(quotationCaveat(withVersion("submitted"))).toMatch(/not been through peer review/);
+  });
+
+  it("admits when the version is unrecorded rather than implying it is fine", () => {
+    expect(quotationCaveat(withVersion("unknown"))).toMatch(/unrecorded/);
+  });
+
+  it("gives a different answer for every version, so none is silently equivalent", () => {
+    const answers = (["published", "accepted", "submitted", "unknown"] as const)
+      .map((v) => quotationCaveat(withVersion(v)));
+    expect(new Set(answers).size).toBe(4);
   });
 });

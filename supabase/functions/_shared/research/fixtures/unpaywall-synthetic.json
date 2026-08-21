@@ -1,0 +1,84 @@
+{
+  "published": {
+    "doi": "10.1000/fixture.open-published",
+    "is_oa": true,
+    "oa_status": "gold",
+    "best_oa_location": {
+      "url": "https://example.org/published/1.pdf",
+      "url_for_pdf": "https://example.org/published/1.pdf",
+      "url_for_landing_page": "https://example.org/published/1",
+      "host_type": "publisher",
+      "version": "publishedVersion",
+      "license": "cc-by"
+    },
+    "oa_locations": []
+  },
+  "acceptedOnly": {
+    "doi": "10.1000/fixture.open-accepted",
+    "is_oa": true,
+    "oa_status": "green",
+    "best_oa_location": {
+      "url": "https://repo.example.org/accepted/2.pdf",
+      "url_for_pdf": "https://repo.example.org/accepted/2.pdf",
+      "host_type": "repository",
+      "version": "acceptedVersion",
+      "license": null
+    },
+    "oa_locations": [
+      {
+        "url": "https://repo.example.org/accepted/2.pdf",
+        "host_type": "repository",
+        "version": "acceptedVersion"
+      }
+    ]
+  },
+  "publishedBuriedInList": {
+    "doi": "10.1000/fixture.buried",
+    "is_oa": true,
+    "oa_status": "hybrid",
+    "best_oa_location": {
+      "url": "https://repo.example.org/accepted/3.pdf",
+      "host_type": "repository",
+      "version": "acceptedVersion"
+    },
+    "oa_locations": [
+      {
+        "url": "https://repo.example.org/accepted/3.pdf",
+        "host_type": "repository",
+        "version": "acceptedVersion"
+      },
+      {
+        "url": "https://publisher.example.org/final/3.pdf",
+        "url_for_pdf": "https://publisher.example.org/final/3.pdf",
+        "host_type": "publisher",
+        "version": "publishedVersion",
+        "license": "cc-by-nc"
+      }
+    ]
+  },
+  "closed": {
+    "doi": "10.1000/fixture.closed",
+    "is_oa": false,
+    "oa_status": "closed",
+    "best_oa_location": null,
+    "oa_locations": []
+  },
+  "openButNowhere": {
+    "doi": "10.1000/fixture.phantom",
+    "is_oa": true,
+    "oa_status": "green",
+    "best_oa_location": null,
+    "oa_locations": []
+  },
+  "unknownVersion": {
+    "doi": "10.1000/fixture.unversioned",
+    "is_oa": true,
+    "oa_status": "bronze",
+    "best_oa_location": {
+      "url": "https://example.org/bronze/6",
+      "host_type": "publisher",
+      "version": null
+    },
+    "oa_locations": []
+  }
+}

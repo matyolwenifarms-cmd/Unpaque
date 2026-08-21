@@ -51,6 +51,30 @@ export type Availability = (typeof AVAILABILITIES)[number];
 // specification's §4 CONTESTED, applied here: show the conflict, do not
 // silently choose a side. `confirmed` requires the registration agency;
 // an aggregator alone gets `contested`, which tells the researcher to look.
+/**
+ * Which version of a paper an open copy actually is.
+ *
+ * Not bookkeeping. An accepted manuscript is the text after peer review and
+ * before the publisher's copy-editing and typesetting: wording can differ and
+ * pagination almost always does. A passage quoted from one and cited against
+ * the published record can send a marker to a page where the sentence is not —
+ * which from their side is indistinguishable from a quotation somebody made up.
+ *
+ * So the version travels with the text, and the interface says which it is.
+ */
+export const FULL_TEXT_VERSIONS = ["published", "accepted", "submitted", "unknown"] as const;
+export type FullTextVersion = (typeof FULL_TEXT_VERSIONS)[number];
+
+export interface FullText {
+  url: string;
+  pdfUrl?: string;
+  version: FullTextVersion;
+  /** e.g. "cc-by". Absent means the terms are unstated, not that they are open. */
+  licence?: string;
+  /** "publisher", "repository". Where the copy actually lives. */
+  host?: string;
+}
+
 export const RETRACTION_STATES = ["none", "contested", "confirmed"] as const;
 export type RetractionState = (typeof RETRACTION_STATES)[number];
 
@@ -83,8 +107,11 @@ export interface Reference {
   /** `confirmed` only from a registration agency. See RETRACTION_STATES. */
   retraction: RetractionState;
   openAccess: boolean;
-  /** Where the full text can be fetched, when it is openly available. */
-  fullTextUrl?: string;
+  /**
+   * The open copy, when there is one, with its provenance. Absent means
+   * `availability` is metadata_only and no passage may be shown.
+   */
+  fullText?: FullText;
   landingPageUrl?: string;
   citedByCount?: number;
   /** How well we know this exists. Upgraded by the verification pass. */
@@ -135,7 +162,7 @@ export interface ProviderRecord {
    */
   retractionAuthority?: boolean;
   openAccess?: unknown;
-  fullTextUrl?: unknown;
+  fullText?: { url?: unknown; pdfUrl?: unknown; version?: unknown; licence?: unknown; host?: unknown };
   landingPageUrl?: unknown;
   citedByCount?: unknown;
 }
@@ -163,7 +190,7 @@ export function fromProvider(record: ProviderRecord): Reference | null {
       : "contested"
     : "none";
   const openAccess = record.openAccess === true;
-  const fullTextUrl = typeof record.fullTextUrl === "string" ? record.fullTextUrl : undefined;
+  const fullText = toFullText(record.fullText);
 
   return {
     id: doi ? `doi:${doi}` : `${record.source}:${providerId}`,
@@ -186,7 +213,7 @@ export function fromProvider(record: ProviderRecord): Reference | null {
     preprint: record.preprint === true,
     retraction,
     openAccess,
-    fullTextUrl,
+    fullText,
     landingPageUrl: typeof record.landingPageUrl === "string" ? record.landingPageUrl : undefined,
     citedByCount: typeof record.citedByCount === "number" ? record.citedByCount : undefined,
     // A provider returning something is not the same as that identifier
@@ -194,7 +221,25 @@ export function fromProvider(record: ProviderRecord): Reference | null {
     // agency yet, so it starts at provider_only and the verification pass
     // upgrades it.
     verification: "provider_only",
-    availability: fullTextUrl ? "full_text" : "metadata_only",
+    availability: fullText ? "full_text" : "metadata_only",
+  };
+}
+
+function toFullText(value: ProviderRecord["fullText"]): FullText | undefined {
+  if (!value || typeof value.url !== "string" || value.url.trim() === "") return undefined;
+  // An unrecognised version string becomes "unknown" rather than being passed
+  // through. A version nobody can interpret is not better than admitting the
+  // version is not known — it is worse, because it looks authoritative.
+  const version: FullTextVersion =
+    typeof value.version === "string" && (FULL_TEXT_VERSIONS as readonly string[]).includes(value.version)
+      ? (value.version as FullTextVersion)
+      : "unknown";
+  return {
+    url: value.url,
+    pdfUrl: typeof value.pdfUrl === "string" ? value.pdfUrl : undefined,
+    version,
+    licence: typeof value.licence === "string" ? value.licence : undefined,
+    host: typeof value.host === "string" ? value.host : undefined,
   };
 }
 
@@ -227,4 +272,38 @@ export function leadingCaveat(reference: Reference): string | null {
   if (reference.verification === "user_supplied") return "Added by you — not verified";
   if (reference.availability === "metadata_only") return "Full text not openly available";
   return null;
+}
+
+/**
+ * Attach an open copy found after the fact — by Unpaywall, typically — and
+ * upgrade availability with it.
+ *
+ * Returns a new reference rather than mutating, so a caller cannot half-apply
+ * this and end up with `availability: "full_text"` and nothing to read.
+ */
+export function withFullText(reference: Reference, fullText: FullText): Reference {
+  return { ...reference, fullText, availability: "full_text", openAccess: true };
+}
+
+/**
+ * What a reader must be told about a quotation drawn from this reference.
+ *
+ * Separate from `leadingCaveat` because it answers a different question. That
+ * one is about whether to cite the work at all; this is about whether the words
+ * you are looking at are the words in the version of record.
+ */
+export function quotationCaveat(reference: Reference): string | null {
+  if (!reference.fullText) {
+    return "Full text not openly available — the reference is listed, no passage can be shown";
+  }
+  switch (reference.fullText.version) {
+    case "published":
+      return null;
+    case "accepted":
+      return "Accepted manuscript — wording and pagination may differ from the published version";
+    case "submitted":
+      return "Submitted manuscript — this text has not been through peer review";
+    case "unknown":
+      return "Version of this copy is unrecorded — check the quotation against the published record";
+  }
 }

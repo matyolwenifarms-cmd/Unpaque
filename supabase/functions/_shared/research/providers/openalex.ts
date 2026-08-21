@@ -58,7 +58,7 @@ export function openAlex(options: OpenAlexOptions = {}): SearchProvider {
           preprint: isPreprint(work),
           retracted: work.is_retracted === true,
           openAccess: openAccessOf(work).isOa,
-          fullTextUrl: openAccessOf(work).url,
+          fullText: fullTextOf(work),
           landingPageUrl: locationOf(work)?.landing_page_url,
           citedByCount: work.cited_by_count,
         });
@@ -110,6 +110,30 @@ function isPreprint(work: Record<string, unknown>): boolean {
     return (source as Record<string, unknown>).type === "repository";
   }
   return false;
+}
+
+/**
+ * OpenAlex records a version on the location, so it is carried through rather
+ * than defaulted to unknown. A repository copy is very often an accepted
+ * manuscript, and a passage quoted from one has to say so.
+ */
+function fullTextOf(work: Record<string, unknown>) {
+  const { isOa, url } = openAccessOf(work);
+  if (!isOa || !url) return undefined;
+  const location = locationOf(work);
+  const raw = location?.version;
+  const version = raw === "publishedVersion"
+    ? "published"
+    : raw === "acceptedVersion"
+      ? "accepted"
+      : raw === "submittedVersion"
+        ? "submitted"
+        : "unknown";
+  const source = location?.source;
+  const host = typeof source === "object" && source !== null
+    ? (source as Record<string, unknown>).type
+    : undefined;
+  return { url, version, host: typeof host === "string" ? host : undefined };
 }
 
 function openAccessOf(work: Record<string, unknown>): { isOa: boolean; url?: string } {

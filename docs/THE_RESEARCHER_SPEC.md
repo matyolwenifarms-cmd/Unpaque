@@ -426,8 +426,21 @@ Errata are not retractions. Real Crossref records carry `["erratum",
 "retraction"]` together, so erratum-only works exist — and marking a corrected
 paper as retracted tells a researcher not to cite something perfectly citable.
 
-Still to do: Unpaywall, the retrieval that turns `metadata_only` into
-`full_text`, and Phase 2's passage engine.
+**Unpaywall is in**, and with it the rule that decides whether a quotation can
+be trusted. An open copy is not automatically the version of record: an
+accepted manuscript is the text after peer review and before the publisher's
+copy-editing and typesetting, so wording can differ and pagination almost
+always does. A passage quoted from one and cited against the published record
+sends a marker to a page where the sentence is not — which from their side is
+indistinguishable from a quotation somebody made up.
+
+So the version travels with the text (`published` / `accepted` / `submitted` /
+`unknown`), a published copy buried in the location list outranks an accepted
+one Unpaywall itself preferred, and `quotationCaveat()` returns a different
+sentence for every version so none is silently equivalent to another.
+
+Still to do: retrieval and normalisation of the located full text with
+character offsets preserved, and Phase 2's passage engine on top of it.
 
 **Phase 2 — Passages.** Full-text retrieval, offset storage, hover preview,
 deep link. This is where the feature becomes the thing that was asked for.

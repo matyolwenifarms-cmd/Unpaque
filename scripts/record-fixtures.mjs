@@ -132,10 +132,59 @@ if (crossrefOk) {
   const crossrefPath = `${OUT}crossref-recorded.json`;
   writeFileSync(crossrefPath, `${JSON.stringify(crossrefMerged, null, 2)}\n`);
   console.log(`\n==> Wrote ${crossrefMerged.message.items.length} works to`);
-  console.log(`    ${crossrefPath}\n`);
+  console.log(`    ${crossrefPath}`);
 } else {
   console.error("\n  Crossref failed. OpenAlex fixtures were still written.\n");
   process.exitCode = 1;
+}
+
+// ---- Unpaywall ------------------------------------------------------------
+//
+// Unpaywall requires an email address rather than merely asking for one, so
+// this section is skipped without OPENALEX_CONTACT instead of recording a
+// directory full of 422s. The DOIs come from the OpenAlex recording above,
+// which is the point: the same works, asked a different question.
+
+if (!CONTACT) {
+  console.log("\n==> Skipping Unpaywall: it requires an email address.");
+  console.log("    Re-run with OPENALEX_CONTACT=you@example.org to record it.\n");
+} else {
+  console.log("\n==> Recording Unpaywall fixtures");
+  const dois = merged.results
+    .map((w) => (typeof w.doi === "string" ? w.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, "") : null))
+    .filter(Boolean)
+    .slice(0, 8);
+
+  const unpaywallRecorded = {};
+  for (const doi of dois) {
+    process.stdout.write(`    ${doi} ... `);
+    try {
+      const url = `https://api.unpaywall.org/v2/${encodeURIComponent(doi)}?email=${encodeURIComponent(CONTACT)}`;
+      const response = await fetch(url, { headers: { Accept: "application/json" } });
+      if (response.status === 404) {
+        console.log("not in Unpaywall");
+        continue;
+      }
+      if (!response.ok) {
+        console.log(`HTTP ${response.status}`);
+        continue;
+      }
+      const body = await response.json();
+      unpaywallRecorded[doi] = body;
+      console.log(body.is_oa ? `open (${body.oa_status})` : "closed");
+    } catch (error) {
+      console.log(`failed: ${error.message}`);
+    }
+  }
+
+  if (Object.keys(unpaywallRecorded).length > 0) {
+    const unpaywallPath = `${OUT}unpaywall-recorded.json`;
+    writeFileSync(unpaywallPath, `${JSON.stringify(unpaywallRecorded, null, 2)}\n`);
+    console.log(`\n==> Wrote ${Object.keys(unpaywallRecorded).length} lookups to`);
+    console.log(`    ${unpaywallPath}\n`);
+  } else {
+    console.error("\n  No Unpaywall lookups succeeded.\n");
+  }
 }
 console.log("Now run the suite. If it goes red, that is the adapter being wrong");
 console.log("about the real API — which is exactly what this was for:\n");
