@@ -226,7 +226,10 @@ here that looks wrong against a spec document.
    too:* provenance is NOT NULL because a source whose origin is unrecorded is
    not evidence of anything, and composite foreign keys make evidence linking
    across two investigations impossible to insert rather than merely forbidden.
-   40 SQL assertions across two suites. Next: the dossier and timeline.
+   *Timeline and contradictions done too:* §9's engine produces discrepancies that
+   cannot exist without their explanations, and §10's records cannot be stored
+   with fewer than two. 59 SQL assertions across three suites. Next: the
+   dossier, the case graph, and jobs.
 4. **The queue and worker**, before anything that transcribes, ingests or
    assembles.
 

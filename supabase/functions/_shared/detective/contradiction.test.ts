@@ -1,5 +1,8 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
+  CONTRADICTION_STATUSES,
   CONTRADICTION_TYPES,
   differsOnlyInWording,
   findNumericConflicts,
@@ -8,7 +11,12 @@ import {
   recordProblems,
   type ContradictionRecord,
 } from "./contradiction.ts";
-import { findTemporalDiscrepancies, type TimelineEvent } from "./timeline.ts";
+import {
+  DATE_CERTAINTIES,
+  findTemporalDiscrepancies,
+  TIME_ORIGINS,
+  type TimelineEvent,
+} from "./timeline.ts";
 
 describe("§10's warning, as a check rather than a caution", () => {
   it.each([
@@ -202,5 +210,45 @@ describe("what makes a record fit to show anybody", () => {
     expect([...CONTRADICTION_TYPES].sort()).toEqual([
       "direct", "documentary", "evidentiary", "geographic", "narrative", "temporal",
     ]);
+  });
+});
+
+
+const timelineMigration = readFileSync(
+  fileURLToPath(new URL("../../../migrations/20260822020000_detective_events_contradictions.sql", import.meta.url)),
+  "utf8",
+);
+
+function pgEnum(name: string): string[] {
+  const match = new RegExp(`create type public\\.${name} as enum \\(([^)]*)\\)`, "s").exec(timelineMigration);
+  if (!match) throw new Error(`no enum ${name} in the timeline migration`);
+  return [...match[1]!.matchAll(/'([^']+)'/g)].map((entry) => entry[1]!);
+}
+
+describe("the timeline and contradiction enums still agree with Postgres", () => {
+  it.each([
+    ["date_certainty", DATE_CERTAINTIES],
+    ["time_origin", TIME_ORIGINS],
+    ["contradiction_type", CONTRADICTION_TYPES],
+    ["contradiction_status", CONTRADICTION_STATUSES],
+  ])("matches %s", (name, values) => {
+    expect([...values].sort()).toEqual(pgEnum(name).sort());
+  });
+
+  it("actually reads the migration", () => {
+    expect(() => pgEnum("no_such_enum")).toThrow(/no enum/);
+  });
+
+  // The same rule, written twice on purpose — once where the engine can apply
+  // it and once where the database can. This asserts the two numbers agree, so
+  // relaxing one without the other is caught.
+  it("requires the same minimum explanations in SQL as recordProblems does", () => {
+    expect(timelineMigration).toMatch(/jsonb_array_length\(p_explanations\) >= 2/);
+    const problems = recordProblems({
+      type: "direct", sourceA: "a", sourceB: "b", difference: "d",
+      explanations: [{ summary: "s", distinguishedBy: "d" }],
+      significance: "x", status: "potential",
+    });
+    expect(problems.join(" ")).toMatch(/fewer than two/);
   });
 });
