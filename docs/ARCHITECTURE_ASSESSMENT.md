@@ -203,6 +203,12 @@ connected to real data.
 Not built: accounts, history, persistence of reports (Phase 2), the extension
 (Phase 3), documents (Phase 4), tracking (Phase 5), and both other features.
 
+## 7a. Where departures are recorded
+
+`DEPARTURES.md` holds every deliberate divergence from the supplied
+specifications, each with its argument. Read it before correcting something
+here that looks wrong against a spec document.
+
 ## 8. Recommended order
 
 1. **Finish Unpack Phase 1 against a real Supabase project.** It is the
