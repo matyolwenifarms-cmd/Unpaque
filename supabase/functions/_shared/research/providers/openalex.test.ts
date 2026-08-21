@@ -52,9 +52,11 @@ describe("the OpenAlex adapter, against synthetic fixtures", () => {
     const outcome = await openAlex().search({ text: "x" }, fetcherReturning(fixture));
     if (!outcome.ok) return;
     const retracted = outcome.references.find((r) => r.doi === "10.1000/fixture.retracted");
-    expect(retracted?.retracted).toBe(true);
-    // And it is what a reader is told first, ahead of the open full text.
-    expect(leadingCaveat(retracted!)).toBe("Retracted");
+    // Contested, not confirmed. OpenAlex is an aggregator, and a recorded
+    // search of it flagged the Lancet Commission's dementia report as
+    // retracted — which is why its word alone does not settle the question.
+    expect(retracted?.retraction).toBe("contested");
+    expect(leadingCaveat(retracted!)).toMatch(/^Possibly retracted/);
   });
 
   it("offers no full-text URL for a paywalled work", async () => {
@@ -162,11 +164,16 @@ describe.skipIf(recorded === null)("the OpenAlex adapter, against recorded respo
     }
   });
 
-  it("never leads with anything but retraction on a retracted work", async () => {
+  it("never confirms a retraction on an aggregator's word alone", async () => {
     const outcome = await openAlex().search({ text: "x" }, fetcherReturning(recorded));
     if (!outcome.ok) return;
     for (const reference of outcome.references) {
-      if (reference.retracted) expect(leadingCaveat(reference)).toBe("Retracted");
+      // Real recorded data contains at least one false positive. Nothing from
+      // this provider may reach `confirmed` without the registration agency.
+      expect(reference.retraction).not.toBe("confirmed");
+      if (reference.retraction === "contested") {
+        expect(leadingCaveat(reference)).toMatch(/^Possibly retracted/);
+      }
     }
   });
 
@@ -177,7 +184,7 @@ describe.skipIf(recorded === null)("the OpenAlex adapter, against recorded respo
     // The recorder queries is_retracted:true explicitly, so an absence here
     // means the flag stopped being read, not that none were returned.
     if (raw.some((work) => work.is_retracted === true)) {
-      expect(outcome.references.some((r) => r.retracted)).toBe(true);
+      expect(outcome.references.some((r) => r.retraction === "contested")).toBe(true);
     }
   });
 

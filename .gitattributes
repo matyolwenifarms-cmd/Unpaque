@@ -1,0 +1,22 @@
+# Line endings are pinned to LF everywhere, in the repository and in the
+# working copy.
+#
+# This is not tidiness. The sibling project has a written record of two tests
+# that passed on Linux and in CI and failed on a Windows machine, because a
+# helper split on "\n" and every line but the last kept a trailing "\r". The
+# failure read `'pcm_s16le\r' !== 'pcm_s16le'`, which looks like a codec fault
+# and is a line-ending fault, and CI running ubuntu-latest would never have
+# caught it.
+#
+# Nothing in this repository is parsed by a Windows shell — the scripts are
+# POSIX shell and Node, deliberately, so there is no file that needs CRLF.
+* text=auto eol=lf
+
+*.sh    text eol=lf
+*.mjs   text eol=lf
+*.json  text eol=lf
+*.sql   text eol=lf
+
+*.png binary
+*.jpg binary
+*.pdf binary

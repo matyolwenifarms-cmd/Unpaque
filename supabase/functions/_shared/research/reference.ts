@@ -33,6 +33,27 @@ export type Verification = (typeof VERIFICATIONS)[number];
 export const AVAILABILITIES = ["full_text", "metadata_only"] as const;
 export type Availability = (typeof AVAILABILITIES)[number];
 
+// Retraction is three-valued, not a boolean, and real data is what forced it.
+//
+// A recorded OpenAlex search flagged `is_retracted` on the Lancet Commission's
+// 2020 dementia report — a standing, heavily cited paper with no retraction
+// marker anywhere in its title, sitting alongside two genuine retractions that
+// both announce themselves in their titles. Aggregators get this wrong.
+//
+// The first design let retraction ratchet upward: if any source said retracted,
+// it was retracted, on the reasoning that a false "retracted" costs a
+// double-check and a false "fine" costs a citation. That reasoning is right
+// about a single reference and wrong about the product. A researcher shown a
+// paper they know perfectly well is fine, labelled Retracted, learns that the
+// labels are unreliable — and then disbelieves the true one further down.
+//
+// So a disagreement is shown as a disagreement. This is the Detective
+// specification's §4 CONTESTED, applied here: show the conflict, do not
+// silently choose a side. `confirmed` requires the registration agency;
+// an aggregator alone gets `contested`, which tells the researcher to look.
+export const RETRACTION_STATES = ["none", "contested", "confirmed"] as const;
+export type RetractionState = (typeof RETRACTION_STATES)[number];
+
 export interface Author {
   name: string;
   /** Provider identifier, where one was given. Never invented. */
@@ -59,7 +80,8 @@ export interface Reference {
    * styling choice — it is the difference between evidence and a claim.
    */
   preprint: boolean;
-  retracted: boolean;
+  /** `confirmed` only from a registration agency. See RETRACTION_STATES. */
+  retraction: RetractionState;
   openAccess: boolean;
   /** Where the full text can be fetched, when it is openly available. */
   fullTextUrl?: string;
@@ -106,6 +128,12 @@ export interface ProviderRecord {
   venue?: unknown;
   preprint?: unknown;
   retracted?: unknown;
+  /**
+   * True only for a source that registers retractions — Crossref, and any
+   * other registration agency. An aggregator repeating a retraction is
+   * evidence, not the record, and must not set `confirmed`.
+   */
+  retractionAuthority?: boolean;
   openAccess?: unknown;
   fullTextUrl?: unknown;
   landingPageUrl?: unknown;
@@ -128,7 +156,12 @@ export function fromProvider(record: ProviderRecord): Reference | null {
   const providerId = shortProviderId(record.providerId);
   if (!doi && !providerId) return null;
 
-  const retracted = record.retracted === true;
+  const flagged = record.retracted === true;
+  const retraction: RetractionState = flagged
+    ? record.retractionAuthority === true
+      ? "confirmed"
+      : "contested"
+    : "none";
   const openAccess = record.openAccess === true;
   const fullTextUrl = typeof record.fullTextUrl === "string" ? record.fullTextUrl : undefined;
 
@@ -151,7 +184,7 @@ export function fromProvider(record: ProviderRecord): Reference | null {
     year: typeof record.year === "number" && Number.isInteger(record.year) ? record.year : undefined,
     venue: typeof record.venue === "string" && record.venue.trim() !== "" ? record.venue.trim() : undefined,
     preprint: record.preprint === true,
-    retracted,
+    retraction,
     openAccess,
     fullTextUrl,
     landingPageUrl: typeof record.landingPageUrl === "string" ? record.landingPageUrl : undefined,
@@ -184,7 +217,11 @@ export function byRecencyThenInfluence(a: Reference, b: Reference): number {
  * thing exists outranks convenience about reading it.
  */
 export function leadingCaveat(reference: Reference): string | null {
-  if (reference.retracted) return "Retracted";
+  if (reference.retraction === "confirmed") return "Retracted";
+  // Deliberately phrased as a prompt to check rather than as a finding. Naming
+  // the disagreement is the honest thing to put in front of somebody who is
+  // about to cite it; asserting either side is not.
+  if (reference.retraction === "contested") return "Possibly retracted — sources disagree, check before citing";
   if (reference.verification === "unresolvable") return "Identifier did not resolve";
   if (reference.preprint) return "Preprint — not peer reviewed";
   if (reference.verification === "user_supplied") return "Added by you — not verified";

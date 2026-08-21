@@ -115,6 +115,10 @@ function toReference(work: Record<string, unknown>): Reference | null {
     venue: firstOf(work["container-title"]),
     preprint: isPreprint(work),
     retracted: isRetracted(work),
+    // Crossref registers retractions. Its word is the record, not a report of
+    // the record, which is the whole reason a Crossref flag confirms and an
+    // OpenAlex flag only contests.
+    retractionAuthority: true,
     // Crossref describes licences and links, not open-access status. Claiming
     // full text from a `link` entry would be a guess, and a guess here produces
     // a passage quoted from something nobody retrieved.

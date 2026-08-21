@@ -85,11 +85,16 @@ async function check(reference: Reference, resolve: Resolver): Promise<CheckResu
         reference: {
           ...reference,
           verification: "verified",
-          // Retraction only ever ratchets upward. If either source says a work
-          // is retracted, it is retracted: the cost of a wrong "retracted" is a
-          // researcher double-checking, and the cost of a wrong "fine" is a
-          // retracted paper in their literature review.
-          retracted: reference.retracted || result.retracted,
+          // The registration agency can confirm a retraction. It cannot clear
+          // one: a retraction that has been published but not yet registered is
+          // ordinary, so Crossref's silence is not evidence of absence. An
+          // aggregator's unconfirmed flag therefore stays `contested` and the
+          // researcher is told to check, rather than either side winning.
+          retraction: result.retracted
+            ? "confirmed"
+            : reference.retraction === "confirmed"
+              ? "confirmed"
+              : reference.retraction,
         },
       };
 

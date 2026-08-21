@@ -68,12 +68,16 @@ describe("the Crossref adapter", () => {
   // the check is for.
   it("marks a work carrying updated-by as retracted", async () => {
     const { references } = await search();
-    expect(references.find((r) => r.doi === "10.1000/fixture.retracted-work")?.retracted).toBe(true);
+    // Confirmed, not contested: Crossref registers retractions, so its word is
+    // the record rather than a report of it.
+    expect(references.find((r) => r.doi === "10.1000/fixture.retracted-work")?.retraction)
+      .toBe("confirmed");
   });
 
   it("does NOT mark the retraction notice itself as retracted", async () => {
     const { references } = await search();
-    expect(references.find((r) => r.doi === "10.1000/fixture.retraction-notice")?.retracted).toBe(false);
+    expect(references.find((r) => r.doi === "10.1000/fixture.retraction-notice")?.retraction)
+      .toBe("none");
   });
 
   it("never claims open access, because Crossref does not report it", async () => {
@@ -209,7 +213,44 @@ describe.skipIf(recorded === null)("the Crossref adapter, against recorded respo
     if (!outcome.ok) return;
     const raw = (recorded as { message: { items: Array<Record<string, unknown>> } }).message.items;
     if (raw.some((item) => Array.isArray(item["updated-by"]))) {
-      expect(outcome.references.some((r) => r.retracted)).toBe(true);
+      expect(outcome.references.some((r) => r.retraction === "confirmed")).toBe(true);
     }
+  });
+});
+
+// Real recorded Crossref data returns works whose `updated-by` carries an
+// erratum alongside a retraction, which means erratum-only works exist too. A
+// correction is not a withdrawal: marking a corrected paper as retracted tells
+// a researcher not to cite something perfectly citable.
+describe("errata are not retractions", () => {
+  it("does not mark a work carrying only an erratum as retracted", async () => {
+    const outcome = await crossref().search({ text: "x" }, fetcherReturning(fixture));
+    if (!outcome.ok) return;
+    const corrected = outcome.references.find((r) => r.doi === "10.1000/fixture.corrected");
+    expect(corrected).toBeDefined();
+    expect(corrected?.retraction).toBe("none");
+  });
+
+  it("still catches a retraction listed alongside an erratum", async () => {
+    // The shape real Crossref returns: ["erratum", "retraction"], in either order.
+    const mixed = {
+      status: "ok",
+      message: {
+        "total-results": 1,
+        items: [{
+          DOI: "10.1000/fixture.mixed",
+          title: ["A retracted work whose record also lists an erratum"],
+          issued: { "date-parts": [[2020]] },
+          type: "journal-article",
+          "updated-by": [
+            { type: "erratum", DOI: "10.1000/a" },
+            { type: "retraction", DOI: "10.1000/b" },
+          ],
+        }],
+      },
+    };
+    const outcome = await crossref().search({ text: "x" }, fetcherReturning(mixed));
+    if (!outcome.ok) return;
+    expect(outcome.references[0]?.retraction).toBe("confirmed");
   });
 });

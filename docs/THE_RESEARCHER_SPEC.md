@@ -403,6 +403,29 @@ fact the passage engine depends on. So there are two independent fields,
 `verification` and `availability`, with `retracted` a third axis again, and
 `leadingCaveat()` decides what a reader is told first.
 
+**Retraction is three-valued, and real data is why.** A recorded OpenAlex
+search flagged `is_retracted` on the Lancet Commission's 2020 dementia report —
+a standing, heavily cited paper — alongside two genuine retractions that both
+announce themselves in their titles. Aggregators get this wrong.
+
+The first design let retraction ratchet upward: any source saying retracted
+made it retracted, reasoning that a false positive costs a double-check and a
+false negative costs a citation. That is right about one reference and wrong
+about the product. A researcher shown a paper they know is fine, labelled
+Retracted, learns the labels are unreliable and then disbelieves the true one
+further down.
+
+So `confirmed` requires a registration agency, an aggregator alone gets
+`contested`, and the caveat reads *"Possibly retracted — sources disagree,
+check before citing"*. This is the Detective specification's §4 `CONTESTED`
+applied here: show the conflict, do not silently choose a side. The agency can
+confirm a retraction and cannot clear one, because a retraction published but
+not yet registered is ordinary and silence is not evidence of absence.
+
+Errata are not retractions. Real Crossref records carry `["erratum",
+"retraction"]` together, so erratum-only works exist — and marking a corrected
+paper as retracted tells a researcher not to cite something perfectly citable.
+
 Still to do: Unpaywall, the retrieval that turns `metadata_only` into
 `full_text`, and Phase 2's passage engine.
 

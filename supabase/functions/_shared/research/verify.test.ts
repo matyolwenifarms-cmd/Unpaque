@@ -55,18 +55,33 @@ describe("verifying references", () => {
   });
 });
 
-describe("retraction only ever ratchets upward", () => {
-  it("marks retracted when the resolver says so and the provider did not", async () => {
-    const outcome = await verifyReferences([ref({ retracted: false })], resolverReturning(found(true)));
-    expect(outcome.kept[0]?.retracted).toBe(true);
+describe("what the registration agency can and cannot settle", () => {
+  it("confirms a retraction the agency reports", async () => {
+    const outcome = await verifyReferences([ref({ retraction: "none" })], resolverReturning(found(true)));
+    expect(outcome.kept[0]?.retraction).toBe("confirmed");
   });
 
-  // The asymmetry is the point. A wrong "retracted" costs a researcher one
-  // double-check; a wrong "fine" costs them a retracted paper in a submitted
-  // literature review.
-  it("stays retracted when the provider said so and the resolver does not know", async () => {
-    const outcome = await verifyReferences([ref({ retracted: true })], resolverReturning(found(false)));
-    expect(outcome.kept[0]?.retracted).toBe(true);
+  it("upgrades a contested flag to confirmed when the agency agrees", async () => {
+    const outcome = await verifyReferences([ref({ retraction: "contested" })], resolverReturning(found(true)));
+    expect(outcome.kept[0]?.retraction).toBe("confirmed");
+  });
+
+  // The agency can confirm a retraction. It cannot clear one — a retraction
+  // published but not yet registered is ordinary, so silence is not evidence
+  // of absence. The disagreement stays visible and the researcher decides.
+  it("leaves a contested flag contested when the agency does not corroborate it", async () => {
+    const outcome = await verifyReferences([ref({ retraction: "contested" })], resolverReturning(found(false)));
+    expect(outcome.kept[0]?.retraction).toBe("contested");
+  });
+
+  it("never silently clears a confirmed retraction", async () => {
+    const outcome = await verifyReferences([ref({ retraction: "confirmed" })], resolverReturning(found(false)));
+    expect(outcome.kept[0]?.retraction).toBe("confirmed");
+  });
+
+  it("leaves a clean reference clean", async () => {
+    const outcome = await verifyReferences([ref({ retraction: "none" })], resolverReturning(found(false)));
+    expect(outcome.kept[0]?.retraction).toBe("none");
   });
 });
 

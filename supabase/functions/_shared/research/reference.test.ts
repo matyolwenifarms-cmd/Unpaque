@@ -94,8 +94,30 @@ describe("constructing a reference", () => {
     const reference = fromProvider({
       ...base, retracted: true, openAccess: true, fullTextUrl: "https://x/1.pdf",
     });
-    expect(reference?.retracted).toBe(true);
+    expect(reference?.retraction).toBe("contested");
     expect(reference?.availability).toBe("full_text");
+  });
+});
+
+describe("who is allowed to confirm a retraction", () => {
+  const base = { source: "s", title: "A title", providerId: "W1" };
+
+  it("treats an aggregator's flag as contested, not settled", () => {
+    expect(fromProvider({ ...base, retracted: true })?.retraction).toBe("contested");
+  });
+
+  it("lets a registration agency confirm one", () => {
+    expect(fromProvider({ ...base, retracted: true, retractionAuthority: true })?.retraction)
+      .toBe("confirmed");
+  });
+
+  it("says none when nobody flagged it", () => {
+    expect(fromProvider(base)?.retraction).toBe("none");
+  });
+
+  // Authority without a flag is not a claim about anything.
+  it("does not confirm a retraction nobody reported", () => {
+    expect(fromProvider({ ...base, retractionAuthority: true })?.retraction).toBe("none");
   });
 });
 
@@ -118,14 +140,33 @@ describe("the caveat a reader is shown first", () => {
   const make = (overrides: Partial<ProviderRecord>) =>
     fromProvider({ source: "s", title: "t", providerId: "W1", ...overrides })!;
 
-  it("leads with retraction, even when the full text is open", () => {
-    const reference = make({ retracted: true, openAccess: true, fullTextUrl: "https://x/1.pdf" });
+  it("leads with a confirmed retraction, even when the full text is open", () => {
+    const reference = make({
+      retracted: true, retractionAuthority: true, openAccess: true, fullTextUrl: "https://x/1.pdf",
+    });
     expect(leadingCaveat(reference)).toBe("Retracted");
   });
 
   it("leads with retraction even when the identifier did not resolve", () => {
-    const reference = { ...make({ retracted: true }), verification: "unresolvable" as const };
+    const reference = {
+      ...make({ retracted: true, retractionAuthority: true }),
+      verification: "unresolvable" as const,
+    };
     expect(leadingCaveat(reference)).toBe("Retracted");
+  });
+
+  // The wording matters as much as the state. It asks the researcher to look;
+  // it does not assert a retraction the record does not support, and it does
+  // not quietly drop a flag that might be right.
+  it("phrases a contested retraction as something to check, not as a finding", () => {
+    const caveat = leadingCaveat(make({ retracted: true }));
+    expect(caveat).toBe("Possibly retracted — sources disagree, check before citing");
+    expect(caveat).not.toBe("Retracted");
+  });
+
+  it("puts a contested retraction ahead of every lesser caveat", () => {
+    const reference = { ...make({ retracted: true, preprint: true }), verification: "unresolvable" as const };
+    expect(leadingCaveat(reference)).toMatch(/^Possibly retracted/);
   });
 
   it("warns about an unresolvable identifier before a missing full text", () => {
