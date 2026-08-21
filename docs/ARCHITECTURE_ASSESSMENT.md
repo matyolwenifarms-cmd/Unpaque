@@ -216,8 +216,11 @@ Not built: accounts, history, persistence of reports (Phase 2), the extension
    `_shared/detective/` with a drift test against the Postgres enums. 18 SQL
    assertions prove the refusals — a stranger holding a private case's id sees
    nothing, an unaccepted invitation grants nothing, revocation bites at once,
-   an editor may write and may not delete. Next: the Case + Dossier + Source +
-   Evidence slice.
+   an editor may write and may not delete. *Sources, claims and evidence done
+   too:* provenance is NOT NULL because a source whose origin is unrecorded is
+   not evidence of anything, and composite foreign keys make evidence linking
+   across two investigations impossible to insert rather than merely forbidden.
+   40 SQL assertions across two suites. Next: the dossier and timeline.
 4. **The queue and worker**, before anything that transcribes, ingests or
    assembles.
 

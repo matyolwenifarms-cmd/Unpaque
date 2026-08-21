@@ -87,14 +87,24 @@ create index if not exists case_collaborators_user_idx
 -- The access predicate
 -- ---------------------------------------------------------------------------
 
--- Policies are dropped here, before the functions they call.
+-- Policies are dropped before they are recreated, because `create policy` has
+-- no `or replace`.
 --
--- Found by the second replay pass, which is the entire reason for running
--- three. On a fresh database the defensive `drop function if exists` below is
--- a no-op and everything applies; on the second run the functions exist, the
--- policies already depend on them, and the drop fails with "cannot drop
--- function because other objects depend on it". A migration that works once
--- and breaks on redeploy passes every test that only runs it once.
+-- The functions below are deliberately NOT dropped first, which departs from
+-- the usual house habit and is the more important half of this comment.
+--
+-- Two replay passes taught it. Dropping them fails on the second run of this
+-- migration, because its own policies already depend on them. Hoisting the
+-- policy drops above the function drops fixes that — and then fails again the
+-- moment a *later* migration adds a policy calling the same function, because
+-- this migration cannot drop what it does not know about. An earlier migration
+-- can never safely drop a function that policies attach to, since policies
+-- will keep attaching to it forever.
+--
+-- `create or replace` is sufficient here and stays correct: these return a
+-- fixed type, and if some future migration needs to change one, that migration
+-- owns the drop, the cascade and the recreation of everything that depended on
+-- it.
 drop policy if exists cases_select on public.cases;
 drop policy if exists cases_insert on public.cases;
 drop policy if exists cases_update on public.cases;
@@ -109,8 +119,6 @@ drop policy if exists collaborators_select on public.case_collaborators;
 --
 -- A security definer function breaks the cycle: it runs as the owner, so the
 -- read inside it is not itself subject to the policy that called it.
-drop function if exists public.case_role_of(uuid, uuid);
-
 create or replace function public.case_role_of(p_case uuid, p_user uuid)
 returns public.case_role
 language sql
@@ -135,8 +143,6 @@ $$;
 revoke all on function public.case_role_of(uuid, uuid) from public;
 grant execute on function public.case_role_of(uuid, uuid) to authenticated, service_role;
 
-drop function if exists public.can_read_case(uuid);
-
 create or replace function public.can_read_case(p_case uuid)
 returns boolean
 language sql
@@ -156,8 +162,6 @@ $$;
 
 revoke all on function public.can_read_case(uuid) from public;
 grant execute on function public.can_read_case(uuid) to anon, authenticated, service_role;
-
-drop function if exists public.can_write_case(uuid);
 
 create or replace function public.can_write_case(p_case uuid)
 returns boolean

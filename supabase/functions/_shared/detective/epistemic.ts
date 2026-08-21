@@ -142,3 +142,103 @@ export function canWrite(role: CaseRole | null): boolean {
 
 export const CASE_VISIBILITIES = ["private", "published"] as const;
 export type CaseVisibility = (typeof CASE_VISIBILITIES)[number];
+
+// ---------------------------------------------------------------------------
+// §6 and §10 vocabulary. Mirrored from the sources/evidence migration and
+// drift-tested against it for the same reason as everything above.
+// ---------------------------------------------------------------------------
+
+export const SOURCE_KINDS = [
+  "primary_document",
+  "official_record",
+  "testimony",
+  "video",
+  "audio",
+  "image",
+  "reporting",
+  "archive",
+  "dataset",
+  "correspondence",
+  "other",
+] as const;
+
+export type SourceKind = (typeof SOURCE_KINDS)[number];
+
+/**
+ * §6's source hierarchy, strongest first, and configurable as the
+ * specification requires.
+ *
+ * It is an ordering rather than a score. A number would be treated as a
+ * measurement of reliability, and this is nothing of the sort: an official
+ * record can be wrong and a piece of reporting can be impeccable. What the
+ * ordering encodes is proximity to the event, which is a property of the
+ * category rather than a judgement about any particular document.
+ */
+export const DEFAULT_SOURCE_HIERARCHY: readonly SourceKind[] = [
+  "primary_document",
+  "official_record",
+  "testimony",
+  "video",
+  "audio",
+  "image",
+  "correspondence",
+  "dataset",
+  "reporting",
+  "archive",
+  "other",
+];
+
+export const EVIDENCE_CLASSIFICATIONS = [
+  "supports",
+  "contradicts",
+  "contextualises",
+  "undermines_source",
+  "inconclusive",
+] as const;
+
+export type EvidenceClassification = (typeof EVIDENCE_CLASSIFICATIONS)[number];
+
+export interface EvidenceLike {
+  sourceId: string;
+  classification: EvidenceClassification;
+  /** Same bytes retrieved twice share this. Absent means unknown, not unique. */
+  contentHash?: string | null;
+}
+
+/**
+ * How many *independent* sources support a proposition.
+ *
+ * §3: corroboration matters, and repeated copying is not independent
+ * corroboration. Two sources with the same content hash are the same bytes
+ * fetched twice — a wire story printed in four papers is one source, and
+ * counting it as four is the classic way a claim comes to look far better
+ * supported than it is.
+ *
+ * Sources with no hash count separately, because unknown is not the same as
+ * identical and refusing to count them would penalise material that simply has
+ * not been hashed yet.
+ */
+export function independentSupport(evidence: readonly EvidenceLike[]): number {
+  const hashes = new Set<string>();
+  let unhashed = 0;
+  for (const item of evidence) {
+    if (item.classification !== "supports") continue;
+    if (item.contentHash) hashes.add(item.contentHash);
+    else unhashed += 1;
+  }
+  return hashes.size + unhashed;
+}
+
+/**
+ * Whether the evidence permits calling something corroborated.
+ *
+ * Deliberately conservative and deliberately not automatic: this answers "may
+ * a person mark this corroborated", not "mark it". §4 keeps human authority
+ * explicit for consequential investigative decisions, and quietly promoting a
+ * claim because a count crossed two would be exactly the collapse into truth
+ * the epistemic model exists to prevent.
+ */
+export function mayBeCorroborated(evidence: readonly EvidenceLike[]): boolean {
+  if (evidence.some((item) => item.classification === "contradicts")) return false;
+  return independentSupport(evidence) >= 2;
+}
