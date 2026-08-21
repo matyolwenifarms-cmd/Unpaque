@@ -439,8 +439,32 @@ So the version travels with the text (`published` / `accepted` / `submitted` /
 one Unpaywall itself preferred, and `quotationCaveat()` returns a different
 sentence for every version so none is silently equivalent to another.
 
-Still to do: retrieval and normalisation of the located full text with
-character offsets preserved, and Phase 2's passage engine on top of it.
+**Normalisation and the passage engine are in** (`fulltext/`), which is Phase 2
+arriving early because it is pure logic and needed no network.
+
+`normalise()` turns extracted text into text a passage can be selected from —
+collapsing the whitespace a column layout leaves behind, rejoining words split
+across line breaks by typesetting, folding typographic quotes — while carrying
+an offset per character back to the source, so a deep link still points at the
+right place in the original.
+
+`selectPassage()` is where the guarantee lives. The model returns
+`{reference_id, start, end, why}` and the server slices; `passage.text` is
+assigned exactly once in the module, from `doc.text.slice()`. **The tool schema
+has no field a quotation could be written into**, and `reference_id` is an enum
+of the ids actually retrieved this session, so citing something never found is
+a malformed tool call rather than a mistake for something downstream to catch.
+A model inclined to write a supporting sentence has nowhere to put it, which is
+a stronger guarantee than any instruction telling it not to.
+
+Spans widen to whole sentences before display — a span clipped mid-clause reads
+as carelessness about the source, and widening can only add context the author
+wrote. `passageIsVerbatim()` re-checks the slice against the source, so the
+guarantee is a fact about each object rather than an argument about the design.
+
+Still to do: fetching and extracting the located documents (a job, not a
+request — see `ARCHITECTURE_ASSESSMENT.md` §3), and mapping a source offset to
+a page and highlight rectangle for PDFs.
 
 **Phase 2 — Passages.** Full-text retrieval, offset storage, hover preview,
 deep link. This is where the feature becomes the thing that was asked for.
