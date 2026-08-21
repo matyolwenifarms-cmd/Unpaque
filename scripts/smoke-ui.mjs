@@ -43,7 +43,7 @@ function findChromium() {
 // shell that is running this.
 const PORT = 4100 + Math.floor(Math.random() * 800);
 const BASE = `http://127.0.0.1:${PORT}`;
-const ROUTES = ["/", "/research", "/sign-in"];
+const ROUTES = ["/", "/research", "/cases", "/sign-in"];
 
 // A hard ceiling on the whole run. A browser that hangs is worse than one that
 // fails: in CI it burns the job's entire time budget and reports nothing.

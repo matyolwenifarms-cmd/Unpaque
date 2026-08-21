@@ -1,4 +1,6 @@
 import { NavLink, Route, Routes } from "react-router-dom";
+import CaseView from "@/pages/CaseView.tsx";
+import Cases from "@/pages/Cases.tsx";
 import Research from "@/pages/Research.tsx";
 import SignIn from "@/pages/SignIn.tsx";
 import Unpack from "@/pages/Unpack.tsx";
@@ -8,6 +10,7 @@ import { cn } from "@/lib/utils.ts";
 const TABS = [
   { to: "/", label: "Unpack", blurb: "communication diagnostics" },
   { to: "/research", label: "The Researcher", blurb: "literature" },
+  { to: "/cases", label: "The Detective", blurb: "investigations" },
 ];
 
 export default function App() {
@@ -19,7 +22,7 @@ export default function App() {
         <h1 className="text-3xl font-bold tracking-tight">
           <span className="text-accent">Un</span>paque
         </h1>
-        <nav className="mt-4 flex gap-2" aria-label="Features">
+        <nav className="mt-4 flex flex-wrap gap-2" aria-label="Features">
           {TABS.map((tab) => (
             <NavLink
               key={tab.to}
@@ -59,6 +62,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Unpack />} />
         <Route path="/research" element={<Research />} />
+        <Route path="/cases" element={<Cases />} />
+        <Route path="/cases/:id" element={<CaseView />} />
         <Route path="/sign-in" element={<SignIn />} />
       </Routes>
     </div>

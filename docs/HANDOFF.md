@@ -18,7 +18,7 @@ domain models.
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
 | **The Researcher** | Literature search, verified references, passages | Phase 1–2 core complete | **Nothing** |
-| **The Detective** | Investigative intelligence — cases, evidence, timeline | Phase 0–1 complete | Nothing yet |
+| **The Detective** | Investigative intelligence — cases, evidence, timeline | Phase 0–1 + case UI | Nothing yet |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
 Perloq was an earlier name for the feature, not a separate product. Nothing in
@@ -53,7 +53,9 @@ The distinction matters more than the totals.
   `npm run research:record` is run with `OPENALEX_CONTACT` set.
 - **`/research` has never run against the deployed function.** The logic is
   tested; the endpoint has not been exercised in anger.
-- **The Detective has no interface.** Schema, engines and tests only.
+- **The Detective's UI has never seen a real row.** The case list, case view and
+  epistemic badges are component-tested against mocked queries and boot in a
+  browser; no case has ever been created against a live database.
 - **Auth has never run against a real Supabase project.** The session hook, the
   gate and the sign-in page are component-tested against a mocked client, and
   the routes boot in a browser — but no magic link has ever been sent or
