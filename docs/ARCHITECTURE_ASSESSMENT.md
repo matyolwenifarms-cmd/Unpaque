@@ -172,6 +172,20 @@ only as honest as the bibliographic source behind it.
   the same enum-and-cite discipline as Unpack's frameworks. An analysis that
   cannot name its paradigm should not render.
 
+### A known limit of the local harness
+
+Migrations are verified against a bare Postgres 16 as a genuine superuser, and
+`force row level security` has no effect on superusers. Supabase's `postgres`
+role is not one, so a table that wrongly FORCEs RLS breaks there — a security
+definer function reading it has its own query filtered to nothing, presenting as
+"the case does not exist" for everybody including the owner — while passing
+silently here.
+
+`detective_privacy_test.sql` therefore asserts `relforcerowsecurity` is false
+directly rather than relying on behaviour. Any future suite touching RLS should
+do the same, and `supabase/tests/harness.sql` records the gap where somebody
+writing one will see it.
+
 ## 7. What exists in this repository today
 
 Unpack Phase 1, built vertically per §0's implementation rule — data model,
@@ -197,9 +211,13 @@ Not built: accounts, history, persistence of reports (Phase 2), the extension
    deployment yet.
 2. **Write The Researcher's specification**, with §6 settled first. It is the
    least documented and the most dangerous.
-3. **The Detective Phase 0–1** — module boundary, domain types, migrations,
-   case privacy and server-side authorisation *before* any investigative data is
-   exposed, then the Case + Dossier + Source + Evidence slice.
+3. **The Detective Phase 0–1.** *Phase 0 done:* `cases`, `case_collaborators`,
+   the access predicates and their RLS, plus §4's epistemic model in
+   `_shared/detective/` with a drift test against the Postgres enums. 18 SQL
+   assertions prove the refusals — a stranger holding a private case's id sees
+   nothing, an unaccepted invitation grants nothing, revocation bites at once,
+   an editor may write and may not delete. Next: the Case + Dossier + Source +
+   Evidence slice.
 4. **The queue and worker**, before anything that transcribes, ingests or
    assembles.
 
