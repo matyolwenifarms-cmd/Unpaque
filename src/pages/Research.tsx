@@ -84,9 +84,9 @@ function Instructions({ hasData }: { hasData: boolean }) {
         className="w-full resize-y rounded-lg border border-rule bg-paper px-3 py-2 outline-none focus:border-accent"
       />
       <p className="mt-2 text-sm leading-relaxed text-accent">
-        Nothing acts on this yet. Report writing needs a language model, which is not connected in
-        this build — so what you type here is not sent anywhere and nothing will come back. The
-        analysis above is complete and needs no model at all.
+        Nothing acts on this yet, and what you type here is not sent anywhere. The results section
+        above is already written from your analyses and needs no model — what is missing is the
+        discussion, and that needs one.
       </p>
     </section>
   );

@@ -155,6 +155,10 @@ describe("the two stages", () => {
     await user.click(screen.getByRole("button", { name: /analyse data/i }));
     await user.type(screen.getByLabelText(/further instructions/i), "Write this up in APA style.");
     expect(screen.getByText(/Nothing acts on this yet/i)).toBeInTheDocument();
-    expect(screen.getByText(/not sent anywhere and nothing will come back/i)).toBeInTheDocument();
+    expect(screen.getByText(/not sent anywhere/i)).toBeInTheDocument();
+    // Narrowed as the feature grew: the results section is written, so the
+    // disclosure now names the discussion as the part that needs a model
+    // rather than claiming nothing works.
+    expect(screen.getByText(/the discussion, and that needs one/i)).toBeInTheDocument();
   });
 });

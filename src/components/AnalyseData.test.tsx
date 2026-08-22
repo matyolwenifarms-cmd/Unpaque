@@ -85,8 +85,11 @@ describe("choosing a procedure", () => {
     const user = await choose(TWO_ARMS, "score", "arm");
     await user.click(screen.getByRole("radio", { name: "Independent-samples t-test" }));
     await user.click(screen.getByRole("button", { name: /run it/i }));
-    expect(screen.getByText(/Independence of observations/)).toBeInTheDocument();
-    expect(screen.getByText(/no statistic can recover it/)).toBeInTheDocument();
+    // Scoped: the phrase is legitimately in the finding and in the results
+    // section, and getAllByText would stop asserting it is in the finding.
+    const finding = screen.getByLabelText(/Welch's t-test/i);
+    expect(within(finding).getByText(/Independence of observations/)).toBeInTheDocument();
+    expect(within(finding).getByText(/no statistic can recover it/)).toBeInTheDocument();
   });
 
   it("will not run until a procedure that fits is chosen", () => {
@@ -126,5 +129,67 @@ describe("the interpretation is checked against the design", () => {
     await user.click(screen.getByLabelText(/randomly allocated/i));
     await user.type(screen.getByLabelText(/interpretation/i), "The condition causes higher scores.");
     expect(screen.queryByText(/cannot support a claim about cause/)).toBeNull();
+  });
+});
+
+describe("the results section", () => {
+  async function runOne(user: ReturnType<typeof userEvent.setup>, a: string, b: string, procedure: string) {
+    await user.selectOptions(screen.getByLabelText(/first column/i), a);
+    await user.selectOptions(screen.getByLabelText(/second column/i), b);
+    await user.click(screen.getByRole("radio", { name: procedure }));
+    await user.click(screen.getByRole("button", { name: /run it/i }));
+  }
+
+  it("appears once an analysis has been run, and not before", async () => {
+    const user = userEvent.setup();
+    render(<AnalyseData dataset={TWO_ARMS} />);
+    expect(screen.queryByLabelText(/results section/i)).toBeNull();
+
+    await runOne(user, "score", "arm", "Independent-samples t-test");
+    const results = screen.getByLabelText(/results section/i);
+    expect(within(results).getByText(/## Results/)).toBeInTheDocument();
+  });
+
+  // A results section held as text drifts from the analyses the moment one is
+  // re-run. Here it is a function of the findings, so there is nothing to drift.
+  it("keeps every analysis, not only the last", async () => {
+    const user = userEvent.setup();
+    render(<AnalyseData dataset={TWO_ARMS} />);
+    await runOne(user, "score", "arm", "Independent-samples t-test");
+    await runOne(user, "score", "age", "Pearson correlation");
+
+    expect(screen.getByText(/2 analyses run on this file/i)).toBeInTheDocument();
+    const results = screen.getByLabelText(/results section/i);
+    expect(results.textContent).toMatch(/Welch's t-test/);
+    expect(results.textContent).toMatch(/Pearson correlation/);
+  });
+
+  it("writes p without a leading zero, which is what APA asks for", async () => {
+    const user = userEvent.setup();
+    render(<AnalyseData dataset={TWO_ARMS} />);
+    await runOne(user, "score", "arm", "Independent-samples t-test");
+    const results = screen.getByLabelText(/results section/i);
+    expect(results.textContent).toMatch(/\*p\* [<=] \.\d|p\* < \.001/);
+    expect(results.textContent).not.toMatch(/\*p\* = 0\./);
+  });
+
+  // §8. Interpretation is the researcher's argument, and a tool that drafted it
+  // would be one positioning decision from producing work somebody submits as
+  // their own.
+  it("stops at the results and writes no discussion", async () => {
+    const user = userEvent.setup();
+    render(<AnalyseData dataset={TWO_ARMS} />);
+    await runOne(user, "score", "arm", "Independent-samples t-test");
+    const results = screen.getByLabelText(/results section/i);
+    expect(results.textContent).not.toMatch(/## Discussion|we conclude|this suggests/i);
+    expect(screen.getByText(/the discussion is your argument/i)).toBeInTheDocument();
+  });
+
+  it("clears the analyses on request", async () => {
+    const user = userEvent.setup();
+    render(<AnalyseData dataset={TWO_ARMS} />);
+    await runOne(user, "score", "arm", "Independent-samples t-test");
+    await user.click(screen.getByRole("button", { name: /clear them/i }));
+    expect(screen.queryByLabelText(/results section/i)).toBeNull();
   });
 });

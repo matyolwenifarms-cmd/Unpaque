@@ -8,7 +8,9 @@ import {
 } from "@shared/research/analytics/procedures.ts";
 import type { Finding } from "@shared/research/analytics/result.ts";
 import { DESIGN_KINDS, checkCausalClaim, type Design, type DesignKind } from "@shared/research/analytics/causal.ts";
+import { describe as summarise, type Descriptives } from "@shared/research/analytics/describe.ts";
 import { FindingView } from "@/components/FindingView.tsx";
+import { ResultsSection } from "@/components/ResultsSection.tsx";
 import { cn } from "@/lib/utils.ts";
 
 /**
@@ -32,7 +34,11 @@ export function AnalyseData({ dataset }: { dataset: Dataset }) {
   const [designKind, setDesignKind] = useState<DesignKind>("correlational");
   const [randomised, setRandomised] = useState(false);
   const [strategy, setStrategy] = useState("");
-  const [finding, setFinding] = useState<Finding | null>(null);
+  // A list, not one. A results section is written from every analysis that was
+  // run, and a workspace that forgot the previous one would make the write-up
+  // a copy-and-paste exercise — which is the administration this feature exists
+  // to take off the researcher.
+  const [findings, setFindings] = useState<Finding[]>([]);
   const [problem, setProblem] = useState<string | null>(null);
 
   const a = usable.find((column) => column.name === aName) ?? null;
@@ -48,15 +54,42 @@ export function AnalyseData({ dataset }: { dataset: Dataset }) {
 
   function onRun() {
     setProblem(null);
-    setFinding(null);
     if (!procedure || !a || !b) return;
     const count = Number.parseInt(comparisons, 10);
     const outcome = run(dataset, procedure, a.name, b.name, {
       comparisons: Number.isFinite(count) && count > 0 ? count : 1,
     });
-    if (outcome.ok) setFinding(outcome.finding);
-    else setProblem("reason" in outcome ? outcome.reason : "That procedure could not run.");
+    if (!outcome.ok) {
+      setProblem("reason" in outcome ? outcome.reason : "That procedure could not run.");
+      return;
+    }
+    // Newest first, so the analysis just run is the one on screen. The results
+    // section reverses this — a write-up reads in the order the work was done.
+    setFindings((current) => [outcome.finding, ...current]);
   }
+
+  /**
+   * Descriptives for every numeric column the analyses actually used.
+   *
+   * Derived from the findings rather than from the whole file: a Table 1
+   * listing every column in the spreadsheet, including the participant id and
+   * the timestamp, is a table nobody reads and a reviewer queries.
+   */
+  const described: Array<{ label: string; stats: Descriptives }> = findings.length === 0
+    ? []
+    : [aName, bName]
+        .filter((name, index, all) => name !== "" && all.indexOf(name) === index)
+        .map((name) => {
+          const column = dataset.columns.find((c) => c.name === name);
+          if (!column || column.kind !== "numeric") return null;
+          // The raw cells, not `numericValues`. Filtering first hides the gaps
+          // from `describe`, so Table 1 reported Missing 0 for a column that
+          // had dropped a value — a table stating the opposite of the truth
+          // about its own completeness.
+          const stats = summarise(column.values);
+          return stats ? { label: column.name, stats } : null;
+        })
+        .filter((entry): entry is { label: string; stats: Descriptives } => entry !== null);
 
   return (
     <div className="space-y-4">
@@ -193,8 +226,34 @@ export function AnalyseData({ dataset }: { dataset: Dataset }) {
         )}
       </section>
 
-      {finding && <FindingView finding={finding} />}
-      {finding && <Interpretation design={design} />}
+      {findings.length > 0 && (
+        <div className="flex items-center justify-between text-sm text-muted">
+          {/* One expression, not three. Interpolating the plural separately
+              splits the sentence across text nodes, so it reads correctly and
+              matches nothing — including a screen reader's flat rendering. */}
+          <span>{`${findings.length} ${findings.length === 1 ? "analysis" : "analyses"} run on this file.`}</span>
+          <button
+            type="button"
+            onClick={() => setFindings([])}
+            className="rounded-md border border-rule px-3 py-1.5 hover:bg-paper"
+          >
+            Clear them
+          </button>
+        </div>
+      )}
+
+      {findings.map((finding, index) => (
+        <FindingView key={findings.length - index} finding={finding} />
+      ))}
+
+      {findings.length > 0 && (
+        <ResultsSection
+          findings={[...findings].reverse()}
+          descriptives={described}
+          rowsInFile={dataset.rows}
+        />
+      )}
+      {findings.length > 0 && <Interpretation design={design} />}
     </div>
   );
 }
