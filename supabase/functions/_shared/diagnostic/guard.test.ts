@@ -11,6 +11,15 @@ import type { DiagnosticReport } from "./report.ts";
 function report(overrides: Partial<DiagnosticReport> = {}): DiagnosticReport {
   return {
     mode: "decode",
+    verdict: "The message is shaped as an update and works as a refusal.",
+    annotations: [{
+      start: 0,
+      end: 8,
+      device: "agentless_framing",
+      framework: "critical_discourse",
+      aspect: "responsibility",
+      note: "The opening reports a state of affairs rather than naming a decision.",
+    }],
     sections: [
       {
         id: "act",
@@ -74,7 +83,11 @@ describe("the guard refuses claims about a mind", () => {
     ["the phrasing makes the reader feel responsible", "makes-feel"],
     ["the apology comes across as grudging", "comes-across"],
     ["the reader's impression is one of delay", "reader-reaction-noun"],
-    ["it leaves the reader without a date", "leaves-the-reader"],
+    // Was "it leaves the reader without a date", which this rule used to refuse
+    // and no longer does. That sentence asserts what the text omits, not what
+    // anybody feels — see the narrowing in guard.ts. These are states.
+    ["it leaves the reader uncertain about the timing", "leaves-the-reader"],
+    ["it leaves the reader with a sense of being managed", "leaves-the-reader"],
   ])("refuses %s", (text, ruleId) => {
     const violations = inspect(text, "f");
     expect(violations.map((v) => v.ruleId)).toContain(ruleId);
@@ -179,5 +192,63 @@ describe("the retry instruction", () => {
     expect(instruction).toContain("sections.act.summary");
     expect(instruction).toContain("will feel");
     expect(instruction).toContain("Keep every other field");
+  });
+});
+
+// The deployed product's own prose is the register this is built to match, so
+// the guard has to accept it. The `leaves-the-reader` rule did not, and it took
+// the stub tripping it to notice: the rule banned a frame rather than a claim.
+describe("the register the running site actually writes in", () => {
+  const FROM_THE_SITE = [
+    "The core act is an announcement of layoffs, with a secondary act of reassurance.",
+    "The passive construction reports the outcome without naming who chose it, so the reader learns what happened but not who is answerable for it.",
+    "People become positions, and dismissal becomes impact. Converting the action into a noun removes both the actor and the specific event, which makes the scale of the change harder to picture.",
+    "A single adverb carries the emotional weight of the announcement. It registers regret without attaching that regret to anyone who made the call, and it does no work to explain the reasoning.",
+    "A value claim sits directly beside the loss it follows. It is stated rather than evidenced, so it emphasises intent while the concrete question of severance, notice, or support stays omitted.",
+    "This message announces job losses while removing any named person from the decision that caused them.",
+  ];
+
+  it.each(FROM_THE_SITE)("passes: %s", (prose) => {
+    expect(inspect(prose, "annotations[0].note")).toEqual([]);
+  });
+
+  // The counterpart. Allowing the absence-of-information frame must not have
+  // opened the door to the thing the rule is for.
+  it.each([
+    "leaves the reader anxious about their job",
+    "leaves the reader with a sense of betrayal",
+    "leaves the recipient without confidence in the sender",
+    "leaves the audience feeling dismissed",
+  ])("still refuses: %s", (prose) => {
+    expect(inspect(prose, "annotations[0].note").length).toBeGreaterThan(0);
+  });
+});
+
+// One sentence of the site's own prose is refused, on purpose, and this records
+// which and why rather than quietly loosening the rule to fit.
+//
+// "The timing commitment is deliberately unbounded" claims the sender chose to
+// leave it so. That is a claim about a mind, and it is the exact thing the
+// intent rules exist to refuse — §12's boundary does not have an exception for
+// prose the product already ships. The finding survives the correction intact:
+// "the commitment carries no date, threshold or named condition" says
+// everything the reader needs and asserts nothing about anyone's intention.
+describe("where the site's prose crosses Unpaque's own boundary", () => {
+  it("refuses 'deliberately', even in a sentence the deployed product writes", () => {
+    const violations = inspect(
+      "The timing commitment is deliberately unbounded.",
+      "annotations[0].note",
+    );
+    expect(violations.map((v) => v.ruleId)).toContain("intent-adverb");
+    expect(violations[0]?.kind).toBe("intent");
+  });
+
+  it("accepts the same finding stated structurally", () => {
+    expect(
+      inspect(
+        "The commitment carries no date, threshold or named condition, so an open phrase keeps the sender free while leaving the reader without a point to plan around.",
+        "annotations[0].note",
+      ),
+    ).toEqual([]);
   });
 });

@@ -62,8 +62,22 @@ export const GUARD_RULES: readonly GuardRule[] = [
   {
     id: "leaves-the-reader",
     kind: "reader_state",
-    pattern: /\bleaves?\s+the\s+(reader|recipient|audience)\b/i,
-    why: "asserts an effect on a reader",
+    // Narrowed, and the narrowing is the interesting part.
+    //
+    // The rule used to ban "leaves the reader" outright, and it was wrong: it
+    // banned a frame rather than a claim. "Leaves the reader anxious" asserts
+    // a state nobody can see. "Leaves the reader without a point to plan
+    // around" asserts that the text supplies no date — which is a fact about
+    // the text, stated from where the reader stands, and is some of the best
+    // prose the product writes. The deployed site uses it, and the rule as
+    // written would have refused the register this is being built to match.
+    //
+    // So: the absence-of-information frame is allowed, and only that frame.
+    // "with a sense of", "without confidence" and the rest are still states
+    // wearing the frame, so the second clause takes them back.
+    pattern:
+      /\bleaves?\s+the\s+(reader|recipient|audience)\s+(?!without\s|with\s+no\s|with\s+nothing\b)|\bleaves?\s+the\s+(reader|recipient|audience)\s+with(out|\s+no)?\s+(a\s+)?(sense|feeling|impression|confidence|trust|doubt|certainty|belief|suspicion)\b/i,
+    why: "asserts a reader's state rather than what the text does or does not supply",
   },
 
   // ---- Ruling on honesty or character ------------------------------------
@@ -170,6 +184,13 @@ export function inspect(text: string, field: string): Violation[] {
  */
 export function guardedFields(report: DiagnosticReport): Array<[string, string]> {
   const fields: Array<[string, string]> = [];
+  // The verdict first, because it is the one line a reader who reads nothing
+  // else will read — and therefore the single worst place for a claim about
+  // somebody's motive to survive.
+  fields.push(["verdict", report.verdict]);
+  for (const [index, annotation] of report.annotations.entries()) {
+    fields.push([`annotations[${index}].note`, annotation.note]);
+  }
   for (const section of report.sections) {
     fields.push([`sections.${section.id}.summary`, section.summary]);
     for (const [index, finding] of section.findings.entries()) {

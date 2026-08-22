@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { MAX_INPUT_CHARS, MIN_INPUT_CHARS } from "@shared/diagnostic/analyse.ts";
 import type { DiagnosticReport, Mode } from "@shared/diagnostic/report.ts";
 import { requestAnalysis } from "@/lib/api.ts";
+import { DEPTHS, type Depth } from "@shared/diagnostic/devices.ts";
 import { ReportView } from "@/components/ReportView.tsx";
 import { cn } from "@/lib/utils.ts";
 
@@ -18,6 +19,17 @@ export default function Unpack() {
   const [report, setReport] = useState<DiagnosticReport | null>(null);
   const [stub, setStub] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [depth, setDepth] = useState<Depth>("advanced");
+  /**
+   * The text the report's offsets point into.
+   *
+   * Its own state, not `text`. Every annotation is a pair of offsets into what
+   * was submitted, and the box stays editable while the report is on screen —
+   * so rendering against `text` would silently shift every highlight the
+   * moment somebody typed another word, and shift it into a message the
+   * analysis never saw.
+   */
+  const [analysed, setAnalysed] = useState("");
 
   const tooShort = text.trim().length > 0 && text.trim().length < MIN_INPUT_CHARS;
   const tooLong = text.length > MAX_INPUT_CHARS;
@@ -33,6 +45,9 @@ export default function Unpack() {
     const result = await requestAnalysis(text, mode);
     if (result.status === "ok") {
       setReport(result.report);
+      // From the response, never from the box. The server trims before
+      // analysing, so its copy is the one the offsets index.
+      setAnalysed(result.source);
       setStub(result.stub);
     } else setError(result.message);
     setBusy(false);
@@ -66,6 +81,35 @@ export default function Unpack() {
               <span className="block text-sm text-muted">{option.blurb}</span>
             </button>
           ))}
+        </div>
+
+        {/* Basic / Advanced, as the running site sets it: a slash, not a pill,
+            because it is a setting on the analysis rather than a third thing
+            to choose between. It changes the words for each device and nothing
+            else — same spans, same order, same explanations — which is why it
+            is safe to flip after a report is on screen without re-analysing. */}
+        <div role="group" aria-label="Depth" className="mb-4 flex items-center gap-2 text-sm">
+          {DEPTHS.map((option, index) => (
+            <span key={option} className="flex items-center gap-2">
+              {index > 0 && <span aria-hidden className="text-muted">/</span>}
+              <button
+                type="button"
+                aria-pressed={depth === option}
+                onClick={() => setDepth(option)}
+                className={cn(
+                  "rounded px-1 capitalize transition-colors",
+                  depth === option ? "font-medium text-ink" : "text-muted hover:text-ink",
+                )}
+              >
+                {option}
+              </button>
+            </span>
+          ))}
+          <span className="ml-2 text-xs text-muted">
+            {depth === "advanced"
+              ? "Names each device by its term of art."
+              : "The same findings, without the terminology."}
+          </span>
         </div>
 
         <label htmlFor="text" className="sr-only">
@@ -125,7 +169,7 @@ export default function Unpack() {
             </p>
           </div>
         )}
-        {report && <ReportView report={report} />}
+        {report && <ReportView report={report} source={analysed} depth={depth} />}
       </div>
 
       <footer className="mt-12 border-t border-rule pt-5 text-sm leading-relaxed text-muted">

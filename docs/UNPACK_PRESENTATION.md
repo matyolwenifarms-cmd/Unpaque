@@ -165,7 +165,48 @@ If Basic output is wanted as evidence, it has to come from an actual run —
 paste the layoffs paragraph into the box with Basic selected and screenshot
 what comes back, rather than the example beneath it.
 
-## 7. Still open
+## 7. Built
+
+The layout, the anchoring, the device layer and the depth switch are in.
+
+- `_shared/diagnostic/annotate.ts` — annotations are offsets. `segments()`
+  splits the whole text into highlighted and plain pieces, and a test asserts
+  concatenating them reconstructs the input exactly.
+- The tool schema gives an annotation `start`, `end`, `device`, `framework`,
+  `aspect` and `note` — **and no field a phrase could be written into**. A test
+  enumerates the properties and refuses `text`, `quote`, `phrase`, `span` and
+  `excerpt`.
+- The four aspects survive as a field on each annotation rather than as four
+  boxes: they are what made the analysis cover responsibility instead of
+  producing four remarks about tone.
+- `ReportView` renders annotated source → verdict → per-span explanations, then
+  the four aspects beneath.
+- The depth switch is one lookup, so it can be flipped after a report is on
+  screen without re-analysing. A test asserts no second call.
+
+Two things the build turned up that the screenshots could not:
+
+**The offsets index the server's trimmed copy.** `analyse()` trims before
+sending, so the browser holding what was typed would shift every highlight by
+however much whitespace was removed — invisibly, because the thing that moved
+them cannot be seen. The response now carries `source`, and a test shows the
+same offsets picking out the wrong text against the untrimmed input.
+
+**The guard refused the site's own register.** `leaves-the-reader` banned the
+frame rather than the claim: "leaves the reader anxious" asserts a state nobody
+can see, "leaves the reader without a point to plan around" asserts that the
+text supplies no date. The rule is narrowed to the absence-of-information frame
+and the site's paragraphs are now test fixtures the guard must accept.
+
+One sentence of the site's prose is still refused, deliberately: **"The timing
+commitment is deliberately unbounded."** *Deliberately* claims the sender chose
+to, which is exactly what the intent rules exist to refuse, and the boundary
+does not get an exception for prose the product already ships. The finding
+survives the correction intact — "the commitment carries no date, threshold or
+named condition" says everything the reader needs and asserts nothing about
+anyone's intention. There is a test for both halves.
+
+## 8. Still open
 - Which diagnostics Advanced adds that Basic does not show at all — "deeper
   diagnostics" is the site's phrase and its content is unknown.
 - Whether Draft's rewrite is a third card or replaces the verdict.

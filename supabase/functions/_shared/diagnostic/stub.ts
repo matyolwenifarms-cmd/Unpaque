@@ -1,3 +1,4 @@
+import type { Annotation } from "./annotate.ts";
 import type { DiagnosticReport, Mode } from "./report.ts";
 
 // A fixed report, returned when UNPAQUE_MODEL=stub, so the interface, the
@@ -15,9 +16,46 @@ import type { DiagnosticReport, Mode } from "./report.ts";
 // contract or the boundary changes, the tests below fail and this has to be
 // brought along too.
 
-export function stubReport(mode: Mode): DiagnosticReport {
+/**
+ * A span chosen by counting, not by reading.
+ *
+ * The stub has to produce annotations or the annotated view — the main thing
+ * the stub exists to exercise — is never rendered at all. But an annotation is
+ * a claim that *this phrase* does *that thing*, and the stub has not read the
+ * text, so any span it picks is arbitrary.
+ *
+ * So it takes the opening words, and its note says in its first clause that
+ * the span was chosen by position. A reader must not be able to look at a
+ * highlight and think something found it.
+ */
+function positionalSpan(source: string): Annotation[] {
+  const text = source.trimEnd();
+  if (text.trim().length < 12) return [];
+
+  // The first word boundary at or after 24 characters, so the span never ends
+  // mid-word — which the parser refuses, and rightly.
+  let end = Math.min(24, text.length);
+  while (end < text.length && /[\p{L}\p{N}]/u.test(text[end]!)) end += 1;
+  const start = text.length - text.trimStart().length;
+  if (end - start < 2) return [];
+
+  return [{
+    start,
+    end,
+    device: "agentless_framing",
+    framework: "critical_discourse",
+    aspect: "responsibility",
+    note:
+      "This span was chosen by counting characters, not by reading them. In a real report the highlight marks a construction that was actually found, and this paragraph says what it does and what the text does not supply.",
+  }];
+}
+
+export function stubReport(mode: Mode, source: string): DiagnosticReport {
   const report: DiagnosticReport = {
     mode,
+    verdict:
+      "This is a fixed example and not an analysis: Unpack has not read the text you submitted.",
+    annotations: positionalSpan(source),
     sections: [
       {
         id: "act",

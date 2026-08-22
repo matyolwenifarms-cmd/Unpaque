@@ -1,24 +1,25 @@
+import { ASPECT_IDS, ASPECT_TITLES, type AspectId } from "./aspects.ts";
+import { DEVICE_IDS } from "./devices.ts";
 import { FRAMEWORK_IDS, isFrameworkId, type FrameworkId } from "./frameworks.ts";
+import { parseAnnotations, describeProblem, type Annotation } from "./annotate.ts";
 
 export type Mode = "decode" | "draft";
 
 /**
- * The four sections of a Phase 1 report, in render order.
+ * The four concerns, re-exported from aspects.ts under their original names.
  *
- * Deliberately not reusing FrameworkId values as section ids even though
- * "speech act" appears in both lists: a section is a place on the page, a
- * framework is a citation, and a finding in the `act` section may perfectly
+ * They moved because annotate.ts needs them and report.ts needs annotate.ts.
+ * Aliased rather than renamed across the repository: the rename is cosmetic,
+ * the cycle was not, and doing both at once would bury one in the other.
+ *
+ * Deliberately not reusing FrameworkId values as aspect ids even though
+ * "speech act" appears in both lists: an aspect is a concern the analysis must
+ * cover, a framework is a citation, and a finding about `act` may perfectly
  * well cite Face Theory. Collapsing the two would quietly forbid that.
  */
-export const SECTION_IDS = ["act", "responsibility", "framing", "ambiguity"] as const;
-export type SectionId = (typeof SECTION_IDS)[number];
-
-export const SECTION_TITLES: Readonly<Record<SectionId, string>> = {
-  act: "What this is doing",
-  responsibility: "Where responsibility sits",
-  framing: "What is foregrounded, what is left out",
-  ambiguity: "Where it stays vague",
-};
+export const SECTION_IDS = ASPECT_IDS;
+export type SectionId = AspectId;
+export const SECTION_TITLES = ASPECT_TITLES;
 
 export interface Finding {
   /** Required. An unattributed finding is not representable. */
@@ -58,6 +59,31 @@ export interface Rewrite {
 
 export interface DiagnosticReport {
   mode: Mode;
+  /**
+   * One sentence naming what the whole message does. Guarded.
+   *
+   * The site leads with this and it does the work a heading cannot: a reader
+   * who stops after one line should still have been told the finding. It is a
+   * claim about the text — "announces job losses while removing any named
+   * person from the decision" — never about the sender.
+   */
+  verdict: string;
+  /**
+   * Findings anchored to positions in the submitted text, in the text's order.
+   *
+   * See annotate.ts. This is what the annotated view renders, and what
+   * `sections` cannot express: a section groups by theme and its findings
+   * carry copies of phrases, which cannot be highlighted in place.
+   */
+  annotations: Annotation[];
+  /**
+   * The four concerns, still analysed and no longer rendered as four boxes.
+   *
+   * Kept because they are what makes the analysis cover responsibility rather
+   * than produce four remarks about tone — every annotation names the aspect
+   * it speaks to. The summaries remain useful to anything that wants a
+   * thematic read of the report, and cost one short field each.
+   */
   sections: Section[];
   /** Present only in draft mode. */
   rewrite?: Rewrite;
@@ -72,6 +98,53 @@ export interface DiagnosticReport {
  */
 export function diagnosticToolSchema(mode: Mode): Record<string, unknown> {
   const properties: Record<string, unknown> = {
+    verdict: {
+      type: "string",
+      description:
+        "One sentence naming what the whole message does. A claim about the text, never about the sender's honesty, motive or state of mind.",
+    },
+    annotations: {
+      type: "array",
+      description:
+        "Findings anchored to the submitted text. Give character offsets; the phrase itself is taken from the source.",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["start", "end", "device", "framework", "aspect", "note"],
+        properties: {
+          // Offsets, and no field for the phrase. That absence is the whole
+          // mechanism: a highlighted span is sliced from the source, so it
+          // cannot be a phrase the model composed. Adding `text` here "so the
+          // model can show its working" would hand back exactly the ability
+          // this design removes.
+          start: {
+            type: "integer",
+            description: "Character offset where the span begins, counting from 0.",
+          },
+          end: { type: "integer", description: "Character offset just past the end of the span." },
+          device: {
+            type: "string",
+            enum: [...DEVICE_IDS],
+            description: "What is being done to the sentence at this span.",
+          },
+          framework: {
+            type: "string",
+            enum: [...FRAMEWORK_IDS],
+            description: "The framework licensing the reading. Required.",
+          },
+          aspect: {
+            type: "string",
+            enum: [...ASPECT_IDS],
+            description: "Which of the four concerns this span speaks to.",
+          },
+          note: {
+            type: "string",
+            description:
+              "Two to four sentences on what this construction does and what it leaves the reader without. Never a judgement of honesty or motive.",
+          },
+        },
+      },
+    },
     sections: {
       type: "array",
       // No minItems/maxItems. Strict tool use does not support "complex array
@@ -137,10 +210,11 @@ export function diagnosticToolSchema(mode: Mode): Record<string, unknown> {
     };
   }
 
+  const required = ["verdict", "annotations", "sections"];
   return {
     type: "object",
     additionalProperties: false,
-    required: mode === "draft" ? ["sections", "rewrite"] : ["sections"],
+    required: mode === "draft" ? [...required, "rewrite"] : required,
     properties,
   };
 }
@@ -157,10 +231,24 @@ export type ParseResult =
  * thing that has ever actually stopped a malformed payload reaching a screen
  * is a parser that refuses it.
  */
-export function parseReport(value: unknown, mode: Mode): ParseResult {
+export function parseReport(value: unknown, mode: Mode, source: string): ParseResult {
   const problems: string[] = [];
   const record = asRecord(value);
   if (!record) return { ok: false, problems: ["payload is not an object"] };
+
+  // The source is a parameter because offsets cannot be checked without it.
+  // That is the cost of anchoring: a parser that took only the payload could
+  // confirm the shape of an annotation and nothing about whether it points at
+  // anything, which is the half that matters.
+  const verdict = record.verdict;
+  if (typeof verdict !== "string" || verdict.trim() === "") {
+    problems.push("verdict is empty");
+  }
+
+  const annotated = parseAnnotations(record.annotations, source);
+  if (!annotated.ok) {
+    for (const problem of annotated.problems) problems.push(describeProblem(problem));
+  }
 
   const sections: Section[] = [];
   const rawSections = record.sections;
@@ -219,7 +307,14 @@ export function parseReport(value: unknown, mode: Mode): ParseResult {
   // Render order is ours, not the model's: a section list that arrived shuffled
   // would otherwise reorder the page.
   sections.sort((a, b) => SECTION_IDS.indexOf(a.id) - SECTION_IDS.indexOf(b.id));
-  return { ok: true, report: rewrite ? { mode, sections, rewrite } : { mode, sections } };
+
+  const report: DiagnosticReport = {
+    mode,
+    verdict: (verdict as string).trim(),
+    annotations: annotated.ok ? annotated.annotations : [],
+    sections,
+  };
+  return { ok: true, report: rewrite ? { ...report, rewrite } : report };
 }
 
 function parseFindings(value: unknown, path: string, problems: string[]): Finding[] {

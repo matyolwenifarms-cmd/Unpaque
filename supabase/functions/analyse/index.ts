@@ -157,7 +157,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
     if (text.length < MIN_INPUT_CHARS) {
       return json({ error: "too_short", message: `Give Unpack at least ${MIN_INPUT_CHARS} characters.` }, 400);
     }
-    return json({ report: stubReport(mode), repaired: false, stub: true }, 200);
+    return json({ report: stubReport(mode, text), source: text, repaired: false, stub: true }, 200);
   }
 
   const anthropic = new Anthropic({ apiKey: apiKey! });
@@ -199,7 +199,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
 
     switch (outcome.status) {
       case "ok":
-        return json({ report: outcome.report, repaired: outcome.repaired }, 200);
+        return json({ report: outcome.report, source: outcome.source, repaired: outcome.repaired }, 200);
       case "too_short":
         return json(
           {

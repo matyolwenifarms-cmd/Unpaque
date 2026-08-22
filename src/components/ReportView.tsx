@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Check, Copy, Quote } from "lucide-react";
+import { DEVICES, deviceLabel, type Depth } from "@shared/diagnostic/devices.ts";
 import { FRAMEWORKS } from "@shared/diagnostic/frameworks.ts";
+import { AnnotatedSource } from "@/components/AnnotatedSource.tsx";
+import type { Annotation } from "@shared/diagnostic/annotate.ts";
 import { SECTION_TITLES, type DiagnosticReport, type Finding } from "@shared/diagnostic/report.ts";
 import { cn } from "@/lib/utils.ts";
 
@@ -63,9 +66,102 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-export function ReportView({ report }: { report: DiagnosticReport }) {
+/**
+ * One annotated span: the phrase as a chip, then what it does.
+ *
+ * The framework sits under the prose rather than beside the device label,
+ * because they answer different questions — the label says what was done to
+ * the sentence, the framework says which literature licenses reading it that
+ * way — and putting both in the heading turns a finding into a citation.
+ */
+function AnnotationCard({
+  annotation,
+  source,
+  depth,
+}: {
+  annotation: Annotation;
+  source: string;
+  depth: Depth;
+}) {
+  const [open, setOpen] = useState(false);
+  const framework = FRAMEWORKS[annotation.framework];
+  const device = DEVICES[annotation.device];
+
+  return (
+    <li>
+      <p className="mb-1.5">
+        <span className="rounded bg-accent/20 px-1.5 py-0.5 text-sm text-ink">
+          {/* Sliced from the source, never a string carried alongside it. */}
+          {source.slice(annotation.start, annotation.end)}
+        </span>
+        <span className="ml-2 text-xs text-muted">{deviceLabel(annotation.device, depth)}</span>
+      </p>
+      <p className="text-[0.95rem] leading-relaxed">{annotation.note}</p>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="mt-2 text-xs font-medium uppercase tracking-wider text-accent hover:underline"
+      >
+        {framework.name}
+      </button>
+      {open && (
+        <div className="mt-2 rounded-md bg-paper p-3 text-sm text-muted">
+          <p className="mb-1 text-xs uppercase tracking-wide">{framework.tradition}</p>
+          <p className="mb-2 leading-relaxed">{framework.gloss}</p>
+          <p className="leading-relaxed">{device.gloss}</p>
+        </div>
+      )}
+    </li>
+  );
+}
+
+export function ReportView({
+  report,
+  source,
+  depth = "advanced",
+}: {
+  report: DiagnosticReport;
+  /** The text that was submitted. Every span is sliced from this. */
+  source: string;
+  depth?: Depth;
+}) {
   return (
     <div className="space-y-4">
+      <section className="rounded-lg border border-rule bg-raised p-5" aria-labelledby="annotated">
+        <h3
+          id="annotated"
+          className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted"
+        >
+          Annotated source
+        </h3>
+        <AnnotatedSource text={source} annotations={report.annotations} depth={depth} />
+      </section>
+
+      <section className="rounded-lg border border-rule bg-raised p-5" aria-labelledby="verdict">
+        {/* The one line a reader who stops after one line will have read. */}
+        <h3 id="verdict" className="mb-4 text-lg font-bold leading-snug text-accent">
+          {report.verdict}
+        </h3>
+        {report.annotations.length > 0 ? (
+          <ul className="space-y-5">
+            {report.annotations.map((annotation, index) => (
+              <AnnotationCard
+                key={index}
+                annotation={annotation}
+                source={source}
+                depth={depth}
+              />
+            ))}
+          </ul>
+        ) : (
+          // An absence is a result. Rendering nothing would read as a bug.
+          <p className="text-sm italic text-muted">
+            No individual phrase was singled out. The verdict above is the whole finding.
+          </p>
+        )}
+      </section>
+
       {report.sections.map((section) => (
         <section
           key={section.id}

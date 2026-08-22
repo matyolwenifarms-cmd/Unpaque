@@ -1,7 +1,12 @@
 import type { DiagnosticReport, Mode } from "@shared/diagnostic/report.ts";
 
 export type AnalysisResponse =
-  | { status: "ok"; report: DiagnosticReport; repaired: boolean; stub: boolean }
+  /**
+   * `source` is the text the report's offsets index — the server's trimmed
+   * copy, not what is in the textarea. Rendering highlights against anything
+   * else shifts every one of them by however much whitespace was trimmed.
+   */
+  | { status: "ok"; report: DiagnosticReport; source: string; repaired: boolean; stub: boolean }
   | { status: "error"; code: string; message: string; retryAfterSeconds?: number };
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
@@ -51,6 +56,11 @@ export async function requestAnalysis(text: string, mode: Mode): Promise<Analysi
     return {
       status: "ok",
       report: body.report as DiagnosticReport,
+      // Falls back to what was sent rather than to "". An older deployment that
+      // does not return `source` yet then renders against the untrimmed text,
+      // which is wrong only by the leading whitespace — where "" would render
+      // no text at all and look like a broken page.
+      source: typeof body.source === "string" ? body.source : text,
       repaired: body.repaired === true,
       stub: body.stub === true,
     };

@@ -2,8 +2,27 @@ import { describe, expect, it } from "vitest";
 import { FRAMEWORK_IDS } from "./frameworks.ts";
 import { diagnosticToolSchema, parseReport, SECTION_IDS } from "./report.ts";
 
+// Annotations are offsets, so the fixtures need a real text to point into.
+const SOURCE =
+  "Following a review of current operating conditions, a decision has been made " +
+  "to consolidate several roles. Regrettably, a number of positions will be impacted.";
+
+const spanOf = (phrase: string) => {
+  const start = SOURCE.indexOf(phrase);
+  if (start < 0) throw new Error(`fixture error: "${phrase}" is not in SOURCE`);
+  return { start, end: start + phrase.length };
+};
+
 function payload(overrides: Record<string, unknown> = {}) {
   return {
+    verdict: "The message reports an outcome without naming who decided it.",
+    annotations: [{
+      ...spanOf("a decision has been made"),
+      device: "agentless_framing",
+      framework: "critical_discourse",
+      aspect: "responsibility",
+      note: "The passive construction reports the outcome without naming who chose it.",
+    }],
     sections: SECTION_IDS.map((id) => ({
       id,
       summary: `summary for ${id}`,
@@ -15,7 +34,7 @@ function payload(overrides: Record<string, unknown> = {}) {
 
 describe("parsing a well-formed payload", () => {
   it("accepts one and keeps the findings", () => {
-    const result = parseReport(payload(), "decode");
+    const result = parseReport(payload(), "decode", SOURCE);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.report.sections).toHaveLength(SECTION_IDS.length);
@@ -28,7 +47,7 @@ describe("parsing a well-formed payload", () => {
         .reverse()
         .map((id) => ({ id, summary: `s ${id}`, findings: [] })),
     });
-    const result = parseReport(shuffled, "decode");
+    const result = parseReport(shuffled, "decode", SOURCE);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.report.sections.map((s) => s.id)).toEqual([...SECTION_IDS]);
@@ -38,7 +57,7 @@ describe("parsing a well-formed payload", () => {
     const sparse = payload({
       sections: SECTION_IDS.map((id) => ({ id, summary: `s ${id}`, findings: [] })),
     });
-    expect(parseReport(sparse, "decode").ok).toBe(true);
+    expect(parseReport(sparse, "decode", SOURCE).ok).toBe(true);
   });
 });
 
@@ -53,7 +72,7 @@ describe("refusing a malformed payload", () => {
         findings: [{ framework: "general communication principles", claim: "c", quotes: [] }],
       })),
     });
-    const result = parseReport(bad, "decode");
+    const result = parseReport(bad, "decode", SOURCE);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.problems.join(" ")).toContain("not a known framework");
@@ -63,7 +82,7 @@ describe("refusing a malformed payload", () => {
     const bad = payload({
       sections: SECTION_IDS.slice(0, 2).map((id) => ({ id, summary: "s", findings: [] })),
     });
-    const result = parseReport(bad, "decode");
+    const result = parseReport(bad, "decode", SOURCE);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.problems.some((p) => p.includes("is missing"))).toBe(true);
@@ -73,7 +92,7 @@ describe("refusing a malformed payload", () => {
     const bad = payload({
       sections: [...SECTION_IDS, "act"].map((id) => ({ id, summary: "s", findings: [] })),
     });
-    const result = parseReport(bad, "decode");
+    const result = parseReport(bad, "decode", SOURCE);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.problems.some((p) => p.includes("duplicated"))).toBe(true);
@@ -83,11 +102,11 @@ describe("refusing a malformed payload", () => {
     const bad = payload({
       sections: SECTION_IDS.map((id) => ({ id, summary: "   ", findings: [] })),
     });
-    expect(parseReport(bad, "decode").ok).toBe(false);
+    expect(parseReport(bad, "decode", SOURCE).ok).toBe(false);
   });
 
   it("refuses draft mode with no rewrite", () => {
-    const result = parseReport(payload(), "draft");
+    const result = parseReport(payload(), "draft", SOURCE);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.problems).toContain("rewrite is missing in draft mode");
@@ -97,6 +116,7 @@ describe("refusing a malformed payload", () => {
     const result = parseReport(
       payload({ rewrite: { text: "a revised message", note: "what changed" } }),
       "draft",
+      SOURCE,
     );
     expect(result.ok).toBe(true);
     if (!result.ok) return;
@@ -104,7 +124,7 @@ describe("refusing a malformed payload", () => {
   });
 
   it.each([[null], [42], ["a string"], [[]]])("refuses the non-object %p", (value) => {
-    expect(parseReport(value, "decode").ok).toBe(false);
+    expect(parseReport(value, "decode", SOURCE).ok).toBe(false);
   });
 });
 
@@ -137,7 +157,7 @@ describe("the tool schema", () => {
     const short = {
       sections: SECTION_IDS.slice(0, 3).map((id) => ({ id, summary: "s", findings: [] })),
     };
-    const result = parseReport(short, "decode");
+    const result = parseReport(short, "decode", SOURCE);
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.problems).toContain(`section "${SECTION_IDS[3]}" is missing`);
@@ -194,5 +214,71 @@ describe("the tool schema stays inside what strict mode accepts", () => {
     const found: string[] = [];
     walk({ type: "array", minItems: 4, items: { type: "string" } }, "fixture", found);
     expect(found).toEqual(["fixture.minItems"]);
+  });
+});
+
+describe("the verdict and the anchoring, through the parser", () => {
+  it("keeps the verdict and the annotation", () => {
+    const result = parseReport(payload(), "decode", SOURCE);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.report.verdict).toMatch(/without naming who decided it/);
+    expect(result.report.annotations).toHaveLength(1);
+    const [first] = result.report.annotations;
+    expect(SOURCE.slice(first!.start, first!.end)).toBe("a decision has been made");
+  });
+
+  it("refuses a payload with no verdict", () => {
+    const result = parseReport(payload({ verdict: "  " }), "decode", SOURCE);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems).toContain("verdict is empty");
+  });
+
+  // The offsets are checked against the text, not merely for being numbers.
+  // A parser that took only the payload could confirm an annotation's shape
+  // and nothing about whether it points at anything.
+  it("refuses an annotation pointing outside the text", () => {
+    const result = parseReport(
+      payload({ annotations: [{ ...payload().annotations[0], end: SOURCE.length + 50 }] }),
+      "decode",
+      SOURCE,
+    );
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems.join(" ")).toMatch(/points outside the text/);
+  });
+
+  it("refuses a device outside the enum", () => {
+    const result = parseReport(
+      payload({ annotations: [{ ...payload().annotations[0], device: "vibes" }] }),
+      "decode",
+      SOURCE,
+    );
+    expect(result.ok).toBe(false);
+  });
+});
+
+describe("the schema the model is handed", () => {
+  // The absence is the mechanism: with no field for the phrase, a highlighted
+  // span is necessarily sliced from the source. Adding `text` "so the model can
+  // show its working" would hand back exactly what this design removes.
+  it("gives an annotation no field a phrase could be written into", () => {
+    const schema = diagnosticToolSchema("decode") as never as {
+      properties: { annotations: { items: { properties: Record<string, unknown>; required: string[] } } };
+    };
+    const properties = Object.keys(schema.properties.annotations.items.properties);
+    expect(properties.sort()).toEqual(
+      ["aspect", "device", "end", "framework", "note", "start"].sort(),
+    );
+    for (const forbidden of ["text", "quote", "phrase", "span", "excerpt"]) {
+      expect(properties).not.toContain(forbidden);
+    }
+  });
+
+  it("requires a verdict and annotations in both modes", () => {
+    for (const mode of ["decode", "draft"] as const) {
+      const schema = diagnosticToolSchema(mode) as never as { required: string[] };
+      expect(schema.required).toContain("verdict");
+      expect(schema.required).toContain("annotations");
+    }
   });
 });

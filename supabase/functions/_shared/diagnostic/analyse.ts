@@ -35,7 +35,17 @@ export interface ModelRequest {
 export type ModelCaller = (request: ModelRequest) => Promise<unknown>;
 
 export type AnalysisOutcome =
-  | { status: "ok"; report: DiagnosticReport; attempts: number; repaired: boolean }
+  /**
+   * `source` is the exact string the report's offsets index.
+   *
+   * Returned rather than left for the caller to reconstruct, because the
+   * caller cannot: this function trims its input, so offsets are into the
+   * trimmed text while the browser still holds what was typed. Leading
+   * whitespace would then shift every highlight by exactly as many characters
+   * as nobody could see. Offsets and the text they point into travel together
+   * or they do not travel.
+   */
+  | { status: "ok"; report: DiagnosticReport; source: string; attempts: number; repaired: boolean }
   | { status: "too_short" | "too_long" }
   | { status: "malformed"; problems: string[]; attempts: number }
   | { status: "refused"; violations: Violation[]; attempts: number };
@@ -72,7 +82,7 @@ export async function analyse(
     attempts += 1;
     const raw = await callModel(correction ? { ...base, correction } : base);
 
-    const parsed = parseReport(raw, input.mode);
+    const parsed = parseReport(raw, input.mode, text);
     if (!parsed.ok) {
       lastProblems = parsed.problems;
       correction = [
@@ -86,7 +96,7 @@ export async function analyse(
 
     const violations = guardReport(parsed.report);
     if (violations.length === 0) {
-      return { status: "ok", report: parsed.report, attempts, repaired: attempts > 1 };
+      return { status: "ok", report: parsed.report, source: text, attempts, repaired: attempts > 1 };
     }
 
     lastViolations = violations;

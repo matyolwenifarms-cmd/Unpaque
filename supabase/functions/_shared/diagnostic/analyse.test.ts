@@ -8,8 +8,37 @@ import {
 } from "./analyse.ts";
 import { SECTION_IDS } from "./report.ts";
 
+const LONG_ENOUGH = "We have reviewed the request and there is no capacity this quarter for it.";
+
+// Annotations are offsets into the analysed text, so the fixture has to point
+// into LONG_ENOUGH rather than carry a copy of a phrase.
+const SPAN = "no capacity this quarter";
+const SPAN_START = LONG_ENOUGH.indexOf(SPAN);
+
+/**
+ * A text of exactly `length` characters, made of words.
+ *
+ * The boundary tests used `"a".repeat(n)`, which is one very long word — and an
+ * annotation into it can only ever land mid-word, which the parser refuses.
+ * The limits being tested are about length, not about being unreadable, so the
+ * fixture is words.
+ */
+function textOfLength(length: number): string {
+  const filler = "words about a decision that nobody has been named for yet ";
+  return filler.repeat(Math.ceil(length / filler.length)).slice(0, length).trimEnd().padEnd(length, "x");
+}
+
 function goodPayload(claim = "The refusal is carried by a statement of constraint.") {
   return {
+    verdict: "The message declines a request by reporting a constraint.",
+    annotations: [{
+      start: SPAN_START,
+      end: SPAN_START + SPAN.length,
+      device: "agentless_framing",
+      framework: "critical_discourse",
+      aspect: "responsibility",
+      note: "The constraint is reported as a fact of the quarter rather than as a decision anyone took.",
+    }],
     sections: SECTION_IDS.map((id) => ({
       id,
       summary: "A structural summary of the text.",
@@ -17,8 +46,6 @@ function goodPayload(claim = "The refusal is carried by a statement of constrain
     })),
   };
 }
-
-const LONG_ENOUGH = "We have reviewed the request and there is no capacity this quarter for it.";
 
 describe("input limits", () => {
   it("refuses text too short to have structure worth reporting", async () => {
@@ -40,9 +67,24 @@ describe("input limits", () => {
   });
 
   it("accepts text at the boundaries", async () => {
-    const call: ModelCaller = async () => goodPayload();
-    expect((await analyse({ text: "a".repeat(MIN_INPUT_CHARS), mode: "decode" }, call)).status).toBe("ok");
-    expect((await analyse({ text: "a".repeat(MAX_INPUT_CHARS), mode: "decode" }, call)).status).toBe("ok");
+    // The payload's annotation has to point into the text actually analysed,
+    // so each boundary gets a payload built against its own text.
+    for (const length of [MIN_INPUT_CHARS, MAX_INPUT_CHARS]) {
+      const text = textOfLength(length);
+      const first = text.indexOf(" ");
+      const call: ModelCaller = async () => ({
+        ...goodPayload(),
+        annotations: [{
+          start: 0,
+          end: first,
+          device: "agentless_framing",
+          framework: "critical_discourse",
+          aspect: "responsibility",
+          note: "A note about the opening.",
+        }],
+      });
+      expect((await analyse({ text, mode: "decode" }, call)).status).toBe("ok");
+    }
   });
 });
 
@@ -141,5 +183,33 @@ describe("draft mode", () => {
     await analyse({ text: LONG_ENOUGH, mode: "decode" }, call as unknown as ModelCaller);
     const schema = JSON.stringify(call.mock.calls[0]?.[0]?.toolSchema ?? {});
     expect(schema).not.toContain("rewrite");
+  });
+});
+
+// Offsets index the trimmed text, so the trimmed text has to come back with
+// them. Without this the browser renders highlights against what was typed and
+// every one of them shifts by however much whitespace was removed — invisibly,
+// because the thing that moved them cannot be seen.
+describe("the text the offsets belong to", () => {
+  it("comes back with the report", async () => {
+    const call: ModelCaller = async () => goodPayload();
+    const outcome = await analyse({ text: LONG_ENOUGH, mode: "decode" }, call);
+    expect(outcome.status).toBe("ok");
+    if (outcome.status !== "ok") return;
+    expect(outcome.source).toBe(LONG_ENOUGH);
+  });
+
+  it("is the trimmed copy, not what was handed in", async () => {
+    const padded = `\n\n   ${LONG_ENOUGH}   \n`;
+    const call: ModelCaller = async () => goodPayload();
+    const outcome = await analyse({ text: padded, mode: "decode" }, call);
+    expect(outcome.status).toBe("ok");
+    if (outcome.status !== "ok") return;
+    expect(outcome.source).toBe(LONG_ENOUGH);
+    // The span still lands on the phrase it names, which is the whole point.
+    const [first] = outcome.report.annotations;
+    expect(outcome.source.slice(first!.start, first!.end)).toBe(SPAN);
+    // And would not, against the untrimmed input.
+    expect(padded.slice(first!.start, first!.end)).not.toBe(SPAN);
   });
 });
