@@ -13,6 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "db:verify": "./scripts/verify-schema.sh",
+    "deploy": "supabase db push && supabase functions deploy analyse && supabase functions deploy research-search",
+    "deploy:status": "supabase migration list",
     "smoke": "node scripts/smoke-test.mjs",
     "research:record": "node scripts/record-fixtures.mjs",
     "smoke:ui": "vite build && node scripts/smoke-ui.mjs"

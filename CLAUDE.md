@@ -36,14 +36,25 @@ npm run typecheck    # tsc -b --noEmit
 npm run lint         # eslint . — keep it at zero
 npm test             # vitest run
 npm run build        # tsc -b && vite build
-npm run db:verify    # every migration, three times, against local Postgres
+npm run db:verify    # every migration three times, then every SQL suite
 npm run smoke        # a real analysis through the deployed function
 npm run smoke:ui     # drives the built app in a real browser
 npm run research:record   # records live provider responses as fixtures
+npm run deploy       # db push + BOTH functions. Run after every pull.
+npm run deploy:status     # migrations, local version against remote
 ```
 
 **Check exit codes, not output.** A piped `| tail` reports `tail`'s status,
 which is always 0. This has already produced one false "all clear" here.
+
+**`git pull` deploys nothing, and `_shared/` is where that bites.** It reads
+like library code in the checkout, and the literature pipeline — providers,
+merge, ranking — lives entirely in it, bundled into a deployed function. A
+change there is invisible until `npm run deploy` runs, and the symptom is a fix
+you can read in the diff that has plainly not happened. Both times that has
+occurred here, an hour went into re-debugging working code. When telling
+somebody a server-side fix is ready, tell them what to redeploy in the same
+breath.
 
 ---
 

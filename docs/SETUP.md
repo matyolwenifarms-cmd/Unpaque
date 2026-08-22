@@ -108,11 +108,22 @@ in it. A change there is invisible until the function that bundles it is
 redeployed, and the symptom is that a fix you can see in the diff has plainly
 not happened.
 
-To deploy everything after a pull, in one line:
+To deploy everything after a pull:
 
 ```bash
-supabase db push && supabase functions deploy analyse && supabase functions deploy research-search
+npm run deploy
 ```
+
+An npm script rather than a documented command line, and that is the point:
+npm puts `node_modules/.bin` on `PATH`, so the CLI resolves without a global
+install. Typing `supabase` directly in a fresh shell gets *"'supabase' is not
+recognized as the name of a cmdlet"* on Windows — which reads as a broken
+machine, not a missing prefix, and a deploy that never ran looks exactly like a
+fix that did not work.
+
+`npm run deploy:status` lists the migrations with their local and remote
+versions, which is how you tell "the migration is not applied" from "the
+migration is applied and did not help".
 
 ## 3. Point the app at it
 
