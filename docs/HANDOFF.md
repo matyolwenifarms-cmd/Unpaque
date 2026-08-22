@@ -8,6 +8,16 @@ Keep it current. A stale handoff is worse than none, because it is believed.
 
 ---
 
+## The look of the thing
+
+The wordmark is a charcoal plate with an amber "Un", an off-white "paque", an
+amber rule and the tagline in widely tracked capitals. **Dark is the brand at
+rest**, so it is what `:root` holds; light is the adaptation and lives in a
+`prefers-color-scheme: light` query rather than the other way round.
+
+The wordmark is set in type rather than dropped in as an image: it stays sharp
+at any size, adapts to a light-mode reader, and reads as the word it is.
+
 ## The shape of the thing
 
 Unpaque is a platform with three features. They share auth, design tokens,

@@ -43,7 +43,7 @@ function findChromium() {
 // shell that is running this.
 const PORT = 4100 + Math.floor(Math.random() * 800);
 const BASE = `http://127.0.0.1:${PORT}`;
-const ROUTES = ["/", "/research", "/cases", "/sign-in"];
+const ROUTES = ["/", "/unpack", "/research", "/cases", "/sign-in"];
 
 // A hard ceiling on the whole run. A browser that hangs is worse than one that
 // fails: in CI it burns the job's entire time budget and reports nothing.
@@ -104,14 +104,27 @@ try {
     const response = await page.goto(`${BASE}${route}`, { waitUntil: "load", timeout: 20_000 });
     await page.waitForLoadState("domcontentloaded");
     const status = response?.status() ?? 0;
-    const heading = await page.locator("h1").first().innerText().catch(() => "(none)");
+
+    // Short timeouts throughout. A missing element should fail this check in
+    // two seconds, not hang until the watchdog kills the run — an earlier
+    // version waited ninety seconds to report one absent heading.
+    const brand = await page.getByRole("link", { name: "Unpaque" }).first()
+      .textContent({ timeout: 2_000 }).catch(() => null);
+    // Exactly one h1 per page. The shell's wordmark is a link home rather than
+    // a heading, so each page must title itself — a route with none is an
+    // accessibility defect, and a route with two is an outline nobody can
+    // navigate.
+    const headings = await page.locator("h1").allTextContents().catch(() => []);
     const body = (await page.locator("body").innerText().catch(() => "")).trim();
 
     let verdict = "ok";
     if (status !== 200) { verdict = `HTTP ${status}`; failures += 1; }
-    else if (!heading.includes("Unpaque")) { verdict = `no wordmark, saw "${heading}"`; failures += 1; }
-    else if (body.length < 40) { verdict = "page rendered almost nothing"; failures += 1; }
-    else if (problems.length > 0) { verdict = `console not clean`; failures += 1; }
+    else if (brand === null) { verdict = "no wordmark in the shell"; failures += 1; }
+    else if (headings.length !== 1) {
+      verdict = `expected one h1, found ${headings.length}${headings.length ? `: ${headings.join(" / ")}` : ""}`;
+      failures += 1;
+    } else if (body.length < 40) { verdict = "page rendered almost nothing"; failures += 1; }
+    else if (problems.length > 0) { verdict = "console not clean"; failures += 1; }
 
     console.log(`  ${route.padEnd(12)} ${verdict}`);
     for (const problem of problems) console.log(`      ${problem}`);
@@ -122,7 +135,8 @@ try {
   // nothing for an unmatched path by default, which looks identical to a crash.
   const page = await context.newPage();
   await page.goto(`${BASE}/not-a-real-route`, { waitUntil: "load", timeout: 20_000 });
-  const stillThere = (await page.locator("h1").first().innerText().catch(() => "")).includes("Unpaque");
+  const stillThere = (await page.getByRole("link", { name: "Unpaque" }).first()
+    .textContent({ timeout: 2_000 }).catch(() => null)) !== null;
   console.log(`  /not-a-real-route  ${stillThere ? "shell survives" : "SHELL LOST"}`);
   if (!stillThere) failures += 1;
   await page.close();

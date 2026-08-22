@@ -1,5 +1,6 @@
 import { NavLink, Route, Routes } from "react-router-dom";
 import CaseView from "@/pages/CaseView.tsx";
+import Landing from "@/pages/Landing.tsx";
 import Cases from "@/pages/Cases.tsx";
 import Research from "@/pages/Research.tsx";
 import SignIn from "@/pages/SignIn.tsx";
@@ -8,7 +9,7 @@ import { useSession } from "@/hooks/useSession.ts";
 import { cn } from "@/lib/utils.ts";
 
 const TABS = [
-  { to: "/", label: "Unpack", blurb: "communication diagnostics" },
+  { to: "/unpack", label: "Unpack", blurb: "diagnostics" },
   { to: "/research", label: "The Researcher", blurb: "literature" },
   { to: "/cases", label: "The Detective", blurb: "investigations" },
 ];
@@ -19,15 +20,16 @@ export default function App() {
   return (
     <div className="mx-auto min-h-screen max-w-3xl px-5 py-10">
       <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">
+        {/* The wordmark links home rather than being decoration. It is the
+            only navigation back to the landing page, so it has to be one. */}
+        <NavLink to="/" className="inline-block text-3xl font-bold tracking-tight">
           <span className="text-accent">Un</span>paque
-        </h1>
+        </NavLink>
         <nav className="mt-4 flex flex-wrap gap-2" aria-label="Features">
           {TABS.map((tab) => (
             <NavLink
               key={tab.to}
               to={tab.to}
-              end={tab.to === "/"}
               className={({ isActive }) =>
                 cn(
                   "rounded-lg border px-4 py-2 text-sm transition-colors",
@@ -60,7 +62,8 @@ export default function App() {
       </header>
 
       <Routes>
-        <Route path="/" element={<Unpack />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/unpack" element={<Unpack />} />
         <Route path="/research" element={<Research />} />
         <Route path="/cases" element={<Cases />} />
         <Route path="/cases/:id" element={<CaseView />} />

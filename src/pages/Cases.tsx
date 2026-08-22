@@ -111,7 +111,7 @@ export default function Cases() {
   return (
     <div>
       <header className="mb-8">
-        <h2 className="text-2xl font-bold tracking-tight">The Detective</h2>
+        <h1 className="text-2xl font-bold tracking-tight">The Detective</h1>
         <p className="mt-1 text-sm text-muted">
           What does the available evidence actually allow us to say? What remains unknown?
         </p>

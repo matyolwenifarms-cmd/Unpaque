@@ -5,6 +5,18 @@ import { isConfigured, supabase } from "@/lib/supabase.ts";
 
 type Stage = "asking" | "sending" | "sent" | "failed";
 
+function Header() {
+  return (
+    <header className="mb-6">
+      <h1 className="text-2xl font-bold tracking-tight">Sign in</h1>
+      <p className="mt-1 text-sm text-muted">
+        Unpaque sends a link rather than keeping a password. There is nothing to forget and
+        nothing of yours to leak from here.
+      </p>
+    </header>
+  );
+}
+
 export default function SignIn() {
   const { session, configured } = useSession();
   const [email, setEmail] = useState("");
@@ -32,25 +44,31 @@ export default function SignIn() {
 
   if (!configured) {
     return (
-      <div className="rounded-lg border border-rule bg-raised p-5">
-        <p>This build is not connected to an Unpaque project.</p>
+      <div>
+        <Header />
+        <div className="rounded-lg border border-rule bg-raised p-5">
+          <p>This build is not connected to an Unpaque project.</p>
+        </div>
       </div>
     );
   }
 
   if (session) {
     return (
-      <div className="rounded-lg border border-rule bg-raised p-5">
+      <div>
+        <Header />
+        <div className="rounded-lg border border-rule bg-raised p-5">
         <p className="mb-3">
           Signed in as <span className="font-medium">{session.user.email}</span>.
         </p>
-        <button
-          type="button"
-          onClick={() => void supabase().auth.signOut()}
-          className="rounded-lg border border-rule px-4 py-2 text-sm hover:bg-paper"
-        >
-          Sign out
-        </button>
+          <button
+            type="button"
+            onClick={() => void supabase().auth.signOut()}
+            className="rounded-lg border border-rule px-4 py-2 text-sm hover:bg-paper"
+          >
+            Sign out
+          </button>
+        </div>
       </div>
     );
   }
@@ -61,24 +79,21 @@ export default function SignIn() {
   // rather than a theoretical one.
   if (stage === "sent") {
     return (
-      <div className="rounded-lg border border-accent/40 bg-raised p-5">
+      <div>
+        <Header />
+        <div className="rounded-lg border border-accent/40 bg-raised p-5">
         <p className="leading-relaxed">
           If <span className="font-medium">{email.trim()}</span> can sign in, a link is on its way.
-          Open it on this device — it signs you in here, not where the mail is read.
-        </p>
+            Open it on this device — it signs you in here, not where the mail is read.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
     <div>
-      <header className="mb-6">
-        <h2 className="text-2xl font-bold tracking-tight">Sign in</h2>
-        <p className="mt-1 text-sm text-muted">
-          Unpaque sends a link rather than keeping a password. There is nothing to forget and
-          nothing of yours to leak from here.
-        </p>
-      </header>
+      <Header />
 
       <form onSubmit={onSubmit} className="max-w-md">
         <label htmlFor="email" className="mb-1 block text-sm font-medium">

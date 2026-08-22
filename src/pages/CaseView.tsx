@@ -83,7 +83,7 @@ function CaseDetail({ id }: { id: string }) {
 
   return (
     <div>
-      <h3 className="text-xl font-bold tracking-tight">{investigation.title}</h3>
+      <h1 className="text-xl font-bold tracking-tight">{investigation.title}</h1>
       {investigation.question && (
         <p className="mt-1 text-muted">{investigation.question}</p>
       )}

@@ -41,7 +41,7 @@ export default function Unpack() {
   return (
     <div>
       <header className="mb-8">
-        <h2 className="text-2xl font-bold tracking-tight">Unpack</h2>
+        <h1 className="text-2xl font-bold tracking-tight">Unpack</h1>
         <p className="mt-1 text-sm text-muted">
           Communication diagnostics. What is this communication doing?
         </p>
