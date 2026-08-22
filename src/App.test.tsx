@@ -77,21 +77,16 @@ describe("the shell", () => {
   });
 });
 
-describe("the landing page's palette", () => {
-  // Charcoal for everybody, including a reader whose system is set to light.
-  // Asserted on the root attribute rather than a computed colour because jsdom
-  // does not resolve custom properties — the attribute is what index.css keys
-  // the whole palette off, so it is the thing that has to be right.
-  it("forces the dark palette on the landing route", () => {
-    const { unmount } = draw("/");
-    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    unmount();
-  });
-
-  it("leaves every other route to follow the reader's system", () => {
-    document.documentElement.setAttribute("data-theme", "dark");
-    const { unmount } = draw("/research");
-    expect(document.documentElement.hasAttribute("data-theme")).toBe(false);
-    unmount();
+describe("the palette", () => {
+  // Charcoal is unconditional now, so there is no attribute to set and no
+  // route that differs. What is worth asserting is that nothing puts one back:
+  // a `data-theme` appearing again would mean somebody has reintroduced a
+  // second palette, which is what produced two products in one visit.
+  it("needs no per-route switching, because there is only one palette", () => {
+    for (const path of ["/", "/unpack", "/research", "/cases"]) {
+      const { unmount } = draw(path);
+      expect(document.documentElement.hasAttribute("data-theme")).toBe(false);
+      unmount();
+    }
   });
 });
