@@ -26,6 +26,12 @@ jobs:
       # meets first.
       - run: node scripts/smoke-ui.mjs
 
+      # And the coding surface with a real pointer. A coding is stored as an
+      # offset into the transcript, derived from where the pointer was dragged;
+      # jsdom has no layout and cannot produce a drag, so this is the only
+      # place that path is exercised at all.
+      - run: node scripts/smoke-coding.mjs
+
   # The Edge Function runs under Deno, and `npm run typecheck` does not read
   # that directory at all — tsconfig.app.json includes _shared but not the
   # function bodies, because they import npm: specifiers and touch Deno.env.

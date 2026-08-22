@@ -17,7 +17,8 @@
     "deploy:status": "supabase migration list",
     "smoke": "node scripts/smoke-test.mjs",
     "research:record": "node scripts/record-fixtures.mjs",
-    "smoke:ui": "vite build && node scripts/smoke-ui.mjs"
+    "smoke:ui": "vite build && node scripts/smoke-ui.mjs",
+    "smoke:coding": "vite build && node scripts/smoke-coding.mjs"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",

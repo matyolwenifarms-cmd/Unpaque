@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Loader2, Search } from "lucide-react";
 import { AnalyseData } from "@/components/AnalyseData.tsx";
 import { ChooseMethod } from "@/components/ChooseMethod.tsx";
+import { CodeText } from "@/components/CodeText.tsx";
 import { DataUpload } from "@/components/DataUpload.tsx";
 import { DatasetSummary } from "@/components/DatasetSummary.tsx";
 import { ReferenceList } from "@/components/ReferenceList.tsx";
@@ -10,17 +11,23 @@ import type { Dataset } from "@shared/research/analytics/dataset.ts";
 import { searchReferences, type ResultOrder, type SearchedReference } from "@/lib/research-api.ts";
 
 /**
- * The two stages that exist.
+ * The stages that exist.
  *
  * Named for what the researcher is doing, not for what the software is doing.
  * The specification's lifecycle has four — proposal, collection, analysis,
- * write-up — and two of them are not built; putting all four here with two
- * inert would be a menu that lies about the product.
+ * write-up — and write-up is not built; putting it here inert would be a menu
+ * that lies about the product.
+ *
+ * Analysis is two entries rather than one because the two are different work
+ * with different evidence. A researcher with transcripts is not choosing a
+ * t-test, and a menu that sends them to a column picker teaches them the tool
+ * is not for them.
  */
 const STAGES = [
   { id: "literature", name: "Literature", blurb: "Find and verify references" },
   { id: "method", name: "Method", blurb: "Declare the paradigm and approach" },
   { id: "analyse", name: "Analyse data", blurb: "Upload a file and run a test" },
+  { id: "code", name: "Code text", blurb: "Code transcripts and build themes" },
 ] as const;
 type Stage = (typeof STAGES)[number]["id"];
 
@@ -138,6 +145,15 @@ export default function Research() {
       <div>
         <ResearchHeader stage={stage} onStage={setStage} />
         <ChooseMethod />
+      </div>
+    );
+  }
+
+  if (stage === "code") {
+    return (
+      <div>
+        <ResearchHeader stage={stage} onStage={setStage} />
+        <CodeText />
       </div>
     );
   }

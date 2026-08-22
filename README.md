@@ -42,12 +42,18 @@ That boundary is enforced structurally, not by asking a model nicely:
 ## Commands
 
 ```bash
-npm run dev        # Vite dev server
-npm run typecheck  # tsc -b --noEmit
-npm run lint       # eslint .
-npm test           # vitest run — 70 tests
-npm run build      # tsc -b && vite build
+npm run dev          # Vite dev server
+npm run typecheck    # tsc -b --noEmit
+npm run lint         # eslint .
+npm test             # vitest run — 865 tests
+npm run build        # tsc -b && vite build
+npm run smoke:ui     # every route, in Chromium, console asserted empty
+npm run smoke:coding # the coding surface, driven with a real pointer
 ```
+
+`smoke:coding` is separate from `smoke:ui` because it proves something else. A
+coding is stored as an offset into the transcript, and the offset comes from
+where a pointer was dragged — which jsdom, having no layout, cannot produce.
 
 Check exit codes, not output. A piped `| tail` reports the exit status of
 `tail`, which is always 0.

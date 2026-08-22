@@ -32,7 +32,7 @@ what deliberately did not change with it, is `DEPARTURES.md` §6.
 | Feature | What it does | State | Costs to run |
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
-| **Research** | Literature, method, analysis, results section | Three stages on screen; §6 and §7 quantitative | **Nothing** |
+| **Research** | Literature, method, quantitative analysis, coding transcripts | Four stages on screen; §6 and §7, quantitative and qualitative | **Nothing** |
 | **Detect** | Investigative intelligence — cases, evidence, timeline, dossier | Phase 0–1, case UI and the assembled document | Nothing |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
@@ -47,13 +47,21 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 378 unit tests, four passing gates (typecheck, lint, test, build).
+- 865 unit and component tests, four passing gates (typecheck, lint, test, build).
 - 59 SQL assertions across four suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
   responses. The recorded fixtures are committed.
 - The production build driven in a real browser: every route returns 200,
   renders, keeps its shell on an unknown path, and logs nothing.
+- **The coding surface driven with a real pointer** (`npm run smoke:coding`).
+  A transcript is pasted, two codes written, two passages dragged and coded, a
+  theme assembled and the saturation account read — in Chromium, against the
+  built bundle. It is a separate gate from `smoke:ui` because the thing it
+  proves is not that the route boots: a coding is stored as an offset into the
+  transcript and the offset comes from where a pointer was dragged, which jsdom
+  cannot produce at all. Breaking the offset walk turns it red with
+  `dragging "waiting" offered "waiting was"`.
 - The whole Unpack deployment path, end to end, in stub mode — gateway, JWT
   check, rate limiter against real Postgres, function under Deno, client,
   parser, rendering.
@@ -80,6 +88,12 @@ The distinction matters more than the totals.
   a byte-order mark — and those are committed as fixtures. The shapes are
   right; the data is invented. A real export is still the thing to try, and it
   needs no key.
+- **No transcript from an actual study has been coded.** The qualitative
+  workspace holds nothing after a refresh — transcripts, codes and themes live
+  in the browser tab, and the screen says so at the top. That is the next thing
+  to close and it needs no key: four tables, RLS, and the notice comes out in
+  the same commit. Inter-coder agreement (Cohen's kappa) is specified and not
+  built; `Coding` already carries `coderId` for it.
 - **Relevance ordering has not been seen against a live provider.** The sort is
   unit-tested against ranked fixtures and the change is the difference between
   keeping and discarding the providers' own ordering, but no live OpenAlex or
