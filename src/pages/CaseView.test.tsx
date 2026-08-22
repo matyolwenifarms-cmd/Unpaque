@@ -7,14 +7,21 @@ const getCase = vi.fn();
 const listClaims = vi.fn();
 const listSources = vi.fn();
 const listEvidence = vi.fn();
+const listEvents = vi.fn();
+// Every export the page reaches for. A missing one is not a missing assertion:
+// the page calls them inside a Promise.all, so an undefined mock rejects and
+// nothing renders at all — which shows up as five unrelated "cannot find text"
+// failures. This only appeared in the full suite; the file passed alone.
 vi.mock("@/lib/detective-api.ts", () => ({
   getCase: (...a: unknown[]) => getCase(...a),
   listClaims: (...a: unknown[]) => listClaims(...a),
   listSources: (...a: unknown[]) => listSources(...a),
   listEvidence: (...a: unknown[]) => listEvidence(...a),
+  listEvents: (...a: unknown[]) => listEvents(...a),
   createClaim: vi.fn(),
   createSource: vi.fn(),
   createEvidence: vi.fn(),
+  createEvent: vi.fn(),
 }));
 vi.mock("@/components/RequireSession.tsx", () => ({
   RequireSession: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -42,6 +49,7 @@ describe("opening a case", () => {
     listClaims.mockReset().mockResolvedValue({ ok: true, data: [] });
     listSources.mockReset().mockResolvedValue({ ok: true, data: [] });
     listEvidence.mockReset().mockResolvedValue({ ok: true, data: [] });
+    listEvents.mockReset().mockResolvedValue({ ok: true, data: [] });
   });
 
   it("shows the title and the question", async () => {
@@ -82,10 +90,10 @@ describe("opening a case", () => {
       }],
     });
     draw();
-    // Scoped to the sources section: a title legitimately appears there, in the
-    // evidence list, and in the link form's options, so an unscoped query is
-    // ambiguous rather than wrong.
-    await waitFor(() => expect(screen.getByText("A gazette notice")).toBeInTheDocument());
+    // A source title legitimately appears in the sources list, in the evidence
+    // line, and as an <option> in both the link-evidence and add-event forms.
+    // Every assertion here is scoped to the list item rather than loosened.
+    await waitFor(() => expect(screen.getAllByText("A gazette notice").length).toBeGreaterThan(0));
     // Scoped to the list, not the section: the add-source form sits inside the
     // same section and its <option> elements carry the same words.
     const sourcesSection = screen.getByRole("region", { name: /sources/i });
@@ -118,6 +126,7 @@ describe("what the page will and will not do for you", () => {
     listClaims.mockReset().mockResolvedValue({ ok: true, data: [claim] });
     listSources.mockReset().mockResolvedValue({ ok: true, data: twoSources });
     listEvidence.mockReset().mockResolvedValue({ ok: true, data: [] });
+    listEvents.mockReset().mockResolvedValue({ ok: true, data: [] });
   });
 
   it("lists the evidence bearing on a claim, with its excerpt", async () => {

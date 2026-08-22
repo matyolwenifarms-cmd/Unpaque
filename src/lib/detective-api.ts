@@ -3,6 +3,7 @@ import type {
   EvidenceClassification,
   SourceKind,
 } from "@shared/detective/epistemic.ts";
+import type { DateCertainty, TimeOrigin } from "@shared/detective/timeline.ts";
 import { supabase } from "@/lib/supabase.ts";
 
 // Queries go straight to Postgres through supabase-js, with no edge function in
@@ -158,6 +159,56 @@ export async function listEvidence(caseId: string): Promise<Result<EvidenceRow[]
     .eq("case_id", caseId)
     .order("created_at", { ascending: true });
   return wrap<EvidenceRow[]>(data as EvidenceRow[] | null, error);
+}
+
+export interface EventRow {
+  id: string;
+  source_id: string;
+  label: string;
+  occurred_at: string | null;
+  certainty: DateCertainty;
+  origin: TimeOrigin;
+  tolerance_minutes: number | null;
+  moment: string | null;
+}
+
+export async function listEvents(caseId: string): Promise<Result<EventRow[]>> {
+  const { data, error } = await supabase()
+    .from("events")
+    .select("id, source_id, label, occurred_at, certainty, origin, tolerance_minutes, moment")
+    .eq("case_id", caseId)
+    .order("occurred_at", { ascending: true, nullsFirst: false });
+  return wrap<EventRow[]>(data as EventRow[] | null, error);
+}
+
+export async function createEvent(
+  caseId: string,
+  input: {
+    sourceId: string;
+    label: string;
+    occurredAt: string | null;
+    certainty: DateCertainty;
+    origin: TimeOrigin;
+    moment: string;
+  },
+): Promise<Result<EventRow>> {
+  const { data, error } = await supabase()
+    .from("events")
+    .insert({
+      case_id: caseId,
+      source_id: input.sourceId,
+      label: input.label.trim(),
+      // The schema refuses a date on an unknown-certainty event and refuses one
+      // missing on any other, so the two are decided together here rather than
+      // left for a constraint to catch.
+      occurred_at: input.certainty === "unknown" ? null : input.occurredAt,
+      certainty: input.certainty,
+      origin: input.origin,
+      moment: input.moment.trim() || null,
+    })
+    .select("id, source_id, label, occurred_at, certainty, origin, tolerance_minutes, moment")
+    .single();
+  return wrap<EventRow>(data as EventRow | null, error);
 }
 
 export async function listSources(caseId: string): Promise<Result<SourceRow[]>> {

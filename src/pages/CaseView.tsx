@@ -2,17 +2,21 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { AddClaim } from "@/components/AddClaim.tsx";
+import { AddEvent } from "@/components/AddEvent.tsx";
 import { AddSource } from "@/components/AddSource.tsx";
 import { EpistemicBadge } from "@/components/EpistemicBadge.tsx";
 import { LinkEvidence } from "@/components/LinkEvidence.tsx";
+import { Timeline } from "@/components/Timeline.tsx";
 import { RequireSession } from "@/components/RequireSession.tsx";
 import {
   getCase,
   listClaims,
+  listEvents,
   listEvidence,
   listSources,
   type CaseSummary,
   type ClaimRow,
+  type EventRow,
   type EvidenceRow,
   type SourceRow,
 } from "@/lib/detective-api.ts";
@@ -23,6 +27,7 @@ function CaseDetail({ id }: { id: string }) {
   const [claims, setClaims] = useState<ClaimRow[]>([]);
   const [sources, setSources] = useState<SourceRow[]>([]);
   const [evidence, setEvidence] = useState<EvidenceRow[]>([]);
+  const [events, setEvents] = useState<EventRow[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,13 +42,14 @@ function CaseDetail({ id }: { id: string }) {
       setInvestigation(found.data);
       if (!found.data) return;
 
-      const [claimResult, sourceResult, evidenceResult] = await Promise.all([
-        listClaims(id), listSources(id), listEvidence(id),
+      const [claimResult, sourceResult, evidenceResult, eventResult] = await Promise.all([
+        listClaims(id), listSources(id), listEvidence(id), listEvents(id),
       ]);
       if (!active) return;
       if (claimResult.ok) setClaims(claimResult.data);
       if (sourceResult.ok) setSources(sourceResult.data);
       if (evidenceResult.ok) setEvidence(evidenceResult.data);
+      if (eventResult.ok) setEvents(eventResult.data);
     })();
     return () => {
       active = false;
@@ -174,6 +180,20 @@ function CaseDetail({ id }: { id: string }) {
         )}
         <div className="mt-4">
           <AddSource caseId={id} onAdded={(source) => setSources((current) => [source, ...current])} />
+        </div>
+      </section>
+
+      <section className="mt-8" aria-labelledby="timeline-heading">
+        <h4 id="timeline-heading" className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted">
+          Timeline
+        </h4>
+        <Timeline events={events} sources={sources} />
+        <div className="mt-4">
+          <AddEvent
+            caseId={id}
+            sources={sources}
+            onAdded={(event) => setEvents((current) => [...current, event])}
+          />
         </div>
       </section>
     </div>
