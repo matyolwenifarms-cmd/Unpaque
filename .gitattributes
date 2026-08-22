@@ -20,3 +20,16 @@
 *.png binary
 *.jpg binary
 *.pdf binary
+
+# The one exception, and it follows from the same reasoning as the rule.
+#
+# These are sample exports from Qualtrics, SPSS and Google Forms, kept because
+# the parser has to survive what those tools actually write — and what they
+# write is CRLF, with a byte-order mark on the Qualtrics one. Normalised to LF
+# on checkout they would still parse, and would silently stop testing the thing
+# they exist to test: a fixture that has been cleaned up is a fixture that
+# proves nothing about dirty input.
+#
+# `-text` rather than `eol=crlf`, so git does no conversion in either
+# direction and the bytes in a fresh clone are the bytes that were committed.
+supabase/functions/_shared/research/analytics/fixtures/*.csv -text
