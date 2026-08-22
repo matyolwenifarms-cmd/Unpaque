@@ -1,21 +1,28 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { AddClaim } from "@/components/AddClaim.tsx";
+import { AddSource } from "@/components/AddSource.tsx";
 import { EpistemicBadge } from "@/components/EpistemicBadge.tsx";
+import { LinkEvidence } from "@/components/LinkEvidence.tsx";
 import { RequireSession } from "@/components/RequireSession.tsx";
 import {
   getCase,
   listClaims,
+  listEvidence,
   listSources,
   type CaseSummary,
   type ClaimRow,
+  type EvidenceRow,
   type SourceRow,
 } from "@/lib/detective-api.ts";
+import { mayBeCorroborated } from "@shared/detective/epistemic.ts";
 
 function CaseDetail({ id }: { id: string }) {
   const [investigation, setInvestigation] = useState<CaseSummary | null | undefined>(undefined);
   const [claims, setClaims] = useState<ClaimRow[]>([]);
   const [sources, setSources] = useState<SourceRow[]>([]);
+  const [evidence, setEvidence] = useState<EvidenceRow[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -30,10 +37,13 @@ function CaseDetail({ id }: { id: string }) {
       setInvestigation(found.data);
       if (!found.data) return;
 
-      const [claimResult, sourceResult] = await Promise.all([listClaims(id), listSources(id)]);
+      const [claimResult, sourceResult, evidenceResult] = await Promise.all([
+        listClaims(id), listSources(id), listEvidence(id),
+      ]);
       if (!active) return;
       if (claimResult.ok) setClaims(claimResult.data);
       if (sourceResult.ok) setSources(sourceResult.data);
+      if (evidenceResult.ok) setEvidence(evidenceResult.data);
     })();
     return () => {
       active = false;
@@ -83,19 +93,61 @@ function CaseDetail({ id }: { id: string }) {
           </p>
         ) : (
           <ul className="space-y-2">
-            {claims.map((claim) => (
-              <li key={claim.id} className="rounded-lg border border-rule bg-raised p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <p className="leading-relaxed">{claim.statement}</p>
-                  <EpistemicBadge status={claim.status} />
-                </div>
-                {claim.asserted_by && (
-                  <p className="mt-2 text-sm text-muted">Asserted by {claim.asserted_by}</p>
-                )}
-              </li>
-            ))}
+            {claims.map((claim) => {
+              const forClaim = evidence.filter((row) => row.claim_id === claim.id);
+              const named = (sourceId: string) =>
+                sources.find((source) => source.id === sourceId)?.title ?? "a source";
+              const corroboratable = mayBeCorroborated(
+                forClaim.map((row) => ({ sourceId: row.source_id, classification: row.classification })),
+              );
+              return (
+                <li key={claim.id} className="rounded-lg border border-rule bg-raised p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="leading-relaxed">{claim.statement}</p>
+                    <EpistemicBadge status={claim.status} />
+                  </div>
+                  {claim.asserted_by && (
+                    <p className="mt-2 text-sm text-muted">Asserted by {claim.asserted_by}</p>
+                  )}
+
+                  {forClaim.length > 0 && (
+                    <ul className="mt-3 space-y-1 text-sm">
+                      {forClaim.map((row) => (
+                        <li key={row.id} className="text-muted">
+                          <span className="font-medium">{row.classification.replace(/_/g, " ")}</span>
+                          {" — "}
+                          {named(row.source_id)}
+                          {row.excerpt && <span className="italic"> “{row.excerpt}”</span>}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {/* Stated as permission, never applied. §4 keeps human
+                      authority explicit, and moving a claim because a count
+                      crossed two is precisely the collapse into truth the
+                      epistemic model exists to prevent. */}
+                  {corroboratable && claim.status !== "corroborated" && (
+                    <p className="mt-3 text-xs text-accent">
+                      Two independent sources support this. You may mark it corroborated — Unpaque
+                      will not.
+                    </p>
+                  )}
+
+                  <LinkEvidence
+                    caseId={id}
+                    claimId={claim.id}
+                    sources={sources}
+                    onLinked={(row) => setEvidence((current) => [...current, row])}
+                  />
+                </li>
+              );
+            })}
           </ul>
         )}
+        <div className="mt-4">
+          <AddClaim caseId={id} onAdded={(claim) => setClaims((current) => [...current, claim])} />
+        </div>
       </section>
 
       <section className="mt-8" aria-labelledby="sources-heading">
@@ -120,6 +172,9 @@ function CaseDetail({ id }: { id: string }) {
             ))}
           </ul>
         )}
+        <div className="mt-4">
+          <AddSource caseId={id} onAdded={(source) => setSources((current) => [source, ...current])} />
+        </div>
       </section>
     </div>
   );

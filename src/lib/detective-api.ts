@@ -1,4 +1,8 @@
-import type { EpistemicStatus } from "@shared/detective/epistemic.ts";
+import type {
+  EpistemicStatus,
+  EvidenceClassification,
+  SourceKind,
+} from "@shared/detective/epistemic.ts";
 import { supabase } from "@/lib/supabase.ts";
 
 // Queries go straight to Postgres through supabase-js, with no edge function in
@@ -83,6 +87,77 @@ export async function listClaims(caseId: string): Promise<Result<ClaimRow[]>> {
     .eq("case_id", caseId)
     .order("created_at", { ascending: true });
   return wrap<ClaimRow[]>(data as ClaimRow[] | null, error);
+}
+
+export interface EvidenceRow {
+  id: string;
+  claim_id: string;
+  source_id: string;
+  classification: EvidenceClassification;
+  excerpt: string | null;
+}
+
+export async function createSource(
+  caseId: string,
+  input: { kind: SourceKind; title: string; retrievedFrom: string },
+): Promise<Result<SourceRow>> {
+  const { data, error } = await supabase()
+    .from("sources")
+    .insert({
+      case_id: caseId,
+      kind: input.kind,
+      title: input.title.trim(),
+      retrieved_from: input.retrievedFrom.trim(),
+    })
+    .select("id, kind, title, retrieved_from, retrieved_at")
+    .single();
+  return wrap<SourceRow>(data as SourceRow | null, error);
+}
+
+export async function createClaim(
+  caseId: string,
+  input: { statement: string; assertedBy: string },
+): Promise<Result<ClaimRow>> {
+  // No status is sent. §3: a claim is not a fact, and the column defaults to
+  // `unknown` — letting the form choose would make "corroborated" a thing you
+  // can type rather than a thing the evidence earns.
+  const { data, error } = await supabase()
+    .from("claims")
+    .insert({
+      case_id: caseId,
+      statement: input.statement.trim(),
+      asserted_by: input.assertedBy.trim() || null,
+    })
+    .select("id, statement, status, asserted_by")
+    .single();
+  return wrap<ClaimRow>(data as ClaimRow | null, error);
+}
+
+export async function createEvidence(
+  caseId: string,
+  input: { claimId: string; sourceId: string; classification: EvidenceClassification; excerpt: string },
+): Promise<Result<EvidenceRow>> {
+  const { data, error } = await supabase()
+    .from("evidence")
+    .insert({
+      case_id: caseId,
+      claim_id: input.claimId,
+      source_id: input.sourceId,
+      classification: input.classification,
+      excerpt: input.excerpt.trim() || null,
+    })
+    .select("id, claim_id, source_id, classification, excerpt")
+    .single();
+  return wrap<EvidenceRow>(data as EvidenceRow | null, error);
+}
+
+export async function listEvidence(caseId: string): Promise<Result<EvidenceRow[]>> {
+  const { data, error } = await supabase()
+    .from("evidence")
+    .select("id, claim_id, source_id, classification, excerpt")
+    .eq("case_id", caseId)
+    .order("created_at", { ascending: true });
+  return wrap<EvidenceRow[]>(data as EvidenceRow[] | null, error);
 }
 
 export async function listSources(caseId: string): Promise<Result<SourceRow[]>> {
