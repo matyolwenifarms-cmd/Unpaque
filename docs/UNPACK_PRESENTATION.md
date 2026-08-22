@@ -52,7 +52,7 @@ immediately by a small muted parenthetical naming the device:
 > Following a review of current operating conditions, `a decision has been
 > made` *(agentless framing)* to consolidate several roles. `Regrettably`
 > *(sentiment softener)*, `a number of positions will be impacted`
-> *(nominalization)*. We remain `deeply committed to our people` *(value
+> *(nominalisation)*. We remain `deeply committed to our people` *(value
 > claim)*, and affected colleagues will be contacted `in due course`
 > *(strategic vagueness)* with further information.
 
@@ -81,7 +81,7 @@ without a point to plan around"*.
 ## 3. The device vocabulary seen so far
 
 Five, from one example, so this is certainly partial:
-agentless framing · sentiment softener · nominalization · value claim ·
+agentless framing · sentiment softener · nominalisation · value claim ·
 strategic vagueness
 
 These are **devices**, at a finer grain than the eight communication frameworks
@@ -90,8 +90,9 @@ framework is what licenses the reading. They are not alternatives — a device
 label should cite a framework — but the existing enum cannot express the device
 layer, so it needs one.
 
-Note the spelling: `nominalization`, with a z, against the repository's British
-prose. Worth confirming which is intended before it is copied into an enum.
+The deployed site spells this `nominalization`, with a z. **Settled: British
+throughout**, so the enum is `nominalisation` and a test refuses the American
+form — along with -ize, -ization, behavior and color anywhere in the vocabulary.
 
 ## 4. What this means for what is built
 
@@ -127,8 +128,8 @@ where it is the accurate one:
   outcome without naming who chose it."* *"Converting the action into a noun
   removes both the actor and the specific event."*
 - **Device labels that are terms of art**: agentless framing, sentiment
-  softener, nominalization, value claim, strategic vagueness. A reader who does
-  not know what nominalization is gets no help from the label.
+  softener, nominalisation, value claim, strategic vagueness. A reader who does
+  not know what nominalisation is gets no help from the label.
 
 What stays constant even at this register, and is the more important half: the
 prose describes a mechanism and never condemns. It says what a construction
@@ -143,17 +144,33 @@ and opening "deeper diagnostics". So Basic is not a shorter report — it is the
 same finding in plain words, and Advanced additionally shows diagnostics Basic
 withholds.
 
-## 6. Still open
+## 6. The worked example does not follow the depth switch
 
-- **No Basic example has been seen.** Both sets of screenshots supplied show
-  the same Advanced worked example, so the plain-language register is inferred
-  from the front page's own description of it rather than read from output.
-  A Basic sample of the same input would settle it in one screenshot.
+Three sets of screenshots were supplied, the third labelled Basic. All three
+show the same output, and all three carry the same line above it: *"This is
+what Advanced mode returns."*
+
+The most likely reading is that the front page's worked example is a fixed
+sample rather than live output, so toggling Basic does not change it. That is a
+perfectly reasonable thing for a landing page to do — and it means **no Basic
+output has been observed**, and cannot be observed from that section of the
+page.
+
+So the Basic register in `devices.ts` is written rather than copied: the plain
+label for each device is an attempt at the accessible half, and the pair is
+there to be corrected in one place. `deviceLabel(id, depth)` is the entire
+switch; changing a word changes it everywhere it appears.
+
+If Basic output is wanted as evidence, it has to come from an actual run —
+paste the layoffs paragraph into the box with Basic selected and screenshot
+what comes back, rather than the example beneath it.
+
+## 7. Still open
 - Which diagnostics Advanced adds that Basic does not show at all — "deeper
   diagnostics" is the site's phrase and its content is unknown.
 - Whether Draft's rewrite is a third card or replaces the verdict.
 - The full device list.
 - Whether the four thematic sections survive underneath the annotation.
-- `nominalization` is spelled with a z against the repository's British prose.
+- `nominalisation` is spelled with a z against the repository's British prose.
   Worth settling before it becomes an enum value.
 
