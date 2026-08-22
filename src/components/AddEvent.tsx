@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { DATE_CERTAINTIES, TIME_ORIGINS, type DateCertainty, type TimeOrigin } from "@shared/detective/timeline.ts";
+import { TEXT_LIMITS, textProblem } from "@shared/detective/limits.ts";
 import { createEvent, type EventRow, type SourceRow } from "@/lib/detective-api.ts";
+import { LimitedField } from "@/components/LimitedField.tsx";
 
 export function AddEvent({
   caseId,
@@ -25,7 +27,13 @@ export function AddEvent({
   }
 
   const needsTime = certainty !== "unknown";
-  const ready = sourceId !== "" && label.trim() !== "" && (!needsTime || occurredAt !== "");
+  // Length is checked here as well as shown in the field, so a paste that
+  // overshoots cannot be submitted at all. Before this, the only thing that
+  // noticed was Postgres, and it answered with a constraint name.
+  const tooLong = textProblem(label, TEXT_LIMITS.eventLabel)
+    ?? textProblem(moment, TEXT_LIMITS.eventMoment);
+  const ready =
+    sourceId !== "" && label.trim() !== "" && tooLong === null && (!needsTime || occurredAt !== "");
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -55,12 +63,19 @@ export function AddEvent({
     <form onSubmit={onSubmit} className="rounded-lg border border-rule bg-raised p-4">
       <h5 className="mb-3 text-sm font-medium">Add an event</h5>
 
-      <label htmlFor="event-label" className="mb-1 block text-xs text-muted">What happened?</label>
-      <input
+      {/* "What happened?" alone invited the paragraph it could not hold —
+          somebody pasted a news report into it, which is the obvious thing to
+          do when a field asks what happened and a source is open beside you.
+          The column is a label, so the timeline has something to print; the
+          account itself belongs in a claim. The wording says so now. */}
+      <LimitedField
         id="event-label"
+        limit="eventLabel"
+        label="What happened?"
+        hint="— a short label for the timeline, not the full account"
+        placeholder="Shot fired outside the venue"
         value={label}
-        onChange={(e) => setLabel(e.target.value)}
-        className="mb-3 w-full rounded-lg border border-rule bg-paper px-3 py-2 outline-none focus:border-accent"
+        onChange={setLabel}
       />
 
       <label htmlFor="event-source" className="mb-1 block text-xs text-muted">From which source?</label>
@@ -127,15 +142,14 @@ export function AddEvent({
         </p>
       )}
 
-      <label htmlFor="event-moment" className="mb-1 block text-xs text-muted">
-        Which moment is this a record of? Records sharing a label are compared with each other.
-      </label>
-      <input
+      <LimitedField
         id="event-moment"
-        value={moment}
-        onChange={(e) => setMoment(e.target.value)}
+        limit="eventMoment"
+        label="Which moment is this a record of?"
+        hint="Records sharing a label are compared with each other."
         placeholder="leaving Location X"
-        className="mb-3 w-full rounded-lg border border-rule bg-paper px-3 py-2 outline-none focus:border-accent"
+        value={moment}
+        onChange={setMoment}
       />
 
       <button

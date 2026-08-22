@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Loader2, Plus } from "lucide-react";
 import { RequireSession } from "@/components/RequireSession.tsx";
+import { TEXT_LIMITS, textProblem } from "@shared/detective/limits.ts";
 import { createCase, listCases, type CaseSummary } from "@/lib/detective-api.ts";
 
 function CaseList() {
@@ -26,6 +27,11 @@ function CaseList() {
   async function onCreate(event: React.FormEvent) {
     event.preventDefault();
     if (busy || title.trim() === "") return;
+    const tooLong = textProblem(title, TEXT_LIMITS.caseTitle);
+    if (tooLong) {
+      setError(tooLong);
+      return;
+    }
     setBusy(true);
     setError(null);
     const result = await createCase(title, question);

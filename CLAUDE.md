@@ -135,6 +135,15 @@ policy. `case_collaborators` works this way: "you cannot invite yourself" and
 
 ### 6. A client-side copy of a server rule must be drift-tested
 
+Every `check (length(...))` in a migration has a mirror in
+`_shared/detective/limits.ts`, and `limits.test.ts` reads the migrations and
+asserts they still agree. Add a constraint, add its mirror — otherwise the
+first person to meet it gets `violates check constraint "events_label_check"`,
+which names no field, states no limit and reads as a broken application.
+
+Mirror it in a message, never in a `maxLength`. Silently truncating a paste to
+fit does not prevent the loss, it hides it.
+
 `_shared/detective/epistemic.ts` mirrors five Postgres enums; its test reads
 the migrations and asserts they still agree. Any future copy gets the same
 treatment or it will drift.

@@ -105,8 +105,23 @@ researcher can choose — over a set relevance has already selected. A long past
 is also reduced to its content terms before it is sent, and the notes say which
 terms were searched.
 
-Neither bug was reachable by the checks in place. The lesson is the one already
-in rule 2 and worth restating: a suite of refusals proves refusals, and nothing
+**A form asked for more than its column could hold.** Adding an event failed
+with `new row for relation "events" violates check constraint
+"events_label_check"` — a sentence naming no field, no limit and no action. The
+field asked "What happened?", so a paragraph of the source was pasted into a
+column that holds a 300-character label for the timeline. Seven length
+constraints existed and not one was checked before submitting.
+
+`_shared/detective/limits.ts` now mirrors them, drift-tested against the
+migrations, and `LimitedField` shows the count and refuses the submit.
+Deliberately not `maxLength`: a browser truncates an over-long paste silently,
+which in an investigation tool records half an account and calls it saved —
+worse than the error it replaces. The wording changed with it, since a field
+that asks what happened will be given what happened.
+
+Neither of the first two bugs was reachable by the checks in place, and the
+third was reachable only by using the thing. The lesson is the one already in
+rule 2 and worth restating: a suite of refusals proves refusals, and nothing
 whatsoever about whether the thing works.
 - **Auth has never run against a real Supabase project.** The session hook, the
   gate and the sign-in page are component-tested against a mocked client, and

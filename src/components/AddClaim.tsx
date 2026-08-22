@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { TEXT_LIMITS, textProblem } from "@shared/detective/limits.ts";
+import { LimitedField } from "@/components/LimitedField.tsx";
 import { createClaim, type ClaimRow } from "@/lib/detective-api.ts";
 
 export function AddClaim({
@@ -13,9 +15,14 @@ export function AddClaim({
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState("");
 
+  // See AddSource: the length has to stop the submit, not just annotate the
+  // field, or a paste still reaches the database and comes back as a constraint
+  // name.
+  const tooLong = textProblem(statement, TEXT_LIMITS.claimStatement);
+
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
-    if (statement.trim() === "" || busy) return;
+    if (statement.trim() === "" || tooLong !== null || busy) return;
     setBusy(true);
     setProblem("");
     const result = await createClaim(caseId, { statement, assertedBy });
@@ -33,15 +40,15 @@ export function AddClaim({
     <form onSubmit={onSubmit} className="rounded-lg border border-rule bg-raised p-4">
       <h5 className="mb-3 text-sm font-medium">Add a claim</h5>
 
-      <label htmlFor="claim-statement" className="mb-1 block text-xs text-muted">
-        What is asserted?
-      </label>
-      <textarea
+      {/* The long field, and where the full account belongs. An event carries
+          a label for the timeline; what a source actually says is a claim. */}
+      <LimitedField
         id="claim-statement"
-        rows={2}
+        limit="claimStatement"
+        label="What is asserted?"
+        rows={3}
         value={statement}
-        onChange={(event) => setStatement(event.target.value)}
-        className="mb-3 w-full resize-y rounded-lg border border-rule bg-paper px-3 py-2 outline-none focus:border-accent"
+        onChange={setStatement}
       />
 
       <label htmlFor="claim-by" className="mb-1 block text-xs text-muted">
@@ -64,7 +71,7 @@ export function AddClaim({
 
       <button
         type="submit"
-        disabled={statement.trim() === "" || busy}
+        disabled={statement.trim() === "" || tooLong !== null || busy}
         className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-ink disabled:opacity-40"
       >
         {busy ? "Adding" : "Add claim"}

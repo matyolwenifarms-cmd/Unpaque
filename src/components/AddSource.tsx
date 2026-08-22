@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { SOURCE_KINDS, type SourceKind } from "@shared/detective/epistemic.ts";
+import { TEXT_LIMITS, textProblem } from "@shared/detective/limits.ts";
+import { LimitedField } from "@/components/LimitedField.tsx";
 import { createSource, type SourceRow } from "@/lib/detective-api.ts";
 
 export function AddSource({
@@ -15,7 +17,11 @@ export function AddSource({
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState("");
 
-  const ready = title.trim() !== "" && retrievedFrom.trim() !== "";
+  // Length blocks the submit as well as showing in the field. Without this the
+  // only thing that notices an over-long paste is Postgres, and it answers with
+  // a constraint name rather than a sentence.
+  const tooLong = textProblem(title, TEXT_LIMITS.sourceTitle);
+  const ready = title.trim() !== "" && retrievedFrom.trim() !== "" && tooLong === null;
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -37,12 +43,13 @@ export function AddSource({
     <form onSubmit={onSubmit} className="rounded-lg border border-rule bg-raised p-4">
       <h5 className="mb-3 text-sm font-medium">Add a source</h5>
 
-      <label htmlFor="source-title" className="mb-1 block text-xs text-muted">What is it?</label>
-      <input
+      <LimitedField
         id="source-title"
+        limit="sourceTitle"
+        label="What is it?"
+        placeholder="Headline, document name, or who gave the account"
         value={title}
-        onChange={(event) => setTitle(event.target.value)}
-        className="mb-3 w-full rounded-lg border border-rule bg-paper px-3 py-2 outline-none focus:border-accent"
+        onChange={setTitle}
       />
 
       <label htmlFor="source-kind" className="mb-1 block text-xs text-muted">Kind</label>
