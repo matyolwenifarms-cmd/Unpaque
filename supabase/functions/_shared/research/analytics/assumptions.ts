@@ -9,6 +9,7 @@
 // beside the result, and one of them returns `not_assessable`, which is the
 // honest answer more often than either of the other two.
 
+import { apaP } from "./apa.ts";
 import { describe, clean } from "./describe.ts";
 import { chiSquareP, fP, normalP } from "./distributions.ts";
 import type { AssumptionCheck } from "./result.ts";
@@ -77,8 +78,8 @@ export function normality(values: readonly unknown[]): AssumptionCheck {
     name: "Normality",
     status: met ? "met" : "unmet",
     detail: met
-      ? `D'Agostino–Pearson K² = ${k2.toFixed(2)}, p = ${p.toFixed(3)}. No departure from normality was detected (n = ${n}, skew ${skewness.toFixed(2)}, excess kurtosis ${kurtosis.toFixed(2)}).`
-      : `D'Agostino–Pearson K² = ${k2.toFixed(2)}, p = ${p.toFixed(3)}. The distribution departs from normal (n = ${n}, skew ${skewness.toFixed(2)}, excess kurtosis ${kurtosis.toFixed(2)}).`,
+      ? `D'Agostino–Pearson K² = ${k2.toFixed(2)}, ${plain(p)}. No departure from normality was detected (n = ${n}, skew ${skewness.toFixed(2)}, excess kurtosis ${kurtosis.toFixed(2)}).`
+      : `D'Agostino–Pearson K² = ${k2.toFixed(2)}, ${plain(p)}. The distribution departs from normal (n = ${n}, skew ${skewness.toFixed(2)}, excess kurtosis ${kurtosis.toFixed(2)}).`,
     ...(met
       ? {}
       : {
@@ -143,7 +144,7 @@ export function homogeneityOfVariance(groups: readonly (readonly unknown[])[]): 
   return {
     name: "Homogeneity of variance",
     status: met ? "met" : "unmet",
-    detail: `Levene's test on the median: W(${k - 1}, ${n - k}) = ${w.toFixed(2)}, p = ${p.toFixed(3)}. ${
+    detail: `Levene's test on the median: W(${k - 1}, ${n - k}) = ${w.toFixed(2)}, ${plain(p)}. ${
       met ? "Group variances are comparable." : "Group variances differ."
     }`,
     ...(met ? {} : { remedy: "Welch's correction does not assume equal variance and is reported by default here." }),
@@ -189,6 +190,21 @@ export function multicollinearity(vifByPredictor: Readonly<Record<string, number
     detail: `Highest variance inflation factor: ${worst[0]} at ${worst[1].toFixed(2)}. The conventional thresholds are 5 for caution and 10 for concern; both are conventions, not findings.`,
     ...(met ? {} : { remedy: "Two predictors are carrying much the same information. Drop one, combine them, or say why both are kept." }),
   };
+}
+
+/**
+ * A p in APA form without the markdown italics.
+ *
+ * These strings are read on screen and pasted into a document, so they take
+ * APA's convention — three decimals, no leading zero, an inequality below
+ * .001 — but not its typesetting, because asterisks in an interface label are
+ * noise. Delegating to `apaP` rather than restating the rule keeps the two
+ * from drifting: the results section quotes this text verbatim, so a p
+ * formatted differently here shows up beside a correctly formatted one in the
+ * same paragraph.
+ */
+function plain(p: number): string {
+  return apaP(p).replace(/\*/g, "");
 }
 
 /** The z for a two-tailed normal test, exported for the tests' own use. */

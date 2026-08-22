@@ -1,0 +1,36 @@
+Timestamp,Email Address,"On a scale of 1-10, how likely are you to recommend us?",Which of these did you use? (Tick all that apply),Any other comments?
+2026/08/01 10:00:00,p0@example.org,4,"App, Website",
+2026/08/02 10:01:00,p1@example.org,5,"App, Phone, Website",
+2026/08/03 10:02:00,p2@example.org,3,"App, Phone, Website","Fine, thanks"
+2026/08/04 10:03:00,p3@example.org,7,"App, Phone, Website",No comment
+2026/08/05 10:04:00,p4@example.org,3,Phone,"They said ""it depends"", which helped"
+2026/08/06 10:05:00,p5@example.org,2,"App, Phone, Website",
+2026/08/07 10:06:00,p6@example.org,3,Phone,
+2026/08/08 10:07:00,p7@example.org,5,"App, Website",
+2026/08/09 10:08:00,p8@example.org,5,"App, Website","Fine, thanks"
+2026/08/10 10:09:00,p9@example.org,2,"App, Phone, Website",
+2026/08/11 10:10:00,p10@example.org,8,"App, Website","They said ""it depends"", which helped"
+2026/08/12 10:11:00,p11@example.org,9,Phone,"They said ""it depends"", which helped"
+2026/08/13 10:12:00,p12@example.org,10,Website,
+2026/08/14 10:13:00,p13@example.org,9,Website,
+2026/08/15 10:14:00,p14@example.org,3,"App, Phone, Website",
+2026/08/16 10:15:00,p15@example.org,3,Website,"They said ""it depends"", which helped"
+2026/08/17 10:16:00,p16@example.org,5,Website,"They said ""it depends"", which helped"
+2026/08/18 10:17:00,p17@example.org,8,Website,"They said ""it depends"", which helped"
+2026/08/19 10:18:00,p18@example.org,6,"App, Website","They said ""it depends"", which helped"
+2026/08/20 10:19:00,p19@example.org,1,"App, Website",
+2026/08/21 10:20:00,p20@example.org,9,Website,No comment
+2026/08/22 10:21:00,p21@example.org,4,Phone,
+2026/08/23 10:22:00,p22@example.org,7,Phone,No comment
+2026/08/24 10:23:00,p23@example.org,9,"App, Phone, Website","Fine, thanks"
+2026/08/25 10:24:00,p24@example.org,4,"App, Phone, Website","Fine, thanks"
+2026/08/26 10:25:00,p25@example.org,3,Phone,"They said ""it depends"", which helped"
+2026/08/27 10:26:00,p26@example.org,1,Website,
+2026/08/28 10:27:00,p27@example.org,2,"App, Phone, Website",No comment
+2026/08/01 10:28:00,p28@example.org,3,"App, Website",
+2026/08/02 10:29:00,p29@example.org,7,"App, Phone, Website","Fine, thanks"
+2026/08/03 10:30:00,p30@example.org,5,"App, Website",No comment
+2026/08/04 10:31:00,p31@example.org,3,Website,"They said ""it depends"", which helped"
+2026/08/05 10:32:00,p32@example.org,8,"App, Website","They said ""it depends"", which helped"
+2026/08/06 10:33:00,p33@example.org,6,"App, Phone, Website","They said ""it depends"", which helped"
+2026/08/07 10:34:00,p34@example.org,4,"App, Website","They said ""it depends"", which helped"

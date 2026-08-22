@@ -68,10 +68,17 @@ const EFFECT_SYMBOLS: Record<string, string> = {
 /** Bounded coefficients drop the leading zero; d and g do not, being unbounded. */
 const UNBOUNDED = new Set(["cohens_d", "hedges_g", "odds_ratio"]);
 
-/** Effects that measure how two things go together rather than how far apart. */
-const ASSOCIATION = new Set([
-  "pearson_r", "spearman_rho", "cramers_v", "cohens_w", "eta_squared", "partial_eta_squared",
-]);
+/**
+ * Effects whose test asks whether two things go together, not how far apart
+ * group means are.
+ *
+ * η² is deliberately **not** here even though it is a proportion of variance
+ * and bounded like the others. ANOVA compares group means: "the association was
+ * significant" under an *F* is the same category error as "the difference" under
+ * an *r*. Formatting and wording are separate questions and were briefly
+ * conflated — see `bounded` below.
+ */
+const ASSOCIATION = new Set(["pearson_r", "spearman_rho", "cramers_v", "cohens_w"]);
 
 /** One finding as the sentence a results section carries. */
 export function apaSentence(finding: Finding): string {
@@ -92,8 +99,10 @@ export function apaSentence(finding: Finding): string {
   // reported as r = .98 with 95% CI [0.93, 0.99] is inconsistent on the page
   // in a way a marker notices — the leading zero is dropped for the same
   // reason in both places, that the quantity cannot exceed 1.
-  const bounded = !UNBOUNDED.has(finding.effect.kind) && ASSOCIATION.has(finding.effect.kind);
-  const format = bounded ? apaBounded : apaNumber;
+  // Bounded is about the number, not about the question. Everything except d,
+  // g and an odds ratio lives in [-1, 1] or [0, 1] and drops its leading zero —
+  // η² included, whose *wording* is a difference and whose *format* is bounded.
+  const format = UNBOUNDED.has(finding.effect.kind) ? apaNumber : apaBounded;
   const ci = `95% CI [${format(finding.interval.lower)}, ${format(finding.interval.upper)}]`;
 
   // A correlation does not test a difference. Hard-coding "difference" put

@@ -14,9 +14,13 @@
 // - **Quoted fields containing the delimiter or a newline.** A free-text answer
 //   with a comma in it, split naively, shifts every column after it by one for
 //   that row only — which looks like bad data rather than a parsing bug.
-// - **Two header rows.** Qualtrics writes the question text as a second row.
-//   Not guessed at, but the type inference sees it and the column reports as
-//   text, which is the visible symptom.
+// - **Extra header rows.** Qualtrics writes three: the field names, the
+//   question text, and a row of JSON import ids. Read as data those two rows
+//   land in every column, so the row count is wrong by two and — far worse —
+//   every numeric column contains two words and reports as text. A 1–7 scale
+//   becomes a nine-level categorical variable and no test will run on it. This
+//   is the standard Qualtrics export and it was completely unusable before
+//   `dropExtraHeaders` below.
 //
 // Type inference is deliberately conservative. A column is numeric only if
 // *every* non-missing value parses as a number, because one stray "N/A" in a
@@ -199,7 +203,8 @@ export function parseDataset(input: string): ParseOutcome {
     notes.push("Some columns shared a name; the repeats have been numbered.");
   }
 
-  const body = grid.slice(1);
+  const { body, dropped } = dropExtraHeaders(grid.slice(1), names.length);
+  for (const note of dropped) notes.push(note);
   const ragged = body.filter((row) => row.length !== names.length).length;
   if (ragged > 0) {
     notes.push(
@@ -217,6 +222,69 @@ export function parseDataset(input: string): ParseOutcome {
   });
 
   return { ok: true, dataset: { columns, rows: body.length, notes } };
+}
+
+/**
+ * Remove the header rows that are not the header.
+ *
+ * Two detections, and the difference between them is how certain each is.
+ *
+ * **The import-id row** is unmistakable: Qualtrics writes a row of JSON objects
+ * each containing an `ImportId` key. Nothing that is actually data looks like
+ * that, so it and everything above it goes, and the note says so.
+ *
+ * **A second header row** — Qualtrics' question text, and some SPSS and
+ * LimeSurvey exports do the same — has no such marker, so it is only removed
+ * when two things hold at once: every cell in it is non-numeric, *and*
+ * removing it turns at least one column numeric. A row of real data cannot
+ * usually satisfy both, and if it somehow did, that column was unusable
+ * either way.
+ *
+ * Both are reported rather than done quietly. A parser that silently discards
+ * a row is a parser nobody can debug when it discards the wrong one.
+ */
+function dropExtraHeaders(
+  body: string[][],
+  width: number,
+): { body: string[][]; dropped: string[] } {
+  const notes: string[] = [];
+  let rows = body;
+
+  const importIdRow = rows.findIndex(
+    (row) =>
+      row.length > 1 &&
+      row.filter((cell) => /"ImportId"\s*:/i.test(cell)).length >= Math.max(2, row.length / 2),
+  );
+  // Only near the top. A row matching this in the middle of a file is
+  // something else entirely and is not ours to throw away.
+  if (importIdRow >= 0 && importIdRow <= 2) {
+    rows = rows.slice(importIdRow + 1);
+    notes.push(
+      `${importIdRow + 1} further header row(s) were removed: this is a Qualtrics export, whose second and third rows hold the question text and its internal field ids rather than responses.`,
+    );
+    return { body: rows, dropped: notes };
+  }
+
+  const [first, ...rest] = rows;
+  if (!first || rest.length < 2) return { body: rows, dropped: notes };
+
+  const numericIn = (candidate: string[][]) =>
+    Array.from({ length: width }, (_, index) =>
+      candidate.some((row) => row[index] !== undefined && !isMissing(row[index]!)) &&
+      candidate.every((row) => {
+        const cell = row[index];
+        return cell === undefined || isMissing(cell) || Number.isFinite(toNumber(cell));
+      })).filter(Boolean).length;
+
+  const firstIsAllText = first.every((cell) => isMissing(cell) || !Number.isFinite(toNumber(cell)));
+  if (firstIsAllText && numericIn(rest) > numericIn(rows)) {
+    notes.push(
+      "The second row was removed: every cell in it is text, and without it columns that were unreadable become numeric — the shape of a question-text row rather than a response.",
+    );
+    return { body: rest, dropped: notes };
+  }
+
+  return { body: rows, dropped: notes };
 }
 
 function summarise(name: string, values: Array<string | null>): Column {
