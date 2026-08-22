@@ -254,3 +254,19 @@ describe("errata are not retractions", () => {
     expect(outcome.references[0]?.retraction).toBe("confirmed");
   });
 });
+
+// Asserted on the real adapter, not on a stand-in. The pipeline tests build
+// their own secondary provider to exercise the mechanism, so they stayed green
+// with this declaration deleted — which is a test proving a mechanism nothing
+// uses. This is the line that makes the mechanism apply to Crossref.
+describe("crossref's standing", () => {
+  it("declares that its ordering is not a subject ranking", () => {
+    expect(crossref({}).discovery).toBe("secondary");
+  });
+
+  it("still returns results, because coverage is why it is queried", async () => {
+    const outcome = await crossref({}).search({ text: "framing" }, fetcherReturning(fixture));
+    expect(outcome.ok).toBe(true);
+    if (outcome.ok) expect(outcome.references.length).toBeGreaterThan(0);
+  });
+});

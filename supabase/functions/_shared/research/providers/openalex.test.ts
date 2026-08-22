@@ -229,3 +229,12 @@ describe("full-text provenance from OpenAlex", () => {
     expect(quotationCaveat(paywalled!)).toMatch(/no passage can be shown/);
   });
 });
+
+describe("openalex's standing", () => {
+  // The counterpart assertion. If both providers were secondary nothing would
+  // be ranked at all, and the list would silently fall back to date order —
+  // the exact failure this was built to stop.
+  it("is a subject index, so its ordering decides", () => {
+    expect(openAlex({}).discovery ?? "primary").toBe("primary");
+  });
+});

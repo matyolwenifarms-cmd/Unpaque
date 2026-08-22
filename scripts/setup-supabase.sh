@@ -50,8 +50,15 @@ echo "==> Setting secrets"
 unset ANTHROPIC_API_KEY SALT
 echo "    done (values not echoed)"
 
-echo "==> Deploying the analyse function"
-"${SUPABASE[@]}" functions deploy analyse
+# Both of them, every time. Deploying only `analyse` was the original mistake
+# here: `research-search` bundles _shared/research/, so a change to the ranking
+# or the providers lives entirely on the server and a developer who has pulled,
+# rebuilt and restarted Vite still gets the old behaviour with nothing on screen
+# to suggest why.
+for fn in analyse research-search; do
+  echo "==> Deploying the $fn function"
+  "${SUPABASE[@]}" functions deploy "$fn"
+done
 
 echo
 echo "Backend deployed. Two things left, both local:"

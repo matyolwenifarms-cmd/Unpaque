@@ -19,6 +19,11 @@ function provider(name: string, outcome: ProviderOutcome): SearchProvider {
   return { name, search: async () => outcome };
 }
 
+/** A provider whose ordering matches metadata rather than subject. */
+function secondaryProvider(name: string, outcome: ProviderOutcome): SearchProvider {
+  return { name, discovery: "secondary", search: async () => outcome };
+}
+
 const ok = (references: Reference[], total = references.length): ProviderOutcome =>
   ({ ok: true, references, total, dropped: [] });
 
@@ -268,5 +273,60 @@ describe("what comes back first", () => {
     expect(asked).toContain("framing");
     expect(asked).not.toMatch(/\bstudy\b/);
     expect(result.notes.join(" ")).toMatch(/Searched for the terms/i);
+  });
+});
+
+describe("which provider decides what is seen first", () => {
+  // The reported failure exactly: every result on screen carried the crossref
+  // badge, and every one was a 2025 trial registration. Crossref answers a bag
+  // of words by matching metadata, so a media-framing query returns
+  // registrations sharing a word — at rank 0, tying with the subject index's
+  // best result once relevance ordering alone was restored.
+  it("puts a subject index ahead of a registration agency at equal rank", async () => {
+    const result = await searchLiterature({ text: "media framing of protest" }, {
+      providers: [
+        provider("openalex", ok(ranked("openalex", [["10.1000/framing", 2016]]))),
+        secondaryProvider("crossref", ok(ranked("crossref", [["10.1257/rct.17211", 2025]]))),
+      ],
+      fetcher,
+      resolve: resolves,
+    });
+    expect(result.references.map((reference) => reference.doi)).toEqual([
+      "10.1000/framing",
+      "10.1257/rct.17211",
+    ]);
+  });
+
+  // Demoted for being found *only* by the agency, never for being found twice.
+  it("does not demote a work the subject index also returned", async () => {
+    const result = await searchLiterature({ text: "media framing" }, {
+      providers: [
+        provider("openalex", ok([
+          ref("openalex", "10.1000/alone", 2016, 0, 0),
+          ref("openalex", "10.1000/both", 2016, 0, 1),
+        ])),
+        secondaryProvider("crossref", ok([ref("crossref", "10.1000/both", 2016, 0, 0)])),
+      ],
+      fetcher,
+      resolve: resolves,
+    });
+    expect(result.references.map((reference) => reference.doi)).toEqual([
+      "10.1000/alone",
+      "10.1000/both",
+    ]);
+    expect(result.references[1]?.sources).toHaveLength(2);
+  });
+
+  // Coverage is the reason it is still queried at all. Demoted is not dropped.
+  it("still lists what only the registration agency found", async () => {
+    const result = await searchLiterature({ text: "media framing" }, {
+      providers: [
+        provider("openalex", ok([])),
+        secondaryProvider("crossref", ok(ranked("crossref", [["10.1000/only-here", 2016]]))),
+      ],
+      fetcher,
+      resolve: resolves,
+    });
+    expect(result.references.map((reference) => reference.doi)).toEqual(["10.1000/only-here"]);
   });
 });

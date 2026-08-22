@@ -27,6 +27,11 @@ export function crossref(options: CrossrefOptions = {}): SearchProvider & {
 } {
   return {
     name: "crossref",
+    // Its search matches metadata, not subject. This is the same division of
+    // labour the module header already describes for merging — Crossref is the
+    // record, OpenAlex is the index — applied to ordering, where it had been
+    // left implicit and was not true by accident.
+    discovery: "secondary",
 
     async search(query: SearchQuery, fetcher: Fetcher): Promise<ProviderOutcome> {
       const params = new URLSearchParams({

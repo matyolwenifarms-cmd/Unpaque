@@ -79,6 +79,10 @@ export async function searchLiterature(
   // Providers are queried together and independently. One being down must
   // degrade the result rather than fail it — a partial literature list with a
   // note saying so is far more useful than an error page.
+  const secondaryFor = new Set(
+    deps.providers.filter((provider) => provider.discovery === "secondary").map((p) => p.name),
+  );
+
   const outcomes = await Promise.all(
     deps.providers.map(async (provider) => ({
       name: provider.name,
@@ -93,7 +97,20 @@ export async function searchLiterature(
       notes.push(`${name} could not be reached (${outcome.status}), so its results are missing.`);
       continue;
     }
-    groups.push(outcome.references);
+    // A secondary provider's position is discarded rather than merged. See
+    // DiscoveryTier: its ordering is a metadata match, not a subject ranking,
+    // and carrying it would let it decide the list twice over — once for the
+    // works only it found, and again through the merge, where the better of two
+    // ranks wins and "better" would mean the agency that ranked a trial
+    // registration first. What survives is coverage, which is why it is still
+    // queried: an unranked reference sorts below every ranked one and is still
+    // listed. This is one line rather than a rule inside merge.ts on purpose —
+    // merge should not have to know which provider it is holding.
+    groups.push(
+      secondaryFor.has(name)
+        ? outcome.references.map((reference) => ({ ...reference, providerRank: undefined }))
+        : outcome.references,
+    );
     reportedTotal = Math.max(reportedTotal, outcome.total);
     if (outcome.dropped.length > 0) {
       notes.push(

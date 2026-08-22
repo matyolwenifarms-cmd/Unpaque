@@ -78,7 +78,7 @@ From the repository root:
 
 It links the project, applies the migrations, prompts for your Anthropic API key
 without echoing it, generates `RATE_LIMIT_SALT` itself, sets both as secrets, and
-deploys the function. It prints no secret at any point.
+deploys both functions. It prints no secret at any point.
 
 Doing it by hand instead:
 
@@ -88,6 +88,30 @@ supabase db push          # applies supabase/migrations in filename order
 supabase secrets set ANTHROPIC_API_KEY=...
 supabase secrets set RATE_LIMIT_SALT="$(openssl rand -hex 32)"
 supabase functions deploy analyse
+supabase functions deploy research-search
+```
+
+### After you pull a change
+
+**`git pull` deploys nothing.** Most of this repository runs on your machine,
+and the two parts that matter most do not:
+
+| What changed | What you must run |
+|---|---|
+| Anything under `supabase/migrations/` | `supabase db push` |
+| Anything under `supabase/functions/` — **including `_shared/`** | `supabase functions deploy analyse` and `supabase functions deploy research-search` |
+| Anything under `src/` | nothing; Vite reloads |
+
+`_shared/` is the trap. It reads like library code sitting in your checkout, and
+the literature pipeline — the providers, the merge, the ranking — lives entirely
+in it. A change there is invisible until the function that bundles it is
+redeployed, and the symptom is that a fix you can see in the diff has plainly
+not happened.
+
+To deploy everything after a pull, in one line:
+
+```bash
+supabase db push && supabase functions deploy analyse && supabase functions deploy research-search
 ```
 
 ## 3. Point the app at it

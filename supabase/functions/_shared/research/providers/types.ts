@@ -37,7 +37,25 @@ export interface DroppedRecord {
   title?: string;
 }
 
+/**
+ * How much a provider's own ordering means for a topical question.
+ *
+ * `primary` indexes what a work is *about* — OpenAlex holds inverted abstracts
+ * and subject concepts, so asking it for media framing gets media framing.
+ * `secondary` matches bibliographic metadata: it will answer, and its answer
+ * for a bag of words is close to arbitrary. Crossref is the registration
+ * agency, not a subject index, and a search there returns a great many trial
+ * and dataset registrations whose titles happen to share a word.
+ *
+ * A secondary provider is still queried and still merged — it finds work the
+ * primary one misses, and it is the only source that can settle a DOI or a
+ * retraction. It simply does not get to decide what a researcher sees first.
+ */
+export type DiscoveryTier = "primary" | "secondary";
+
 export interface SearchProvider {
   readonly name: string;
+  /** Defaults to `primary`. See DiscoveryTier. */
+  readonly discovery?: DiscoveryTier;
   search(query: SearchQuery, fetcher: Fetcher): Promise<ProviderOutcome>;
 }
