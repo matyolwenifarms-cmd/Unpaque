@@ -14,7 +14,13 @@ export type SearchResponse =
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
-export async function searchReferences(query: string, fromYear?: number): Promise<SearchResponse> {
+export type ResultOrder = "relevance" | "recency";
+
+export async function searchReferences(
+  query: string,
+  fromYear?: number,
+  order: ResultOrder = "relevance",
+): Promise<SearchResponse> {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     return {
       status: "error",
@@ -32,7 +38,11 @@ export async function searchReferences(query: string, fromYear?: number): Promis
         Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         apikey: SUPABASE_ANON_KEY,
       },
-      body: JSON.stringify(fromYear === undefined ? { query } : { query, fromYear }),
+      body: JSON.stringify({
+        query,
+        ...(fromYear === undefined ? {} : { fromYear }),
+        ...(order === "relevance" ? {} : { order }),
+      }),
     });
   } catch {
     return { status: "error", code: "offline", message: "Could not reach the search service." };

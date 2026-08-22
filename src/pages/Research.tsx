@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Loader2, Search } from "lucide-react";
 import { ReferenceList } from "@/components/ReferenceList.tsx";
-import { searchReferences, type SearchedReference } from "@/lib/research-api.ts";
+import { cn } from "@/lib/utils.ts";
+import { searchReferences, type ResultOrder, type SearchedReference } from "@/lib/research-api.ts";
 
 export default function Research() {
   const [query, setQuery] = useState("");
@@ -11,6 +12,12 @@ export default function Research() {
   const [notes, setNotes] = useState<string[]>([]);
   const [total, setTotal] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [order, setOrder] = useState<ResultOrder>("relevance");
+  // What the list on screen was actually ordered by, which is not `order` once
+  // somebody has changed the control without searching again. Labelling a list
+  // "most relevant first" while it is still sorted by date is the same lie as
+  // before, told by a control instead of a sort.
+  const [shownOrder, setShownOrder] = useState<ResultOrder>("relevance");
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -21,11 +28,12 @@ export default function Research() {
     setNotes([]);
 
     const year = /^\d{4}$/.test(fromYear) ? Number(fromYear) : undefined;
-    const result = await searchReferences(query.trim(), year);
+    const result = await searchReferences(query.trim(), year, order);
     if (result.status === "ok") {
       setReferences(result.references);
       setNotes(result.notes);
       setTotal(result.reportedTotal);
+      setShownOrder(order);
     } else {
       setError(result.message);
     }
@@ -47,12 +55,18 @@ export default function Research() {
           What are you looking for?
         </label>
         <div className="flex flex-col gap-2 sm:flex-row">
-          <input
+          {/* A textarea, not an input. The feature asks for a proposal or an
+              abstract and a one-line box says it wants a phrase — and a long
+              paste into a box that shows six words of it looks like it was
+              truncated. Long input is reduced to its search terms server-side
+              and the notes above the results say which. */}
+          <textarea
             id="query"
+            rows={3}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="framing theory in organisational communication"
-            className="flex-1 rounded-lg border border-rule bg-raised px-4 py-3 outline-none focus:border-accent"
+            placeholder="A question, or paste an abstract or proposal"
+            className="flex-1 resize-y rounded-lg border border-rule bg-raised px-4 py-3 outline-none focus:border-accent"
           />
           <label htmlFor="fromYear" className="sr-only">
             Published from year
@@ -78,6 +92,39 @@ export default function Research() {
             {busy ? "Searching" : "Search"}
           </button>
         </div>
+
+        {/* Relevance is the default and stays the default. Ordering the whole
+            result set by date does not sort the literature, it replaces it:
+            what surfaces is whatever carries the newest date, related to the
+            question or not. It is offered because a researcher does sometimes
+            want it — over a set relevance has already chosen. */}
+        <fieldset className="mt-3 flex flex-wrap items-center gap-2">
+          <legend className="sr-only">Order the results</legend>
+          <span className="text-sm text-muted">Order by</span>
+          {([["relevance", "Most relevant"], ["recency", "Newest first"]] as const).map(
+            ([value, label]) => (
+              <label
+                key={value}
+                className={cn(
+                  "cursor-pointer rounded-lg border px-3 py-1.5 text-sm transition-colors",
+                  order === value
+                    ? "border-accent bg-accent/10 font-medium"
+                    : "border-rule bg-raised hover:border-muted",
+                )}
+              >
+                <input
+                  type="radio"
+                  name="order"
+                  value={value}
+                  checked={order === value}
+                  onChange={() => setOrder(value)}
+                  className="sr-only"
+                />
+                {label}
+              </label>
+            ),
+          )}
+        </fieldset>
       </form>
 
       <div aria-live="polite">
@@ -104,8 +151,13 @@ export default function Research() {
 
         {references && references.length > 0 && (
           <>
+            {/* Says which ordering produced this list. Sorted by date, a
+                reference list looks exactly like one ranked by relevance —
+                same layout, same badges — and somebody who cannot tell which
+                they are reading cannot tell a thin field from a bad sort. */}
             <p className="mb-3 text-sm text-muted">
-              Showing {references.length} of about {total.toLocaleString("en-GB")}, newest first.
+              Showing {references.length} of about {total.toLocaleString("en-GB")},{" "}
+              {shownOrder === "recency" ? "newest first" : "most relevant first"}.
             </p>
             <ReferenceList references={references} />
           </>

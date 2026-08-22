@@ -61,10 +61,7 @@ jobs:
       PGHOST: 127.0.0.1
     steps:
       - uses: actions/checkout@v4
+      # Replays the migrations three times and then runs every behavioural
+      # suite. The suites used to be a second step here and nowhere else, which
+      # meant a local `npm run db:verify` was a weaker gate than CI.
       - run: ./scripts/verify-schema.sh
-      - name: Behavioural suites
-        run: |
-          for suite in supabase/tests/*_test.sql; do
-            psql -h 127.0.0.1 -p 5432 -U postgres -d unpaque_verify \
-              -v ON_ERROR_STOP=1 -q -f "$suite"
-          done

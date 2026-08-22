@@ -72,7 +72,42 @@ The distinction matters more than the totals.
   entry forms and epistemic badges are component-tested against mocked queries
   and boot in a browser; no case, source, claim or evidence link has ever been
   written to a live database. The RLS behind them *is* verified, against a real
-  Postgres, which is the half that matters most.
+  Postgres — including, now, that the writes actually succeed.
+- **Relevance ordering has not been seen against a live provider.** The sort is
+  unit-tested against ranked fixtures and the change is the difference between
+  keeping and discarding the providers' own ordering, but no live OpenAlex or
+  Crossref answer has been through it. The agent environment cannot reach
+  either host.
+
+## Two failures a user found, and what they cost
+
+Both were in code that had tests, and in both cases the tests were the problem.
+
+**A case could not be created at all** — `new row violates row-level security
+policy for table "cases"` on every attempt. The insert policy was correct
+throughout. Postgres applies the *select* policy to the rows an `insert ...
+returning` gives back and reports a refusal there with the same message as a
+with-check failure, so the error named the wrong policy; the select policy
+resolved ownership by looking the case up in `cases`, where the row being
+inserted was not yet visible. Fixed in `20260822040000_cases_returning.sql`.
+
+The suite had asserted that a stranger cannot create a case in somebody else's
+name, and never that the owner can create one in their own. A policy refusing
+everybody passes every test of that shape. `detective_write_test.sql` now
+inserts into all six tables with `returning`, which is what supabase-js sends.
+
+**Literature search returned the wrong field.** A search about media framing
+led with 2025 trial registrations about irrigation. The providers had ranked
+the relevant work first; the pipeline then sorted the merged list by date and
+threw that ordering away. Relevance is now the default, `providerRank` carries
+each provider's own position through the merge, and date order is a control the
+researcher can choose — over a set relevance has already selected. A long paste
+is also reduced to its content terms before it is sent, and the notes say which
+terms were searched.
+
+Neither bug was reachable by the checks in place. The lesson is the one already
+in rule 2 and worth restating: a suite of refusals proves refusals, and nothing
+whatsoever about whether the thing works.
 - **Auth has never run against a real Supabase project.** The session hook, the
   gate and the sign-in page are component-tested against a mocked client, and
   the routes boot in a browser — but no magic link has ever been sent or

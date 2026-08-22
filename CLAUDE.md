@@ -77,6 +77,18 @@ could not fire, a test passing because only one numeral existed across the
 pair, a migration that worked once and failed on redeploy, and a fidelity gap
 between the local harness and Supabase.
 
+**And its corollary, which cost more than any of those: a suite of refusals
+proves refusals and nothing else.** `detective_privacy_test.sql` asserted at
+length that strangers could not reach a case, and never once that its owner
+could create one — so it stayed green through a period when the app could not
+create a case at all. Whenever you write a test that something is refused,
+write the one that it is permitted, in the same commit. The refusal is
+worthless without it, because a policy that refuses everybody satisfies it.
+
+For anything the browser writes, test it the way supabase-js does it: with
+`returning`. A bare insert is a weaker statement and passed throughout that
+same period.
+
 ### 3. Migrations must survive three replays
 
 `npm run db:verify` applies everything three times. `create table if not
@@ -127,7 +139,19 @@ Both are told, prominently and above the results, not logged.
 The valuable half is almost always the road not taken. Match the surrounding
 density; do not add comments that restate the code.
 
-### 9. On screen the features are Unpack, Research and Detect
+### 9. Relevance is what orders a reference list
+
+Sorting the merged result set by date does not order the literature, it
+replaces it: the providers' own ranking is the only relevance signal in the
+system — nothing here reads a title against a query — and discarding it means
+whatever carries the newest date surfaces, related or not. It shipped that way
+once and returned 2025 irrigation trials for a question about media framing.
+
+Date order stays available, as something a researcher chooses, over a set
+relevance has already selected. `byRecencyThenInfluence` carries the warning;
+do not make it the default again.
+
+### 10. On screen the features are Unpack, Research and Detect
 
 The specification calls two of them "The Researcher" and "The Detective".
 Everything a user reads — tabs, headings, page copy — uses the verb form, and

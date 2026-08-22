@@ -50,7 +50,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
   if (request.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
-  let body: { query?: unknown; fromYear?: unknown };
+  let body: { query?: unknown; fromYear?: unknown; order?: unknown };
   try {
     body = await request.json();
   } catch {
@@ -64,6 +64,11 @@ Deno.serve(async (request: Request): Promise<Response> => {
   const fromYear = typeof body.fromYear === "number" && Number.isInteger(body.fromYear)
     ? body.fromYear
     : undefined;
+  // Anything the client did not explicitly ask to be date-ordered is ordered by
+  // relevance. An unrecognised value falls through to relevance rather than
+  // being refused: the ordering is a preference, and a 400 over a typo would
+  // cost somebody their search for no gain.
+  const order = body.order === "recency" ? "recency" as const : "relevance" as const;
 
   const caller = await fingerprint(request);
   if (!caller) {
@@ -110,7 +115,7 @@ Deno.serve(async (request: Request): Promise<Response> => {
 
   try {
     const result = await searchLiterature(
-      { text: query, fromYear, perPage: 25 },
+      { text: query, fromYear, perPage: 25, order },
       {
         providers: [openAlex(options), registry],
         fetcher,

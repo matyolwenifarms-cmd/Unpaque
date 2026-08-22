@@ -86,6 +86,17 @@ export function mergeReference(a: MergedReference, b: MergedReference): MergedRe
     // number is therefore the better lower bound, not a disagreement to split.
     citedByCount: Math.max(a.citedByCount ?? 0, b.citedByCount ?? 0) || undefined,
 
+    // The better of the two positions. A provider that ranked this work third
+    // has said something; the one that ranked it fortieth has not contradicted
+    // it, it has simply searched a different corpus with different scoring.
+    // Averaging them would penalise a work for being found twice, which is
+    // exactly backwards — `byRelevance` then rewards the agreement separately.
+    providerRank: a.providerRank === undefined
+      ? b.providerRank
+      : b.providerRank === undefined
+        ? a.providerRank
+        : Math.min(a.providerRank, b.providerRank),
+
     verification: a.verification === "verified" || b.verification === "verified"
       ? "verified"
       : record.verification,

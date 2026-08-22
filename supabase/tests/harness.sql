@@ -34,3 +34,10 @@ create table if not exists auth.users (
 create or replace function auth.uid() returns uuid
 language sql stable
 as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+
+-- A Supabase project grants this to its roles; without it a policy calling
+-- auth.uid() as `authenticated` fails with "permission denied for schema auth"
+-- rather than evaluating — a failure that exists only here and would send
+-- somebody hunting a bug that is not in the migrations.
+grant usage on schema auth to anon, authenticated, service_role;
+grant select on auth.users to authenticated, service_role;

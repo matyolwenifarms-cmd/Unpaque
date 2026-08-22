@@ -36,3 +36,14 @@ if "${PSQL[@]}" -d "$DB" -c "select this_function_does_not_exist();" >/dev/null 
   exit 1
 fi
 echo "negative control ok"
+
+# The behavioural suites, in the same run rather than a step somebody has to
+# remember. They were CI-only, so a suite could be added and never execute on
+# the machine it was written on — and the one thing a local gate is for is
+# finding this before a push. `set -e` and ON_ERROR_STOP carry the failure:
+# grepping output for "ERROR" is what once reported three green replay passes
+# against a refused connection.
+for suite in supabase/tests/*_test.sql; do
+  "${PSQL[@]}" -d "$DB" -f "$suite" >/dev/null
+  echo "$(basename "$suite") ok"
+done

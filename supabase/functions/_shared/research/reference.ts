@@ -114,6 +114,19 @@ export interface Reference {
   fullText?: FullText;
   landingPageUrl?: string;
   citedByCount?: number;
+  /**
+   * Where this sat in its provider's own answer, zero-based.
+   *
+   * Both providers return results ordered by their relevance scoring, and that
+   * ordering is the only relevance signal in the system — nothing here reads a
+   * title or an abstract. Discarding it and sorting the merged list by date
+   * produced the failure that made this field necessary: a search for media
+   * framing led with 2025 trial registrations about irrigation, because those
+   * were simply the newest rows anywhere in the result set.
+   *
+   * Absent for a reference no provider ranked, e.g. one the researcher added.
+   */
+  providerRank?: number;
   /** How well we know this exists. Upgraded by the verification pass. */
   verification: Verification;
   /**
@@ -165,6 +178,8 @@ export interface ProviderRecord {
   fullText?: { url?: unknown; pdfUrl?: unknown; version?: unknown; licence?: unknown; host?: unknown };
   landingPageUrl?: unknown;
   citedByCount?: unknown;
+  /** Zero-based position in the provider's own answer. See `providerRank`. */
+  rank?: unknown;
 }
 
 /**
@@ -216,6 +231,10 @@ export function fromProvider(record: ProviderRecord): Reference | null {
     fullText,
     landingPageUrl: typeof record.landingPageUrl === "string" ? record.landingPageUrl : undefined,
     citedByCount: typeof record.citedByCount === "number" ? record.citedByCount : undefined,
+    providerRank:
+      typeof record.rank === "number" && Number.isInteger(record.rank) && record.rank >= 0
+        ? record.rank
+        : undefined,
     // A provider returning something is not the same as that identifier
     // resolving. Nothing here has been checked against the registration
     // agency yet, so it starts at provider_only and the verification pass
@@ -247,10 +266,41 @@ function toFullText(value: ProviderRecord["fullText"]): FullText | undefined {
  * Newest first, which is what was asked for — but ties break on citation count,
  * because a reference list ordered purely by date buries the foundational work
  * every examiner expects to see.
+ *
+ * **Not the default, and it must not become one again.** Applied to the whole
+ * merged set it does not order the literature, it replaces it: every provider's
+ * relevance ranking is thrown away and what floats up is whatever happens to
+ * carry the newest date, related to the question or not. That is the bug this
+ * comment exists to stop somebody re-introducing. It is offered as a choice a
+ * researcher can make, on a list relevance has already selected.
  */
 export function byRecencyThenInfluence(a: Reference, b: Reference): number {
   if (a.year !== b.year) return (b.year ?? 0) - (a.year ?? 0);
   return (b.citedByCount ?? 0) - (a.citedByCount ?? 0);
+}
+
+/**
+ * Relevance first, which is the only ordering that answers the question asked.
+ *
+ * `providerRank` is where the provider itself put the work, and the providers
+ * are the only thing in this system that has read the query against a corpus.
+ * A work both providers returned outranks one only a single provider found, at
+ * equal rank: independent agreement is the closest thing to a second opinion
+ * available without a model. Recency and citation count settle the rest.
+ *
+ * A reference with no rank sorts last rather than first. Absent is not zero —
+ * treating it as zero would put an unranked reference above everything the
+ * providers actually rated.
+ */
+export function byRelevance(
+  a: Reference & { sources?: string[] },
+  b: Reference & { sources?: string[] },
+): number {
+  const rankOf = (reference: Reference) => reference.providerRank ?? Number.MAX_SAFE_INTEGER;
+  if (rankOf(a) !== rankOf(b)) return rankOf(a) - rankOf(b);
+  const agreement = (b.sources?.length ?? 1) - (a.sources?.length ?? 1);
+  if (agreement !== 0) return agreement;
+  return byRecencyThenInfluence(a, b);
 }
 
 /**

@@ -54,8 +54,11 @@ export function crossref(options: CrossrefOptions = {}): SearchProvider & {
 
       const references: Reference[] = [];
       const dropped: DroppedRecord[] = [];
-      for (const raw of items) {
-        const reference = toReference(raw as Record<string, unknown>);
+      // The index is the rank. Crossref answers in its own relevance order and
+      // that order is the only thing in this pipeline that has read the query
+      // against a corpus; losing it here is losing relevance entirely.
+      for (const [rank, raw] of items.entries()) {
+        const reference = toReference(raw as Record<string, unknown>, rank);
         if (reference) references.push(reference);
         else {
           const title = firstOf((raw as Record<string, unknown>).title);
@@ -104,9 +107,13 @@ export type ResolveOutcome =
   | { state: "malformed" }
   | { state: "unreachable" };
 
-function toReference(work: Record<string, unknown>): Reference | null {
+// `rank` is optional because a DOI resolution is not a search: one record came
+// back because it was asked for by identifier, and giving it a rank of 0 would
+// have it outrank every searched result it was merged with.
+function toReference(work: Record<string, unknown>, rank?: number): Reference | null {
   return fromProvider({
     source: "crossref",
+    rank,
     title: firstOf(work.title),
     doi: work.DOI,
     providerId: typeof work.DOI === "string" ? work.DOI : undefined,

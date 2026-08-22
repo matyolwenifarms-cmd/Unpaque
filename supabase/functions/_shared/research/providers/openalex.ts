@@ -45,10 +45,13 @@ export function openAlex(options: OpenAlexOptions = {}): SearchProvider {
       const references: Reference[] = [];
       const dropped: DroppedRecord[] = [];
 
-      for (const raw of results) {
+      // The index is the rank. OpenAlex answers in relevance order; see the note
+      // on `providerRank` for what discarding it did.
+      for (const [rank, raw] of results.entries()) {
         const work = raw as Record<string, unknown>;
         const reference = fromProvider({
           source: "openalex",
+          rank,
           title: work.display_name ?? work.title,
           doi: work.doi,
           providerId: work.id,

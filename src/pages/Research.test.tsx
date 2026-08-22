@@ -34,7 +34,57 @@ describe("the search page", () => {
     await user.type(screen.getByLabelText(/what are you looking for/i), "framing");
     await user.type(screen.getByLabelText(/published from year/i), "banana");
     await user.click(screen.getByRole("button", { name: /^search$/i }));
-    await waitFor(() => expect(searchReferences).toHaveBeenCalledWith("framing", undefined));
+    await waitFor(() =>
+      expect(searchReferences).toHaveBeenCalledWith("framing", undefined, "relevance"),
+    );
+  });
+
+  // Relevance is the default, and the reason is the whole of the bug this
+  // control came out of: sorting the merged result set by date does not order
+  // the literature, it replaces it.
+  it("asks for relevance unless the reader chooses otherwise", async () => {
+    searchReferences.mockResolvedValue({ status: "ok", references: [], reportedTotal: 0, notes: [] });
+    const user = userEvent.setup();
+    render(<Research />);
+    await user.type(screen.getByLabelText(/what are you looking for/i), "media framing");
+    await user.click(screen.getByRole("button", { name: /^search$/i }));
+    await waitFor(() =>
+      expect(searchReferences).toHaveBeenCalledWith("media framing", undefined, "relevance"),
+    );
+
+    await user.click(screen.getByRole("radio", { name: /newest first/i }));
+    await user.click(screen.getByRole("button", { name: /^search$/i }));
+    await waitFor(() =>
+      expect(searchReferences).toHaveBeenLastCalledWith("media framing", undefined, "recency"),
+    );
+  });
+
+  // Labelling a list "most relevant first" while it is still sorted by date is
+  // the same lie the sort told, retold by a control.
+  it("names the ordering the list on screen actually has", async () => {
+    searchReferences.mockResolvedValue({
+      status: "ok",
+      references: [
+        {
+          id: "doi:10.1000/a", source: "openalex", doi: "10.1000/a", title: "A work",
+          authors: [], year: 2020, preprint: false, retraction: "none", openAccess: false,
+          verification: "verified", availability: "metadata_only", sources: ["openalex"],
+          caveat: null, quotationCaveat: null,
+        },
+      ],
+      reportedTotal: 1,
+      notes: [],
+    });
+    const user = userEvent.setup();
+    render(<Research />);
+    await user.type(screen.getByLabelText(/what are you looking for/i), "media framing");
+    await user.click(screen.getByRole("button", { name: /^search$/i }));
+    await waitFor(() => expect(screen.getByText(/most relevant first/i)).toBeInTheDocument());
+
+    // Changing the control without searching again must not relabel the list
+    // that is already on screen.
+    await user.click(screen.getByRole("radio", { name: /newest first/i }));
+    expect(screen.getByText(/most relevant first/i)).toBeInTheDocument();
   });
 
   // The notes are the honest half of this feature. A search that returned less
