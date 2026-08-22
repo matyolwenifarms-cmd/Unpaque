@@ -32,7 +32,7 @@ what deliberately did not change with it, is `DEPARTURES.md` §6.
 | Feature | What it does | State | Costs to run |
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
-| **Research** | Literature, method vocabulary, analysis, results section | Phase 1–2 core, §6, §7 quantitative and write-up | **Nothing** |
+| **Research** | Literature, method, analysis, results section | Three stages on screen; §6 and §7 quantitative | **Nothing** |
 | **Detect** | Investigative intelligence — cases, evidence, timeline, dossier | Phase 0–1, case UI and the assembled document | Nothing |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.

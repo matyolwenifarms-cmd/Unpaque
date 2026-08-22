@@ -44,6 +44,16 @@ export type Epistemology = (typeof EPISTEMOLOGIES)[number];
 export interface Paradigm {
   readonly id: ParadigmId;
   readonly name: string;
+  /**
+   * The adjectival form, for "within a ___ paradigm".
+   *
+   * Stored rather than derived. The endings do not follow a rule —
+   * interpretivism/interpretivist, pragmatism/pragmatic,
+   * phenomenology/phenomenological, hermeneutics/hermeneutic — and a statement
+   * that says "a interpretivism paradigm" has undermined itself in its first
+   * six words.
+   */
+  readonly adjective: string;
   /** Where it comes from, with a real source a supervisor can look up. */
   readonly tradition: string;
   /** What a first-year student reads. One sentence, no jargon it does not define. */
@@ -62,6 +72,7 @@ export interface Paradigm {
 export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   positivism: {
     id: "positivism",
+    adjective: "positivist",
     name: "Positivism",
     tradition: "Comte, Cours de philosophie positive (1830–42); Durkheim, The Rules of Sociological Method (1895)",
     gloss:
@@ -76,6 +87,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   post_positivism: {
     id: "post_positivism",
+    adjective: "post-positivist",
     name: "Post-positivism",
     tradition: "Popper, The Logic of Scientific Discovery (1959); Campbell & Stanley (1963)",
     gloss:
@@ -90,6 +102,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   interpretivism: {
     id: "interpretivism",
+    adjective: "interpretivist",
     name: "Interpretivism",
     tradition: "Weber, Economy and Society (1922); Schütz, The Phenomenology of the Social World (1932)",
     gloss:
@@ -104,6 +117,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   constructivism: {
     id: "constructivism",
+    adjective: "constructivist",
     name: "Constructivism",
     tradition: "Guba & Lincoln, Fourth Generation Evaluation (1989); von Glasersfeld (1995)",
     gloss:
@@ -118,6 +132,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   pragmatism: {
     id: "pragmatism",
+    adjective: "pragmatist",
     name: "Pragmatism",
     tradition: "Dewey, Logic: The Theory of Inquiry (1938); Morgan (2007)",
     gloss:
@@ -132,6 +147,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   critical_theory: {
     id: "critical_theory",
+    adjective: "critical-theoretical",
     name: "Critical theory",
     tradition: "Horkheimer, Traditional and Critical Theory (1937); Habermas (1968)",
     gloss:
@@ -146,6 +162,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   feminist_theory: {
     id: "feminist_theory",
+    adjective: "feminist",
     name: "Feminist theory",
     tradition: "Harding, Whose Science? Whose Knowledge? (1991); Haraway, Situated Knowledges (1988)",
     gloss:
@@ -160,6 +177,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   symbolic_interactionism: {
     id: "symbolic_interactionism",
+    adjective: "symbolic-interactionist",
     name: "Symbolic interactionism",
     tradition: "Blumer, Symbolic Interactionism (1969), after Mead, Mind, Self and Society (1934)",
     gloss:
@@ -174,6 +192,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   phenomenology: {
     id: "phenomenology",
+    adjective: "phenomenological",
     name: "Phenomenology",
     tradition: "Husserl, Ideas (1913); Giorgi (2009); van Manen, Researching Lived Experience (1990)",
     gloss:
@@ -188,6 +207,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   grounded_theory: {
     id: "grounded_theory",
+    adjective: "grounded-theory",
     name: "Grounded theory",
     tradition: "Glaser & Strauss, The Discovery of Grounded Theory (1967); Charmaz (2006)",
     gloss:
@@ -202,6 +222,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   hermeneutics: {
     id: "hermeneutics",
+    adjective: "hermeneutic",
     name: "Hermeneutics",
     tradition: "Gadamer, Truth and Method (1960); Ricoeur (1981)",
     gloss:
@@ -216,6 +237,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   critical_realism: {
     id: "critical_realism",
+    adjective: "critical realist",
     name: "Critical realism",
     tradition: "Bhaskar, A Realist Theory of Science (1975); Sayer, Realism and Social Science (2000)",
     gloss:
@@ -230,6 +252,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   postmodernism: {
     id: "postmodernism",
+    adjective: "postmodernist",
     name: "Postmodernism",
     tradition: "Lyotard, The Postmodern Condition (1979); Foucault, The Archaeology of Knowledge (1969)",
     gloss:
@@ -244,6 +267,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   social_constructionism: {
     id: "social_constructionism",
+    adjective: "social constructionist",
     name: "Social constructionism",
     tradition: "Berger & Luckmann, The Social Construction of Reality (1966); Gergen (1985)",
     gloss:
@@ -258,6 +282,7 @@ export const PARADIGMS: Record<ParadigmId, Paradigm> = {
   },
   realism: {
     id: "realism",
+    adjective: "realist",
     name: "Realism",
     tradition: "Pawson & Tilley, Realistic Evaluation (1997); Maxwell, A Realist Approach (2012)",
     gloss:

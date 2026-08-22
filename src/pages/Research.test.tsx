@@ -162,3 +162,15 @@ describe("the two stages", () => {
     expect(screen.getByText(/the discussion, and that needs one/i)).toBeInTheDocument();
   });
 });
+
+describe("the method stage", () => {
+  it("is reachable and offers the vocabulary", async () => {
+    const user = userEvent.setup();
+    render(<Research />);
+    await user.click(screen.getByRole("button", { name: /^method/i }));
+    expect(screen.getByLabelText(/choose a paradigm/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/choose an analytic approach/i)).toBeInTheDocument();
+    // And the literature stage is gone, not merely scrolled past.
+    expect(screen.queryByLabelText(/what are you looking for/i)).toBeNull();
+  });
+});

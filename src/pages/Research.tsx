@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Loader2, Search } from "lucide-react";
 import { AnalyseData } from "@/components/AnalyseData.tsx";
+import { ChooseMethod } from "@/components/ChooseMethod.tsx";
 import { DataUpload } from "@/components/DataUpload.tsx";
 import { DatasetSummary } from "@/components/DatasetSummary.tsx";
 import { ReferenceList } from "@/components/ReferenceList.tsx";
@@ -18,6 +19,7 @@ import { searchReferences, type ResultOrder, type SearchedReference } from "@/li
  */
 const STAGES = [
   { id: "literature", name: "Literature", blurb: "Find and verify references" },
+  { id: "method", name: "Method", blurb: "Declare the paradigm and approach" },
   { id: "analyse", name: "Analyse data", blurb: "Upload a file and run a test" },
 ] as const;
 type Stage = (typeof STAGES)[number]["id"];
@@ -129,6 +131,15 @@ export default function Research() {
       setError(result.message);
     }
     setBusy(false);
+  }
+
+  if (stage === "method") {
+    return (
+      <div>
+        <ResearchHeader stage={stage} onStage={setStage} />
+        <ChooseMethod />
+      </div>
+    );
   }
 
   if (stage === "analyse") {
