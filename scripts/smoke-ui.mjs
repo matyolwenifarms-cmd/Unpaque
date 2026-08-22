@@ -108,8 +108,14 @@ try {
     // Short timeouts throughout. A missing element should fail this check in
     // two seconds, not hang until the watchdog kills the run — an earlier
     // version waited ninety seconds to report one absent heading.
-    const brand = await page.getByRole("link", { name: "Unpaque" }).first()
-      .textContent({ timeout: 2_000 }).catch(() => null);
+    //
+    // The wordmark is no longer in the shell; it lives on the landing plate.
+    // What every inner route must have instead is a way back, since nothing
+    // else in the header leads anywhere.
+    const home = route === "/"
+      ? "n/a"
+      : await page.getByRole("link", { name: "Home" }).first()
+          .textContent({ timeout: 2_000 }).catch(() => null);
     // Exactly one h1 per page. The shell's wordmark is a link home rather than
     // a heading, so each page must title itself — a route with none is an
     // accessibility defect, and a route with two is an outline nobody can
@@ -119,7 +125,7 @@ try {
 
     let verdict = "ok";
     if (status !== 200) { verdict = `HTTP ${status}`; failures += 1; }
-    else if (brand === null) { verdict = "no wordmark in the shell"; failures += 1; }
+    else if (home === null) { verdict = "no way back to the landing page"; failures += 1; }
     else if (headings.length !== 1) {
       verdict = `expected one h1, found ${headings.length}${headings.length ? `: ${headings.join(" / ")}` : ""}`;
       failures += 1;
@@ -135,7 +141,10 @@ try {
   // nothing for an unmatched path by default, which looks identical to a crash.
   const page = await context.newPage();
   await page.goto(`${BASE}/not-a-real-route`, { waitUntil: "load", timeout: 20_000 });
-  const stillThere = (await page.getByRole("link", { name: "Unpaque" }).first()
+  // An unmatched path renders the shell with no route inside it. The shell is
+  // what must survive — React Router renders nothing for an unknown path by
+  // default, and a blank page is indistinguishable from a crash.
+  const stillThere = (await page.locator("header").first()
     .textContent({ timeout: 2_000 }).catch(() => null)) !== null;
   console.log(`  /not-a-real-route  ${stillThere ? "shell survives" : "SHELL LOST"}`);
   if (!stillThere) failures += 1;

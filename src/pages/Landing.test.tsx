@@ -24,11 +24,23 @@ describe("the landing page", () => {
     expect(within(plate).getByText(/communication diagnostics/i)).toBeInTheDocument();
   });
 
-  it("offers a way into all three features", () => {
+  // The links live on the plate, beneath the tagline. The cards below it
+  // describe the features; they are not a second set of navigation.
+  it("offers a way into all three features, from the plate", () => {
     draw();
-    expect(screen.getByRole("link", { name: /Unpack/ })).toHaveAttribute("href", "/unpack");
-    expect(screen.getByRole("link", { name: /The Researcher/ })).toHaveAttribute("href", "/research");
-    expect(screen.getByRole("link", { name: /The Detective/ })).toHaveAttribute("href", "/cases");
+    const plate = screen.getByRole("region", { name: "Unpaque" });
+    expect(within(plate).getByRole("link", { name: /Unpack/ })).toHaveAttribute("href", "/unpack");
+    expect(within(plate).getByRole("link", { name: /The Researcher/ })).toHaveAttribute("href", "/research");
+    expect(within(plate).getByRole("link", { name: /The Detective/ })).toHaveAttribute("href", "/cases");
+  });
+
+  it("puts them below the tagline, not above it", () => {
+    draw();
+    const plate = screen.getByRole("region", { name: "Unpaque" });
+    const tagline = within(plate).getByText(/communication diagnostics/i);
+    const nav = within(plate).getByRole("navigation", { name: /features/i });
+    // Node.DOCUMENT_POSITION_FOLLOWING — the nav comes after the tagline.
+    expect(tagline.compareDocumentPosition(nav) & 4).toBeTruthy();
   });
 
   it("says what The Researcher will not do, on the way in", () => {
