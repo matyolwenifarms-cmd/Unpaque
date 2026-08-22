@@ -19,7 +19,7 @@ export function Codebook({
   codes: readonly Code[];
   /** How many extracts carry each code. Zero is worth seeing. */
   counts: ReadonlyMap<string, number>;
-  onAdd: (code: Code) => void;
+  onAdd: (code: Omit<Code, "id">) => void;
   onRemove: (id: string) => void;
 }) {
   const [draft, setDraft] = useState<Partial<Code>>({});
@@ -29,8 +29,10 @@ export function Codebook({
   function add(event: React.FormEvent) {
     event.preventDefault();
     if (problems.length > 0) return;
+    // No id. The store owns identity, because when the workspace is kept the
+    // real id is the one Postgres returns and a client-invented one would be
+    // silently replaced on the next load.
     onAdd({
-      id: crypto.randomUUID(),
       label: draft.label!.trim(),
       definition: draft.definition!.trim(),
       when: draft.when!.trim(),

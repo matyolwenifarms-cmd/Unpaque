@@ -1,0 +1,260 @@
+import type { Code } from "@shared/research/qualitative/codebook.ts";
+import type { Coding } from "@shared/research/qualitative/coding.ts";
+import type { ThemeDraft } from "@shared/research/qualitative/themes.ts";
+import { supabase } from "@/lib/supabase.ts";
+
+// Straight to Postgres through supabase-js, with no edge function in between,
+// because row level security is doing the work — the same argument as
+// detective-api.ts. The two exceptions go through RPCs, and both are there
+// because the rule is a cross-table one that RLS has no good way to ask:
+// `apply_code` checks a coding's offsets against the document it points into,
+// and `set_coding_order` rewrites every position in one transaction.
+
+export interface StudySummary {
+  id: string;
+  title: string;
+  question: string | null;
+  created_at: string;
+}
+
+export interface DocumentRow {
+  id: string;
+  name: string;
+  body: string;
+  coding_position: number;
+}
+
+export interface StudyContents {
+  documents: DocumentRow[];
+  codes: Code[];
+  codings: Coding[];
+  drafts: ThemeDraft[];
+}
+
+export type Result<T> = { ok: true; data: T } | { ok: false; message: string };
+
+/** Errors are values. A thrown one ends up in a catch that says "something went wrong". */
+function wrap<T>(data: T | null, error: { message: string } | null): Result<T> {
+  if (error) return { ok: false, message: error.message };
+  return { ok: true, data: (data ?? []) as T };
+}
+
+export async function listStudies(): Promise<Result<StudySummary[]>> {
+  const { data, error } = await supabase()
+    .from("studies")
+    .select("id, title, question, created_at")
+    .order("created_at", { ascending: false });
+  return wrap<StudySummary[]>(data, error);
+}
+
+export async function createStudy(
+  title: string,
+  question: string,
+): Promise<Result<StudySummary>> {
+  const { data: user } = await supabase().auth.getUser();
+  const owner = user.user?.id;
+  if (!owner) return { ok: false, message: "You are not signed in." };
+
+  const { data, error } = await supabase()
+    .from("studies")
+    .insert({ owner_id: owner, title: title.trim(), question: question.trim() || null })
+    .select("id, title, question, created_at")
+    .single();
+  return wrap<StudySummary>(data, error);
+}
+
+/**
+ * Everything in one study, in four round trips.
+ *
+ * Four rather than a join, because the shapes are genuinely different and a
+ * single nested select would arrive as a tree that has to be flattened back
+ * into the four flat lists the engine takes. The engine is the authority on
+ * how these relate — `assembleThemes` is what decides whether a draft is a
+ * theme — so the client's job is to hand it the rows, not to pre-digest them.
+ */
+export async function loadStudy(studyId: string): Promise<Result<StudyContents>> {
+  const documents = await supabase()
+    .from("study_documents")
+    .select("id, name, body, coding_position")
+    .eq("study_id", studyId)
+    .order("coding_position", { ascending: true });
+  if (documents.error) return { ok: false, message: documents.error.message };
+
+  const codes = await supabase()
+    .from("codes")
+    .select("id, label, definition, apply_when, not_when, example, parent_id")
+    .eq("study_id", studyId)
+    .order("created_at", { ascending: true });
+  if (codes.error) return { ok: false, message: codes.error.message };
+
+  const codings = await supabase()
+    .from("codings")
+    .select("id, document_id, code_id, start_offset, end_offset, memo, coder_id")
+    .eq("study_id", studyId)
+    .order("start_offset", { ascending: true });
+  if (codings.error) return { ok: false, message: codings.error.message };
+
+  const drafts = await supabase()
+    .from("theme_drafts")
+    .select("id, label, statement, theme_draft_codes(code_id)")
+    .eq("study_id", studyId)
+    .order("created_at", { ascending: true });
+  if (drafts.error) return { ok: false, message: drafts.error.message };
+
+  return {
+    ok: true,
+    data: {
+      documents: (documents.data ?? []) as DocumentRow[],
+      // The column is `apply_when` because `when` is reserved in SQL, and the
+      // engine's field is `when` because that is what it reads as in a
+      // codebook. Renamed here, once, rather than in every component.
+      codes: (codes.data ?? []).map((row) => ({
+        id: row.id,
+        label: row.label,
+        definition: row.definition,
+        when: row.apply_when,
+        notWhen: row.not_when,
+        example: row.example ?? undefined,
+        parentId: row.parent_id,
+      })),
+      codings: (codings.data ?? []).map((row) => ({
+        id: row.id,
+        documentId: row.document_id,
+        codeId: row.code_id,
+        start: row.start_offset,
+        end: row.end_offset,
+        memo: row.memo,
+        coderId: row.coder_id,
+      })),
+      drafts: (drafts.data ?? []).map((row) => ({
+        id: row.id,
+        label: row.label,
+        statement: row.statement,
+        codeIds: (row.theme_draft_codes ?? []).map((join) => join.code_id),
+      })),
+    },
+  };
+}
+
+export async function addDocument(
+  studyId: string,
+  name: string,
+  body: string,
+  position: number,
+): Promise<Result<DocumentRow>> {
+  const { data, error } = await supabase()
+    .from("study_documents")
+    .insert({ study_id: studyId, name, body, coding_position: position })
+    .select("id, name, body, coding_position")
+    .single();
+  return wrap<DocumentRow>(data, error);
+}
+
+export async function removeDocument(id: string): Promise<Result<null>> {
+  const { error } = await supabase().from("study_documents").delete().eq("id", id);
+  return wrap<null>(null, error);
+}
+
+export async function setCodingOrder(
+  studyId: string,
+  documentIds: readonly string[],
+): Promise<Result<null>> {
+  const { error } = await supabase().rpc("set_coding_order", {
+    p_study: studyId,
+    p_documents: documentIds,
+  });
+  return wrap<null>(null, error);
+}
+
+export async function addCode(studyId: string, code: Code): Promise<Result<Code>> {
+  const { data, error } = await supabase()
+    .from("codes")
+    .insert({
+      study_id: studyId,
+      label: code.label,
+      definition: code.definition,
+      apply_when: code.when,
+      not_when: code.notWhen,
+      example: code.example ?? null,
+      parent_id: code.parentId ?? null,
+    })
+    .select("id, label, definition, apply_when, not_when, example, parent_id")
+    .single();
+  if (error) return { ok: false, message: error.message };
+  return {
+    ok: true,
+    data: {
+      id: data.id,
+      label: data.label,
+      definition: data.definition,
+      when: data.apply_when,
+      notWhen: data.not_when,
+      example: data.example ?? undefined,
+      parentId: data.parent_id,
+    },
+  };
+}
+
+export async function removeCode(id: string): Promise<Result<null>> {
+  const { error } = await supabase().from("codes").delete().eq("id", id);
+  return wrap<null>(null, error);
+}
+
+/**
+ * Apply a code to a passage.
+ *
+ * Through the RPC and not an insert, because the offsets have to be checked
+ * against the document they point into and `codings` has no insert policy at
+ * all. A coding whose offsets run past the end of its document is corruption
+ * nothing downstream can detect: it slices a shorter string and shows a
+ * plausible extract nobody said.
+ */
+export async function applyCoding(
+  documentId: string,
+  codeId: string,
+  start: number,
+  end: number,
+  memo: string | null,
+): Promise<Result<string>> {
+  const { data, error } = await supabase().rpc("apply_code", {
+    p_document: documentId,
+    p_code: codeId,
+    p_start: start,
+    p_end: end,
+    p_memo: memo,
+  });
+  return wrap<string>(data, error);
+}
+
+export async function removeCoding(id: string): Promise<Result<null>> {
+  const { error } = await supabase().from("codings").delete().eq("id", id);
+  return wrap<null>(null, error);
+}
+
+export async function addThemeDraft(
+  studyId: string,
+  draft: Omit<ThemeDraft, "id">,
+): Promise<Result<ThemeDraft>> {
+  const { data, error } = await supabase()
+    .from("theme_drafts")
+    .insert({ study_id: studyId, label: draft.label, statement: draft.statement })
+    .select("id, label, statement")
+    .single();
+  if (error) return { ok: false, message: error.message };
+
+  if (draft.codeIds.length > 0) {
+    const join = await supabase()
+      .from("theme_draft_codes")
+      .insert(draft.codeIds.map((codeId) => ({ theme_id: data.id, code_id: codeId })));
+    if (join.error) return { ok: false, message: join.error.message };
+  }
+  return {
+    ok: true,
+    data: { id: data.id, label: data.label, statement: data.statement, codeIds: [...draft.codeIds] },
+  };
+}
+
+export async function removeThemeDraft(id: string): Promise<Result<null>> {
+  const { error } = await supabase().from("theme_drafts").delete().eq("id", id);
+  return wrap<null>(null, error);
+}

@@ -32,7 +32,7 @@ what deliberately did not change with it, is `DEPARTURES.md` §6.
 | Feature | What it does | State | Costs to run |
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
-| **Research** | Literature, method, quantitative analysis, coding transcripts | Four stages on screen; §6 and §7, quantitative and qualitative | **Nothing** |
+| **Research** | Literature, method, quantitative analysis, coding transcripts | Four stages on screen; §6 and §7, quantitative and qualitative. Qualitative work is kept in Postgres | **Nothing** |
 | **Detect** | Investigative intelligence — cases, evidence, timeline, dossier | Phase 0–1, case UI and the assembled document | Nothing |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
@@ -47,8 +47,8 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 865 unit and component tests, four passing gates (typecheck, lint, test, build).
-- 59 SQL assertions across four suites, run against a real Postgres 16, with
+- 873 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 122 SQL assertions across six suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
   responses. The recorded fixtures are committed.
@@ -88,12 +88,17 @@ The distinction matters more than the totals.
   a byte-order mark — and those are committed as fixtures. The shapes are
   right; the data is invented. A real export is still the thing to try, and it
   needs no key.
-- **No transcript from an actual study has been coded.** The qualitative
-  workspace holds nothing after a refresh — transcripts, codes and themes live
-  in the browser tab, and the screen says so at the top. That is the next thing
-  to close and it needs no key: four tables, RLS, and the notice comes out in
-  the same commit. Inter-coder agreement (Cohen's kappa) is specified and not
-  built; `Coding` already carries `coderId` for it.
+- **The qualitative workspace has never written to a live database.** Six
+  tables, an RPC that checks a coding's offsets against the document it points
+  into, and 33 assertions against a real Postgres 16 — but no study, transcript
+  or coding has been written through supabase-js to a deployed project. It also
+  needs email auth enabled (step 4 below) before anybody can open a study at
+  all. Signed out the workspace still runs and keeps nothing, and says which of
+  those three states it is in.
+- **Inter-coder agreement is not built.** Cohen's kappa is the specified
+  measure and `codings.coder_id` is populated for it, but nothing reads it and
+  a study cannot yet have a second coder — `can_write_study` is owner-only, and
+  is a function precisely so that becomes one body to change.
 - **Relevance ordering has not been seen against a live provider.** The sort is
   unit-tested against ranked fixtures and the change is the difference between
   keeping and discarding the providers' own ordering, but no live OpenAlex or
@@ -207,11 +212,15 @@ could be written into**.
    analysis.
 2. **`npm run research:record`** with `OPENALEX_CONTACT` set. Free, thirty
    seconds, closes the last four skipped tests.
-3. **Deploy both functions** (`analyse` and `research-search`) and run
-   `npm run smoke` and the `/research` route against them.
+3. **`npm run deploy`.** It now also pushes `20260823000000_qualitative_study`,
+   which is the six tables the coding workspace writes to — until it runs,
+   opening a study fails with a message about a missing relation. Then run
+   `npm run smoke` and the `/research` route against the deployed functions.
 4. **Enable email auth** in the Supabase dashboard (Authentication → Providers →
    Email, with magic links on) and sign in once. Nothing that belongs to a
-   person works until that is done.
+   person works until that is done — and the coding workspace is the first
+   thing that silently *degrades* rather than stopping: signed out it runs and
+   keeps nothing, saying so at the top.
 5. **Detect's interface**, or **Research's document retrieval**.
    The latter needs the job worker described in
    `ARCHITECTURE_ASSESSMENT.md` §3, and is the first thing here that cannot be

@@ -30,7 +30,7 @@ export function CodeDocument({
   text: string;
   codes: readonly Code[];
   codings: readonly Coding[];
-  onCode: (coding: Coding) => void;
+  onCode: (coding: Omit<Coding, "id">) => void;
   onUncode: (id: string) => void;
 }) {
   const source = useRef<HTMLParagraphElement>(null);
@@ -68,7 +68,6 @@ export function CodeDocument({
       return;
     }
     onCode({
-      id: crypto.randomUUID(),
       documentId,
       codeId,
       start: selected.start,

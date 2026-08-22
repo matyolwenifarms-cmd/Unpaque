@@ -24,14 +24,15 @@ const CODINGS: Coding[] = [
 
 const DOCUMENTS = new Map([["d1", ONE], ["d2", TWO]]);
 
-function board(drafts: ThemeDraft[], onDrafts = vi.fn()) {
+function board(drafts: ThemeDraft[], onAdd = vi.fn(), onRemove = vi.fn()) {
   return render(
     <ThemeBoard
       codes={CODES}
       codings={CODINGS}
       documents={DOCUMENTS}
       drafts={drafts}
-      onDrafts={onDrafts}
+      onAdd={onAdd}
+      onRemove={onRemove}
     />,
   );
 }

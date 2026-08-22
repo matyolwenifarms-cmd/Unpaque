@@ -125,7 +125,21 @@ fix that did not work.
 versions, which is how you tell "the migration is not applied" from "the
 migration is applied and did not help".
 
-## 3. Point the app at it
+## 3. Turn on sign-in
+
+**Authentication → Providers → Email**, with magic links on. Then sign in once
+at `/sign-in`.
+
+Nothing that belongs to a person works until this is done, and two features
+fail differently without it. Detect shows the "this part of Unpaque is yours"
+gate and stops, which is obvious. Research's **Code text** stage does not stop:
+it runs, holds your transcripts and codings in the browser tab, and tells you
+they are not being kept. That is deliberate — trying the coding surface should
+not require an account — but it does mean the difference between "kept" and
+"not kept" is a sentence at the top of the screen rather than a locked door.
+Read it before you code an afternoon's work.
+
+## 4. Point the app at it
 
 Copy `.env.example` to `.env` and fill in the two public values from
 **Project Settings → API**:
@@ -135,7 +149,7 @@ VITE_SUPABASE_URL=https://<project-ref>.supabase.co
 VITE_SUPABASE_ANON_KEY=<anon public>
 ```
 
-## 4. Prove it works
+## 5. Prove it works
 
 ```bash
 npm run smoke

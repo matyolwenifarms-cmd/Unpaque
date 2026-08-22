@@ -25,13 +25,15 @@ export function ThemeBoard({
   codings,
   documents,
   drafts,
-  onDrafts,
+  onAdd,
+  onRemove,
 }: {
   codes: readonly Code[];
   codings: readonly Coding[];
   documents: ReadonlyMap<string, string>;
-  drafts: ThemeDraft[];
-  onDrafts: (drafts: ThemeDraft[]) => void;
+  drafts: readonly ThemeDraft[];
+  onAdd: (draft: Omit<ThemeDraft, "id">) => void;
+  onRemove: (id: string) => void;
 }) {
   const [label, setLabel] = useState("");
   const [statement, setStatement] = useState("");
@@ -43,10 +45,7 @@ export function ThemeBoard({
   function add(event: React.FormEvent) {
     event.preventDefault();
     if (label.trim() === "" || chosen.length === 0) return;
-    onDrafts([
-      ...drafts,
-      { id: crypto.randomUUID(), label: label.trim(), statement: statement.trim(), codeIds: chosen },
-    ]);
+    onAdd({ label: label.trim(), statement: statement.trim(), codeIds: chosen });
     setLabel("");
     setStatement("");
     setChosen([]);
@@ -123,7 +122,7 @@ export function ThemeBoard({
             <h4 className="text-sm font-medium">{theme.label}</h4>
             <button
               type="button"
-              onClick={() => onDrafts(drafts.filter((draft) => draft.id !== theme.id))}
+              onClick={() => onRemove(theme.id)}
               className="shrink-0 text-xs text-muted underline hover:text-ink"
             >
               Remove
@@ -152,7 +151,7 @@ export function ThemeBoard({
             <h4 className="text-sm font-medium text-muted">{draft.label}</h4>
             <button
               type="button"
-              onClick={() => onDrafts(drafts.filter((other) => other.id !== draft.id))}
+              onClick={() => onRemove(draft.id)}
               className="shrink-0 text-xs text-muted underline hover:text-ink"
             >
               Remove

@@ -1,18 +1,13 @@
-import { useMemo, useState } from "react";
-import type { Code } from "@shared/research/qualitative/codebook.ts";
-import { coOccurrence, type Coding } from "@shared/research/qualitative/coding.ts";
-import type { ThemeDraft } from "@shared/research/qualitative/themes.ts";
+import { useEffect, useMemo, useState } from "react";
+import { coOccurrence } from "@shared/research/qualitative/coding.ts";
 import { readSaturation } from "@shared/research/qualitative/saturation.ts";
 import { CodeDocument } from "@/components/CodeDocument.tsx";
 import { Codebook } from "@/components/Codebook.tsx";
 import { ThemeBoard } from "@/components/ThemeBoard.tsx";
+import { useQualitativeStudy } from "@/hooks/useQualitativeStudy.ts";
+import { useSession } from "@/hooks/useSession.ts";
+import { createStudy, listStudies, type StudySummary } from "@/lib/qualitative-api.ts";
 import { cn } from "@/lib/utils.ts";
-
-interface Document {
-  id: string;
-  name: string;
-  text: string;
-}
 
 const VIEWS = [
   { id: "code", name: "Code", blurb: "Read a transcript and apply codes" },
@@ -25,26 +20,214 @@ type View = (typeof VIEWS)[number]["id"];
  * Qualitative analysis: transcripts, a codebook, themes, and the saturation
  * account a methodology chapter needs.
  *
- * The order of documents is the order they were added, and it is what
- * saturation is read from. It is not inferred anywhere: a claim about
- * saturation is a claim about a sequence, and a sequence the software guessed
- * is a fact about the analysis that nobody established.
+ * Signed in, everything is kept in Postgres. Signed out it still works and
+ * holds nothing, and says so — because a researcher deciding whether the
+ * coding surface suits them should not have to make an account to find out,
+ * and because a screen that quietly discards days of work is the worst thing
+ * this feature could do.
  */
 export function CodeText() {
-  const [documents, setDocuments] = useState<Document[]>([]);
-  const [codes, setCodes] = useState<Code[]>([]);
-  const [codings, setCodings] = useState<Coding[]>([]);
-  const [drafts, setDrafts] = useState<ThemeDraft[]>([]);
+  const { session, configured } = useSession();
+  const [studies, setStudies] = useState<StudySummary[] | null>(null);
+  const [studyId, setStudyId] = useState<string | null>(null);
+  const [naming, setNaming] = useState(false);
+  const [title, setTitle] = useState("");
+  const [question, setQuestion] = useState("");
+  const [listProblem, setListProblem] = useState<string | null>(null);
+
+  const store = useQualitativeStudy(studyId);
+
+  useEffect(() => {
+    if (!configured || !session) {
+      setStudies(null);
+      setStudyId(null);
+      return;
+    }
+    let active = true;
+    void listStudies().then((result) => {
+      if (!active) return;
+      if (!result.ok) return setListProblem(result.message);
+      setListProblem(null);
+      setStudies(result.data);
+      // Opened rather than offered when there is exactly one. A picker with a
+      // single entry is a click that teaches nothing.
+      if (result.data.length === 1) setStudyId(result.data[0]!.id);
+    });
+    return () => {
+      active = false;
+    };
+  }, [configured, session]);
+
+  async function startStudy(event: React.FormEvent) {
+    event.preventDefault();
+    if (title.trim() === "") return;
+    const result = await createStudy(title, question);
+    if (!result.ok) return setListProblem(result.message);
+    setListProblem(null);
+    setStudies((was) => [result.data, ...(was ?? [])]);
+    setStudyId(result.data.id);
+    setTitle("");
+    setQuestion("");
+    setNaming(false);
+  }
+
+  return (
+    <div className="space-y-4">
+      {session && studies !== null && (
+        <StudyPicker
+          studies={studies}
+          studyId={studyId}
+          onOpen={setStudyId}
+          naming={naming}
+          onNaming={setNaming}
+          title={title}
+          onTitle={setTitle}
+          question={question}
+          onQuestion={setQuestion}
+          onStart={startStudy}
+        />
+      )}
+
+      {listProblem && (
+        <p className="rounded-lg border border-rule bg-raised p-3 text-sm" role="alert">
+          {listProblem}
+        </p>
+      )}
+
+      {/* The notice tracks the behaviour rather than the feature existing.
+          Copy changes with behaviour, in the same commit — a warning somebody
+          finds decorative teaches them to discount the next one. */}
+      {!store.kept && (
+        <p className="rounded-lg border border-rule bg-raised p-3 text-sm text-muted">
+          {session
+            ? "Nothing here is saved until you open or start a study. Transcripts, codes and themes live in this browser tab only."
+            : configured
+              ? "Nothing here is saved. Transcripts, codes and themes live in this browser tab, and closing or refreshing it loses them — sign in and start a study to keep your coding."
+              : "This build is not connected to an Unpaque project, so nothing here is saved. Transcripts, codes and themes live in this browser tab only."}
+        </p>
+      )}
+
+      {store.problem && (
+        <p className="rounded-lg border border-rule bg-raised p-3 text-sm" role="alert">
+          {store.problem}
+        </p>
+      )}
+
+      {store.loading ? <p className="text-sm text-muted">Opening the study…</p> : <Workspace store={store} />}
+    </div>
+  );
+}
+
+function StudyPicker({
+  studies,
+  studyId,
+  onOpen,
+  naming,
+  onNaming,
+  title,
+  onTitle,
+  question,
+  onQuestion,
+  onStart,
+}: {
+  studies: readonly StudySummary[];
+  studyId: string | null;
+  onOpen: (id: string) => void;
+  naming: boolean;
+  onNaming: (naming: boolean) => void;
+  title: string;
+  onTitle: (title: string) => void;
+  question: string;
+  onQuestion: (question: string) => void;
+  onStart: (event: React.FormEvent) => void;
+}) {
+  return (
+    <section className="rounded-lg border border-rule bg-raised p-4">
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <h3 className="mr-auto text-sm font-medium">Your studies</h3>
+        <button
+          type="button"
+          onClick={() => onNaming(!naming)}
+          className="rounded-lg border border-rule px-3 py-1.5 text-xs hover:border-accent"
+        >
+          {naming ? "Close" : "New study"}
+        </button>
+      </div>
+
+      {studies.length === 0 && !naming && (
+        <p className="text-sm text-muted">
+          A study holds its transcripts, its codebook and everything coded in it. Start one and the
+          work is kept.
+        </p>
+      )}
+
+      {studies.length > 0 && (
+        <ul className="flex flex-wrap gap-2">
+          {studies.map((study) => (
+            <li key={study.id}>
+              <button
+                type="button"
+                aria-pressed={studyId === study.id}
+                onClick={() => onOpen(study.id)}
+                className={cn(
+                  "rounded-lg border px-3 py-1.5 text-xs",
+                  studyId === study.id
+                    ? "border-accent bg-accent/10"
+                    : "border-rule hover:border-accent",
+                )}
+              >
+                {study.title}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {naming && (
+        <form onSubmit={onStart} className="mt-3">
+          <label htmlFor="study-title" className="mb-1 block text-xs text-muted">
+            What is the study called?
+          </label>
+          <input
+            id="study-title"
+            value={title}
+            onChange={(event) => onTitle(event.target.value)}
+            className="mb-3 w-full rounded-lg border border-rule bg-paper px-3 py-2 text-sm outline-none focus:border-accent"
+          />
+          <label htmlFor="study-question" className="mb-1 block text-xs text-muted">
+            The research question (optional)
+          </label>
+          <input
+            id="study-question"
+            value={question}
+            onChange={(event) => onQuestion(event.target.value)}
+            className="mb-3 w-full rounded-lg border border-rule bg-paper px-3 py-2 text-sm outline-none focus:border-accent"
+          />
+          <button
+            type="submit"
+            disabled={title.trim() === ""}
+            className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-ink disabled:opacity-40"
+          >
+            Start study
+          </button>
+        </form>
+      )}
+    </section>
+  );
+}
+
+function Workspace({ store }: { store: ReturnType<typeof useQualitativeStudy> }) {
   const [openId, setOpenId] = useState<string | null>(null);
   const [view, setView] = useState<View>("code");
   const [pasting, setPasting] = useState(false);
   const [name, setName] = useState("");
   const [text, setText] = useState("");
 
+  const { documents, codes, codings, drafts } = store;
   const open = documents.find((document) => document.id === openId) ?? documents[0] ?? null;
 
   const texts = useMemo(
-    () => new Map(documents.map((document) => [document.id, document.text])),
+    () => new Map(documents.map((document) => [document.id, document.body])),
     [documents],
   );
   const counts = useMemo(() => {
@@ -53,42 +236,30 @@ export function CodeText() {
     return tally;
   }, [codings]);
   const together = useMemo(() => coOccurrence(codings), [codings]);
+  // Read in the order documents were coded, which is what `coding_position`
+  // records and the arrows below change. Never inferred: saturation is a claim
+  // about a sequence, and a guessed one is a fact about the analysis that
+  // nobody established.
   const saturation = useMemo(
     () => readSaturation(codings, documents.map((document) => document.id)),
     [codings, documents],
   );
 
-  function addDocument(event: React.FormEvent) {
+  async function addDocument(event: React.FormEvent) {
     event.preventDefault();
     if (text.trim() === "") return;
-    const id = name.trim() === "" ? `Document ${documents.length + 1}` : name.trim();
-    setDocuments((was) => [...was, { id, name: id, text }]);
-    setOpenId(id);
+    const named = name.trim() === "" ? `Document ${documents.length + 1}` : name.trim();
+    await store.addDocument(named, text);
     setName("");
     setText("");
     setPasting(false);
   }
 
-  async function addFile(file: File) {
-    const contents = await file.text();
-    const id = file.name;
-    setDocuments((was) => [...was, { id, name: id, text: contents }]);
-    setOpenId(id);
-  }
-
   const labelOf = (id: string) => codes.find((code) => code.id === id)?.label ?? id;
+  const nameOf = (id: string) => documents.find((document) => document.id === id)?.name ?? id;
 
   return (
-    <div className="space-y-4">
-      {/* Said once, plainly, at the top. Coding is days of work and this holds
-          none of it after a refresh; a researcher who discovers that by losing
-          an afternoon will not use the feature again. Remove this notice in
-          the same commit that adds persistence, and not before. */}
-      <p className="rounded-lg border border-rule bg-raised p-3 text-sm text-muted">
-        Nothing here is saved yet. Transcripts, codes and themes live in this browser tab only, and
-        closing or refreshing it loses them.
-      </p>
-
+    <>
       <section className="rounded-lg border border-rule bg-raised p-4">
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <h3 className="mr-auto text-sm font-medium">Transcripts</h3>
@@ -100,7 +271,7 @@ export function CodeText() {
               className="sr-only"
               onChange={(event) => {
                 const file = event.target.files?.[0];
-                if (file) void addFile(file);
+                if (file) void file.text().then((body) => store.addDocument(file.name, body));
                 event.target.value = "";
               }}
             />
@@ -123,8 +294,8 @@ export function CodeText() {
 
         {documents.length > 0 && (
           <ul className="flex flex-wrap gap-2">
-            {documents.map((document) => (
-              <li key={document.id}>
+            {documents.map((document, index) => (
+              <li key={document.id} className="flex items-center gap-1">
                 <button
                   type="button"
                   aria-pressed={open?.id === document.id}
@@ -143,6 +314,28 @@ export function CodeText() {
                   <span className="ml-2 text-muted">
                     {codings.filter((coding) => coding.documentId === document.id).length}
                   </span>
+                </button>
+                {/* Arrows rather than drag-and-drop: this is the order the
+                    documents were *coded*, which the researcher is recalling
+                    rather than composing, and a keyboard-reachable control is
+                    what an accessible reorder actually needs. */}
+                <button
+                  type="button"
+                  disabled={index === 0}
+                  onClick={() => void store.moveDocument(document.id, -1)}
+                  aria-label={`Move ${document.name} earlier in the coding order`}
+                  className="rounded border border-rule px-1.5 py-1 text-[0.65rem] text-muted hover:border-accent disabled:opacity-30"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  disabled={index === documents.length - 1}
+                  onClick={() => void store.moveDocument(document.id, 1)}
+                  aria-label={`Move ${document.name} later in the coding order`}
+                  className="rounded border border-rule px-1.5 py-1 text-[0.65rem] text-muted hover:border-accent disabled:opacity-30"
+                >
+                  ↓
                 </button>
               </li>
             ))}
@@ -207,29 +400,17 @@ export function CodeText() {
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
               <CodeDocument
                 documentId={open.id}
-                text={open.text}
+                text={open.body}
                 codes={codes}
                 codings={codings}
-                onCode={(coding) => setCodings((was) => [...was, coding])}
-                onUncode={(id) => setCodings((was) => was.filter((coding) => coding.id !== id))}
+                onCode={(coding) => void store.applyCoding(coding)}
+                onUncode={(id) => void store.removeCoding(id)}
               />
               <Codebook
                 codes={codes}
                 counts={counts}
-                onAdd={(code) => setCodes((was) => [...was, code])}
-                onRemove={(id) => {
-                  setCodes((was) => was.filter((code) => code.id !== id));
-                  // The codings go with it. Leaving them would put extracts on
-                  // screen under a code that no longer has a definition, which
-                  // is the state the codebook exists to prevent.
-                  setCodings((was) => was.filter((coding) => coding.codeId !== id));
-                  setDrafts((was) =>
-                    was.map((draft) => ({
-                      ...draft,
-                      codeIds: draft.codeIds.filter((codeId) => codeId !== id),
-                    })),
-                  );
-                }}
+                onAdd={(code) => void store.addCode(code)}
+                onRemove={(id) => void store.removeCode(id)}
               />
             </div>
           )}
@@ -241,7 +422,8 @@ export function CodeText() {
                 codings={codings}
                 documents={texts}
                 drafts={drafts}
-                onDrafts={setDrafts}
+                onAdd={(draft) => void store.addDraft(draft)}
+                onRemove={(id) => void store.removeDraft(id)}
               />
               {together.length > 0 && (
                 <section className="rounded-lg border border-rule bg-raised p-4">
@@ -275,7 +457,7 @@ export function CodeText() {
                   <tbody>
                     {saturation.newCodesPerDocument.map((row) => (
                       <tr key={row.documentId} className="border-b border-rule/50">
-                        <td className="py-1">{row.documentId}</td>
+                        <td className="py-1">{nameOf(row.documentId)}</td>
                         <td className="py-1 text-right">{row.newCodes}</td>
                         <td className="py-1 text-right text-muted">{row.total}</td>
                       </tr>
@@ -283,17 +465,16 @@ export function CodeText() {
                   </tbody>
                 </table>
               )}
-              {/* The sentence the coherence checker refuses a study for not
-                  having. It is deliberately not a verdict. */}
               <p className="mt-4 text-xs text-muted">
-                Read in the order transcripts were added. Whether it is enough is a judgement about
-                your question and your field; this reports what the coding did, not whether it was
-                sufficient.
+                Read in the order the transcripts are listed above, which is the order you say they
+                were coded in — use the arrows to correct it. Whether it is enough is a judgement
+                about your question and your field; this reports what the coding did, not whether it
+                was sufficient.
               </p>
             </section>
           )}
         </>
       )}
-    </div>
+    </>
   );
 }
