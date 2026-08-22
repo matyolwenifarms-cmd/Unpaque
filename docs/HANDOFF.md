@@ -24,11 +24,16 @@ Unpaque is a platform with three features. They share auth, design tokens,
 storage, the rate limiter and the AI provider abstraction; they do not share
 domain models.
 
+Their names on screen are verbs — **Unpack**, **Research**, **Detect** — written
+once, in `src/lib/features.ts`. The specification calls two of them "The
+Researcher" and "The Detective"; the argument for changing that, and the list of
+what deliberately did not change with it, is `DEPARTURES.md` §6.
+
 | Feature | What it does | State | Costs to run |
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
-| **The Researcher** | Literature search, verified references, passages | Phase 1–2 core complete | **Nothing** |
-| **The Detective** | Investigative intelligence — cases, evidence, timeline | Phase 0–1, full case UI | Nothing yet |
+| **Research** | Literature search, verified references, passages | Phase 1–2 core complete | **Nothing** |
+| **Detect** | Investigative intelligence — cases, evidence, timeline | Phase 0–1, full case UI | Nothing yet |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
 Perloq was an earlier name for the feature, not a separate product. Nothing in
@@ -63,7 +68,7 @@ The distinction matters more than the totals.
   `npm run research:record` is run with `OPENALEX_CONTACT` set.
 - **`/research` has never run against the deployed function.** The logic is
   tested; the endpoint has not been exercised in anger.
-- **The Detective's UI has never seen a real row.** The case list, case view,
+- **Detect's UI has never seen a real row.** The case list, case view,
   entry forms and epistemic badges are component-tested against mocked queries
   and boot in a browser; no case, source, claim or evidence link has ever been
   written to a live database. The RLS behind them *is* verified, against a real
@@ -112,10 +117,10 @@ and all three are built the same way:
 | Feature | Must not | Closed vocabulary |
 |---|---|---|
 | Unpack | Read minds or judge honesty | 8 communication frameworks |
-| The Researcher | Cite anything that does not exist | providers, never the model |
-| The Detective | State an allegation as fact | 11 epistemic classifications |
+| Research | Cite anything that does not exist | providers, never the model |
+| Detect | State an allegation as fact | 11 epistemic classifications |
 
-The Researcher's passage engine is the strongest form: the model returns
+Research's passage engine is the strongest form: the model returns
 offsets, the server slices, and **the tool schema has no field a quotation
 could be written into**.
 
@@ -135,7 +140,7 @@ could be written into**.
 4. **Enable email auth** in the Supabase dashboard (Authentication → Providers →
    Email, with magic links on) and sign in once. Nothing that belongs to a
    person works until that is done.
-5. **The Detective's interface**, or **The Researcher's document retrieval**.
+5. **Detect's interface**, or **Research's document retrieval**.
    The latter needs the job worker described in
    `ARCHITECTURE_ASSESSMENT.md` §3, and is the first thing here that cannot be
    fully tested offline.

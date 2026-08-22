@@ -35,7 +35,7 @@ export default function Research() {
   return (
     <div>
       <header className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight">The Researcher</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Research</h1>
         <p className="mt-1 text-sm text-muted">
           Literature search. Every reference comes from a bibliographic provider and its identifier
           is re-checked before it is shown to you.

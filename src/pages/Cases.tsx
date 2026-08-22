@@ -42,7 +42,7 @@ function CaseList() {
   return (
     <div>
       <form onSubmit={onCreate} className="mb-8 rounded-lg border border-rule bg-raised p-4">
-        <h3 className="mb-3 font-medium">Give The Detective a case</h3>
+        <h3 className="mb-3 font-medium">Open a case</h3>
         <input
           aria-label="Case title"
           value={title}
@@ -111,7 +111,7 @@ export default function Cases() {
   return (
     <div>
       <header className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight">The Detective</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Detect</h1>
         <p className="mt-1 text-sm text-muted">
           What does the available evidence actually allow us to say? What remains unknown?
         </p>

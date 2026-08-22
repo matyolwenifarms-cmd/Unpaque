@@ -6,8 +6,8 @@ import { MemoryRouter } from "react-router-dom";
 const useSession = vi.fn();
 vi.mock("@/hooks/useSession.ts", () => ({ useSession: () => useSession() }));
 vi.mock("@/pages/Unpack.tsx", () => ({ default: () => <h1>Unpack</h1> }));
-vi.mock("@/pages/Research.tsx", () => ({ default: () => <h1>The Researcher</h1> }));
-vi.mock("@/pages/Cases.tsx", () => ({ default: () => <h1>The Detective</h1> }));
+vi.mock("@/pages/Research.tsx", () => ({ default: () => <h1>Research</h1> }));
+vi.mock("@/pages/Cases.tsx", () => ({ default: () => <h1>Detect</h1> }));
 vi.mock("@/pages/CaseView.tsx", () => ({ default: () => <h1>A case</h1> }));
 vi.mock("@/pages/SignIn.tsx", () => ({ default: () => <h1>Sign in</h1> }));
 
@@ -67,8 +67,8 @@ describe("the shell", () => {
 
   it("routes each path to its own page", () => {
     for (const [path, heading] of [
-      ["/unpack", "Unpack"], ["/research", "The Researcher"],
-      ["/cases", "The Detective"], ["/sign-in", "Sign in"],
+      ["/unpack", "Unpack"], ["/research", "Research"],
+      ["/cases", "Detect"], ["/sign-in", "Sign in"],
     ] as const) {
       const { unmount } = draw(path);
       expect(screen.getByRole("heading", { level: 1, name: heading })).toBeInTheDocument();

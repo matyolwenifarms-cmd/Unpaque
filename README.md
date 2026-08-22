@@ -3,8 +3,11 @@
 Unpaque is a platform with three features:
 
 - **Unpack** — communication diagnostics. What is this communication doing?
-- **The Researcher** — academic research support, proposal through to report.
-- **The Detective** — investigative intelligence: cases, evidence, dossiers.
+- **Research** — academic research support, proposal through to report.
+- **Detect** — investigative intelligence: cases, evidence, dossiers.
+
+The supplied specification calls the last two "The Researcher" and "The
+Detective". The verb form, and why, is `docs/DEPARTURES.md` §6.
 
 This repository currently contains **Unpack Phase 1**. See
 [`docs/ARCHITECTURE_ASSESSMENT.md`](docs/ARCHITECTURE_ASSESSMENT.md) for the

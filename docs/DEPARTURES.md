@@ -109,3 +109,41 @@ framework, naming Next.js, and instructs that the assumption be flagged.
 
 **What is built.** Vite + React + Supabase. Argued in
 `ARCHITECTURE_ASSESSMENT.md` §3, which is the flag the addendum asked for.
+
+---
+
+## 6. The three features are named Unpack, Research and Detect
+
+**The spec says.** §0 and §1 of *The Detective — Master System Build* name the
+platform's three surfaces "Unpack", "The Researcher" and "The Detective".
+
+**What is built.** The tabs, headings and navigation read **Unpack**,
+**Research** and **Detect**.
+
+**Why.** Only one of the three could carry a person. "Unpack" is an imperative
+and refuses to become "The Unpacker" — the platform is named after it, and
+renaming the feature to match its two siblings would rename the product. That
+leaves one verb sitting beside two characters, and a tab bar mixing the forms
+reads as three unrelated products bolted together rather than one tool used
+three ways. Made parallel the other way, all three become instructions to the
+reader about what they are here to do, which is what a tab is for.
+
+The names give up a noun, and the plate gives it back: each feature carries a
+one-word category beneath it — *diagnostics*, *literature*, *investigations* —
+so "Detect" is never the only thing on screen telling somebody what the tool
+does.
+
+**What did not change, and deliberately.**
+
+- **The routes.** `/cases` and `/cases/:id` still name what is there: a list of
+  cases, and a case. `/detect/:id` would mean "a detect", which is not a thing.
+  A tab whose label and path differ is ordinary (GitHub's *Pull requests* is at
+  `/pulls`); a path that names nothing is not.
+- **The module directories** — `_shared/research/`, `_shared/detective/` — and
+  the comments citing the specification by its own names. A comment reworded to
+  dodge the term would misquote the document it exists to point at. This file's
+  own headings cite spec sections and keep the spec's names for the same
+  reason.
+- **The section headings in `ARCHITECTURE_ASSESSMENT.md`**, which is an
+  assessment dated to what it assessed. Rewriting a record in place stops it
+  being a record.

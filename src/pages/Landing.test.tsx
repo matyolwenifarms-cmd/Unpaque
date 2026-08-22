@@ -29,9 +29,12 @@ describe("the landing page", () => {
   it("offers a way into all three features, from the plate", () => {
     draw();
     const plate = screen.getByRole("region", { name: "Unpaque" });
-    expect(within(plate).getByRole("link", { name: /Unpack/ })).toHaveAttribute("href", "/unpack");
-    expect(within(plate).getByRole("link", { name: /The Researcher/ })).toHaveAttribute("href", "/research");
-    expect(within(plate).getByRole("link", { name: /The Detective/ })).toHaveAttribute("href", "/cases");
+    // Anchored: the accessible name is the tab plus its one-word category, so
+    // "Research literature" matches and a revert to "The Researcher literature"
+    // does not. An unanchored /Research/ would pass either way.
+    expect(within(plate).getByRole("link", { name: /^Unpack\b/ })).toHaveAttribute("href", "/unpack");
+    expect(within(plate).getByRole("link", { name: /^Research\b/ })).toHaveAttribute("href", "/research");
+    expect(within(plate).getByRole("link", { name: /^Detect\b/ })).toHaveAttribute("href", "/cases");
   });
 
   it("puts them below the tagline, not above it", () => {
@@ -43,7 +46,7 @@ describe("the landing page", () => {
     expect(tagline.compareDocumentPosition(nav) & 4).toBeTruthy();
   });
 
-  it("says what The Researcher will not do, on the way in", () => {
+  it("says what Research will not do, on the way in", () => {
     draw();
     expect(screen.getByText(/none of them come from a language model/i)).toBeInTheDocument();
   });

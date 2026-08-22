@@ -19,7 +19,7 @@ export async function searchReferences(query: string, fromYear?: number): Promis
     return {
       status: "error",
       code: "unconfigured",
-      message: "The Researcher is not connected to its search service in this build.",
+      message: "This build is not connected to the literature search service.",
     };
   }
 

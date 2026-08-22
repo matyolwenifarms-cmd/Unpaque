@@ -3,6 +3,11 @@ Master Build Specification | Academic Research Support Feature
 
 **VERSION 0.1 • DRAFTED 21 AUGUST 2026**
 
+**A note on the name.** This document says THE RESEARCHER throughout, because
+that is what it was drafted as and what the platform specification calls it. On
+screen the feature is **Research** — see `DEPARTURES.md` §6. The routes and the
+module directory keep the names used here.
+
 Working proposition: *the study is the researcher's work. The administration is not.*
 
 ---

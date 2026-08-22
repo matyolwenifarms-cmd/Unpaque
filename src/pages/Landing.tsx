@@ -36,7 +36,11 @@ export default function Landing() {
               to={feature.to}
               className="rounded-lg border border-[rgb(217_160_60)]/40 px-5 py-2.5 text-left transition-colors hover:border-[rgb(217_160_60)] hover:bg-[rgb(217_160_60)]/10"
             >
-              <span className="block font-medium text-[rgb(242_239_233)]">{feature.name}</span>
+              <span className="block font-medium text-[rgb(242_239_233)]">{feature.name}</span>{" "}
+              {/* The space is for the accessible name, not the layout: both
+                  spans are block-level, so it collapses to nothing on screen,
+                  and without it a screen reader announces the link as
+                  "Unpackdiagnostics". */}
               <span className="block text-xs uppercase tracking-wider text-[rgb(217_160_60)]">
                 {feature.short}
               </span>

@@ -45,6 +45,17 @@ const PORT = 4100 + Math.floor(Math.random() * 800);
 const BASE = `http://127.0.0.1:${PORT}`;
 const ROUTES = ["/", "/unpack", "/research", "/cases", "/sign-in"];
 
+// The tab a reader clicks and the heading they land on must be the same word.
+// Each name is written twice — in `src/lib/features.ts` and in the page's own
+// `<h1>` — so renaming a feature is two edits, and the second is the one that
+// gets forgotten. Nothing else catches it: a component test renders the page
+// or the shell, never both, so a mismatch is only visible in a browser with
+// the real route mounted.
+//
+// Only the three feature routes; /sign-in is not a tab and the landing page
+// titles itself with the wordmark.
+const TABBED_ROUTES = new Set(["/unpack", "/research", "/cases"]);
+
 // A hard ceiling on the whole run. A browser that hangs is worse than one that
 // fails: in CI it burns the job's entire time budget and reports nothing.
 const watchdog = setTimeout(() => {
@@ -123,11 +134,22 @@ try {
     const headings = await page.locator("h1").allTextContents().catch(() => []);
     const body = (await page.locator("body").innerText().catch(() => "")).trim();
 
+    // exact: true is load-bearing. Substring matching would let "Research"
+    // match a tab still reading "The Researcher" — which is precisely the
+    // drift this exists to catch.
+    const tab = TABBED_ROUTES.has(route) && headings.length === 1
+      ? await page.locator("header nav").getByRole("link", { name: headings[0], exact: true })
+          .first().textContent({ timeout: 2_000 }).catch(() => null)
+      : "n/a";
+
     let verdict = "ok";
     if (status !== 200) { verdict = `HTTP ${status}`; failures += 1; }
     else if (home === null) { verdict = "no way back to the landing page"; failures += 1; }
     else if (headings.length !== 1) {
       verdict = `expected one h1, found ${headings.length}${headings.length ? `: ${headings.join(" / ")}` : ""}`;
+      failures += 1;
+    } else if (tab === null) {
+      verdict = `no tab named "${headings[0]}" — the nav and the heading disagree`;
       failures += 1;
     } else if (body.length < 40) { verdict = "page rendered almost nothing"; failures += 1; }
     else if (problems.length > 0) { verdict = "console not clean"; failures += 1; }

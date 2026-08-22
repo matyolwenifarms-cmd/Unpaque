@@ -4,8 +4,8 @@ Unpaque is a platform with three features on one Supabase project and one React
 app:
 
 - **Unpack** — communication diagnostics. What is this communication doing?
-- **The Researcher** — literature search, verified references, passages.
-- **The Detective** — investigative intelligence: cases, evidence, timeline.
+- **Research** — literature search, verified references, passages.
+- **Detect** — investigative intelligence: cases, evidence, timeline.
 
 **Stack:** Vite + React 18 + TypeScript (strict) + Tailwind + Supabase
 (Postgres, auth, storage, Edge Functions under Deno). Node 22.
@@ -127,6 +127,18 @@ Both are told, prominently and above the results, not logged.
 The valuable half is almost always the road not taken. Match the surrounding
 density; do not add comments that restate the code.
 
+### 9. On screen the features are Unpack, Research and Detect
+
+The specification calls two of them "The Researcher" and "The Detective".
+Everything a user reads — tabs, headings, page copy — uses the verb form, and
+`src/lib/features.ts` is the only place the three names are written. Argued in
+`docs/DEPARTURES.md` §6.
+
+Unchanged, and deliberately: the routes (`/cases`, `/cases/:id`), the module
+directories (`_shared/research/`, `_shared/detective/`), and comments citing
+the specification, which keep the specification's own names so they do not
+misquote the document they point at.
+
 ---
 
 ## Layout
@@ -140,10 +152,10 @@ supabase/
   functions/
     _shared/    the seam — pure, imported by both Deno and the browser
       diagnostic/   Unpack: frameworks, contract, guard, prompt, pipeline
-      research/     The Researcher: references, providers, verify, passages
-      detective/    The Detective: epistemic model, timeline, contradictions
+      research/     Research: references, providers, verify, passages
+      detective/    Detect: epistemic model, timeline, contradictions
     analyse/          Unpack's endpoint
-    research-search/  The Researcher's endpoint
+    research-search/  Research's endpoint
   migrations/   replay-safe SQL
   tests/        behavioural SQL suites + harness.sql
 scripts/        verification and recording, all POSIX shell or Node
