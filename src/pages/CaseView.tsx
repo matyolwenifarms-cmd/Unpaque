@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { AddClaim } from "@/components/AddClaim.tsx";
 import { AddEvent } from "@/components/AddEvent.tsx";
 import { AddSource } from "@/components/AddSource.tsx";
+import { DossierView } from "@/components/DossierView.tsx";
 import { EpistemicBadge } from "@/components/EpistemicBadge.tsx";
 import { LinkEvidence } from "@/components/LinkEvidence.tsx";
 import { Timeline } from "@/components/Timeline.tsx";
@@ -196,6 +197,19 @@ function CaseDetail({ id }: { id: string }) {
           />
         </div>
       </section>
+
+      {/* Last on the page, because it is a reading of everything above it. A
+          document that appeared before the records it summarises would be read
+          as the case rather than as an account of the case. */}
+      <div className="mt-8">
+        <DossierView
+          investigation={investigation}
+          claims={claims}
+          sources={sources}
+          evidence={evidence}
+          events={events}
+        />
+      </div>
     </div>
   );
 }

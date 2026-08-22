@@ -33,7 +33,7 @@ what deliberately did not change with it, is `DEPARTURES.md` §6.
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
 | **Research** | Literature, method vocabulary, analysis, results section | Phase 1–2 core, §6, §7 quantitative and write-up | **Nothing** |
-| **Detect** | Investigative intelligence — cases, evidence, timeline | Phase 0–1, full case UI | Nothing yet |
+| **Detect** | Investigative intelligence — cases, evidence, timeline, dossier | Phase 0–1, case UI and the assembled document | Nothing |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
 Perloq was an earlier name for the feature, not a separate product. Nothing in
@@ -176,7 +176,7 @@ and all three are built the same way:
 | Unpack | Read minds or judge honesty | 8 communication frameworks |
 | Research | Cite anything that does not exist | providers, never the model |
 | Research | Report a p-value alone, or a causal claim from a correlation | `Finding` has no p without n and an effect |
-| Detect | State an allegation as fact | 11 epistemic classifications |
+| Detect | State an allegation as fact | 11 epistemic classifications; the dossier concludes nothing |
 
 Research's passage engine is the strongest form: the model returns
 offsets, the server slices, and **the tool schema has no field a quotation

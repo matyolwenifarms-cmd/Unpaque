@@ -32,6 +32,15 @@ export interface SourceRow {
   title: string;
   retrieved_from: string;
   retrieved_at: string;
+  /**
+   * Same bytes retrieved twice share this. Null means unknown, not unique.
+   *
+   * Selected because the dossier cannot count independent support without it:
+   * a wire story printed in four papers is one source, and four rows that
+   * look distinct is exactly how a claim comes to appear far better supported
+   * than it is.
+   */
+  content_hash: string | null;
 }
 
 export type Result<T> = { ok: true; data: T } | { ok: false; message: string };
@@ -110,7 +119,7 @@ export async function createSource(
       title: input.title.trim(),
       retrieved_from: input.retrievedFrom.trim(),
     })
-    .select("id, kind, title, retrieved_from, retrieved_at")
+    .select("id, kind, title, retrieved_from, retrieved_at, content_hash")
     .single();
   return wrap<SourceRow>(data as SourceRow | null, error);
 }
@@ -214,7 +223,7 @@ export async function createEvent(
 export async function listSources(caseId: string): Promise<Result<SourceRow[]>> {
   const { data, error } = await supabase()
     .from("sources")
-    .select("id, kind, title, retrieved_from, retrieved_at")
+    .select("id, kind, title, retrieved_from, retrieved_at, content_hash")
     .eq("case_id", caseId)
     .order("retrieved_at", { ascending: false });
   return wrap<SourceRow[]>(data as SourceRow[] | null, error);

@@ -74,7 +74,8 @@ describe("opening a case", () => {
       data: [{ id: "c1", statement: "The tender was awarded in March.", status: "contested", asserted_by: "The gazette" }],
     });
     draw();
-    await waitFor(() => expect(screen.getByText(/awarded in March/)).toBeInTheDocument());
+    const claims = await screen.findByRole("region", { name: /claims/i });
+    await waitFor(() => expect(within(claims).getByText(/awarded in March/)).toBeInTheDocument());
     expect(screen.getByText("Contested")).toBeInTheDocument();
     expect(screen.getByText(/Asserted by The gazette/)).toBeInTheDocument();
   });
@@ -135,8 +136,10 @@ describe("what the page will and will not do for you", () => {
       data: [{ id: "e1", claim_id: "c1", source_id: "s1", classification: "supports", excerpt: "Award published 14 March." }],
     });
     draw();
-    await waitFor(() => expect(screen.getByText(/Award published 14 March/)).toBeInTheDocument());
-    const claimsSection = screen.getByRole("region", { name: /claims/i });
+    const claimsSection = await screen.findByRole("region", { name: /claims/i });
+    await waitFor(() =>
+      expect(within(claimsSection).getByText(/Award published 14 March/)).toBeInTheDocument(),
+    );
     const evidenceLine = within(claimsSection).getByText(/Award published 14 March/).closest("li")!;
     expect(within(evidenceLine).getByText(/supports/)).toBeInTheDocument();
     expect(evidenceLine.textContent).toMatch(/A gazette notice/);
@@ -169,7 +172,74 @@ describe("what the page will and will not do for you", () => {
       ],
     });
     draw();
-    await waitFor(() => expect(screen.getByText(/awarded in March/)).toBeInTheDocument());
+    const claims = await screen.findByRole("region", { name: /claims/i });
+    await waitFor(() => expect(within(claims).getByText(/awarded in March/)).toBeInTheDocument());
     expect(screen.queryByText(/may mark it corroborated/i)).not.toBeInTheDocument();
+  });
+});
+
+describe("the dossier", () => {
+  beforeEach(() => {
+    getCase.mockReset().mockResolvedValue({ ok: true, data: investigation });
+    listClaims.mockReset().mockResolvedValue({
+      ok: true,
+      data: [
+        { id: "c1", statement: "The tender was awarded in March.", status: "claim", asserted_by: "the register" },
+        { id: "c2", statement: "Only one bid was received.", status: "claim", asserted_by: null },
+      ],
+    });
+    listSources.mockReset().mockResolvedValue({
+      ok: true,
+      data: [
+        { id: "s1", kind: "official_record", title: "Tender register", retrieved_from: "portal", retrieved_at: "2026-08-01T00:00:00Z", content_hash: "a" },
+        { id: "s2", kind: "reporting", title: "Local paper", retrieved_from: "url", retrieved_at: "2026-08-01T00:00:00Z", content_hash: "b" },
+      ],
+    });
+    listEvidence.mockReset().mockResolvedValue({
+      ok: true,
+      data: [
+        { id: "v1", claim_id: "c1", source_id: "s1", classification: "supports", excerpt: "awarded 12 March" },
+        { id: "v2", claim_id: "c1", source_id: "s2", classification: "supports", excerpt: null },
+      ],
+    });
+    listEvents.mockReset().mockResolvedValue({ ok: true, data: [] });
+  });
+
+  it("appears at the foot of the case, after the records it reads", async () => {
+    draw();
+    await waitFor(() => expect(screen.getByLabelText(/dossier/i)).toBeInTheDocument());
+    const html = document.body.innerHTML;
+    expect(html.indexOf("timeline-heading")).toBeLessThan(html.indexOf('id="dossier"'));
+  });
+
+  it("answers §4's three questions, in that order", async () => {
+    draw();
+    await waitFor(() => expect(screen.getByLabelText(/dossier/i)).toBeInTheDocument());
+    const text = screen.getByLabelText(/dossier/i).textContent ?? "";
+    const supports = text.indexOf("What the evidence supports");
+    const unknown = text.indexOf("What remains unknown");
+    const notFit = text.indexOf("What does not fit");
+    expect(supports).toBeGreaterThan(-1);
+    expect(unknown).toBeGreaterThan(supports);
+    expect(notFit).toBeGreaterThan(unknown);
+  });
+
+  // "Who did it" is not a question this document answers, and the absence is
+  // the product.
+  it("concludes nothing", async () => {
+    draw();
+    await waitFor(() => expect(screen.getByLabelText(/dossier/i)).toBeInTheDocument());
+    const text = screen.getByLabelText(/dossier/i).textContent ?? "";
+    for (const forbidden of [/\bwe conclude\b/i, /\bis guilty\b/i, /\bthe culprit\b/i, /\bproves\b/i]) {
+      expect(text).not.toMatch(forbidden);
+    }
+  });
+
+  it("says what it is before it says anything else", async () => {
+    draw();
+    await waitFor(() => expect(screen.getByLabelText(/dossier/i)).toBeInTheDocument());
+    expect(screen.getByLabelText(/dossier/i).textContent).toMatch(
+      /Nothing here is a conclusion about what happened/,
+    );
   });
 });
