@@ -10,6 +10,13 @@
     />
   </head>
   <body>
+    <!-- Before first paint, not in React. The landing page is charcoal for
+         everybody; setting it after hydration means a light-mode reader sees
+         a white page flash to black, which is the one thing a brand's own
+         front page must not do. App.tsx keeps it in sync from here on. -->
+    <script>
+      if (location.pathname === "/") document.documentElement.setAttribute("data-theme", "dark");
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

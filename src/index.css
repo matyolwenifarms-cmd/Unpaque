@@ -34,6 +34,23 @@
     }
   }
 
+  /* The landing page is the brand at rest and is charcoal for everybody,
+     including a reader whose system is set to light. Written as its own block
+     rather than by overriding colours on the page's own elements: the header
+     sits outside the landing component, so painting only the page would leave
+     "Log in" in light-mode ink on a charcoal ground.
+     `:root[data-theme="dark"]` outranks `:root` on specificity, so this wins
+     inside the media query above regardless of source order. */
+  :root[data-theme="dark"] {
+    --paper: 28 26 23;
+    --raised: 38 35 31;
+    --ink: 242 239 233;
+    --rule: 58 54 48;
+    --muted: 138 133 128;
+    --accent: 217 160 60;
+    --accent-ink: 28 26 23;
+  }
+
   body {
     @apply bg-paper text-ink antialiased;
   }

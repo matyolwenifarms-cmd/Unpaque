@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { NavLink, Route, Routes, useLocation } from "react-router-dom";
 import CaseView from "@/pages/CaseView.tsx";
 import Cases from "@/pages/Cases.tsx";
@@ -12,6 +13,16 @@ import { cn } from "@/lib/utils.ts";
 export default function App() {
   const { session, configured } = useSession();
   const onLanding = useLocation().pathname === "/";
+
+  // The landing page is charcoal whatever the reader's system is set to; every
+  // other route follows the system. index.html sets this before first paint for
+  // a cold load, so what this handles is client-side navigation — which is how
+  // you arrive at and leave the landing page in practice.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (onLanding) root.setAttribute("data-theme", "dark");
+    else root.removeAttribute("data-theme");
+  }, [onLanding]);
 
   return (
     <div className="mx-auto min-h-screen max-w-3xl px-5 py-10">

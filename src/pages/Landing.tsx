@@ -12,36 +12,33 @@ import { FEATURES } from "@/lib/features.ts";
 export default function Landing() {
   return (
     <div>
-      <section
-        aria-label="Unpaque"
-        className="rounded-2xl bg-[rgb(28_26_23)] px-6 py-16 text-center sm:py-20"
-      >
+      {/* No plate of its own any more: the whole page is the plate. The route
+          forces the dark palette (see index.css), so this is the brand's
+          charcoal for every reader and a box drawn on top of it would only
+          show its own seams. */}
+      <section aria-label="Unpaque" className="px-6 py-16 text-center sm:py-20">
         <h1 className="text-6xl font-bold tracking-tight sm:text-7xl">
-          <span className="text-[rgb(217_160_60)]">Un</span>
-          <span className="text-[rgb(242_239_233)]">paque</span>
+          <span className="text-accent">Un</span>
+          <span className="text-ink">paque</span>
         </h1>
-        <div aria-hidden className="mx-auto mt-6 h-0.5 w-40 bg-[rgb(217_160_60)]" />
-        <p className="mt-6 text-sm font-medium uppercase tracking-[0.3em] text-[rgb(138_133_128)]">
+        <div aria-hidden className="mx-auto mt-6 h-0.5 w-40 bg-accent" />
+        <p className="mt-6 text-sm font-medium uppercase tracking-[0.3em] text-muted">
           Communication diagnostics
         </p>
 
-        {/* On the plate, beneath the tagline. The colours are literal rather
-            than token-driven here: the plate is the brand's own charcoal in
-            both themes, so tokens that flip for a light-mode reader would put
-            off-white text on off-white. */}
         <nav className="mt-10 flex flex-wrap justify-center gap-3" aria-label="Features">
           {FEATURES.map((feature) => (
             <Link
               key={feature.to}
               to={feature.to}
-              className="rounded-lg border border-[rgb(217_160_60)]/40 px-5 py-2.5 text-left transition-colors hover:border-[rgb(217_160_60)] hover:bg-[rgb(217_160_60)]/10"
+              className="rounded-lg border border-accent/40 px-5 py-2.5 text-left transition-colors hover:border-accent hover:bg-accent/10"
             >
-              <span className="block font-medium text-[rgb(242_239_233)]">{feature.name}</span>{" "}
+              <span className="block font-medium text-ink">{feature.name}</span>{" "}
               {/* The space is for the accessible name, not the layout: both
                   spans are block-level, so it collapses to nothing on screen,
                   and without it a screen reader announces the link as
                   "Unpackdiagnostics". */}
-              <span className="block text-xs uppercase tracking-wider text-[rgb(217_160_60)]">
+              <span className="block text-xs uppercase tracking-wider text-accent">
                 {feature.short}
               </span>
             </Link>
