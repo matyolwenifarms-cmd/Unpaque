@@ -48,7 +48,13 @@ export interface Design {
  * which are the three things that most often stand in for it.
  */
 export function mayClaimCause(design: Design): boolean {
-  if (design.kind === "experimental" && design.randomised) return true;
+  // Randomisation alone, not randomisation *and* the word "experimental".
+  //
+  // Coupling the two refused a randomised quasi-experiment — which is an
+  // experiment — because the researcher had picked a different label from a
+  // dropdown. The label is descriptive; random allocation is the fact that
+  // licenses the inference, and it does so whatever the study is called.
+  if (design.randomised) return true;
   return Boolean(design.identificationStrategy?.trim());
 }
 

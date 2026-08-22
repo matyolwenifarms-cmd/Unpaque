@@ -73,6 +73,11 @@ The distinction matters more than the totals.
   and boot in a browser; no case, source, claim or evidence link has ever been
   written to a live database. The RLS behind them *is* verified, against a real
   Postgres — including, now, that the writes actually succeed.
+- **The data workspace has never seen a real research file.** Parsed against
+  hand-built fixtures covering the shapes that break parsers — quoted commas,
+  CRLF, semicolons, a byte-order mark, ragged rows, duplicate headers — and
+  driven in a browser, but no actual Qualtrics or SPSS export has been through
+  it. That is the first thing to try, and it needs no key.
 - **Relevance ordering has not been seen against a live provider.** The sort is
   unit-tested against ranked fixtures and the change is the difference between
   keeping and discarding the providers' own ordering, but no live OpenAlex or

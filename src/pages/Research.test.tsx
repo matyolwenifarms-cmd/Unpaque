@@ -124,8 +124,37 @@ describe("the search page", () => {
     });
   });
 
-  it("says references never come from a language model", () => {
+});
+
+describe("the two stages", () => {
+  it("starts on literature and switches to the data workspace", async () => {
+    const user = userEvent.setup();
     render(<Research />);
-    expect(screen.getByText(/never from a language model/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/what are you looking for/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /analyse data/i }));
+    expect(screen.getByLabelText(/data file/i)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/what are you looking for/i)).toBeNull();
+  });
+
+  // The file is read in the browser and posted nowhere. A researcher cannot
+  // see that, so the only reason to believe it is that the page says so.
+  it("says the file is not uploaded", async () => {
+    const user = userEvent.setup();
+    render(<Research />);
+    await user.click(screen.getByRole("button", { name: /analyse data/i }));
+    expect(screen.getByText(/read in this browser and is not uploaded/i)).toBeInTheDocument();
+  });
+
+  // House rule: a placeholder must announce itself. This box takes an
+  // instruction and nothing carries it out, so it has to say so — a box that
+  // silently swallows "write this up" is worse than no box.
+  it("says plainly that nothing acts on the instruction box yet", async () => {
+    const user = userEvent.setup();
+    render(<Research />);
+    await user.click(screen.getByRole("button", { name: /analyse data/i }));
+    await user.type(screen.getByLabelText(/further instructions/i), "Write this up in APA style.");
+    expect(screen.getByText(/Nothing acts on this yet/i)).toBeInTheDocument();
+    expect(screen.getByText(/not sent anywhere and nothing will come back/i)).toBeInTheDocument();
   });
 });

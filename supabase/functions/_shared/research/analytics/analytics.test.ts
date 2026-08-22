@@ -140,6 +140,10 @@ describe("a correlational design cannot claim cause", () => {
     })).toBe(true);
     // And not any of the three things that usually stand in for it.
     expect(mayClaimCause({ kind: "correlational", randomised: false, identificationStrategy: "   " })).toBe(false);
+    // Randomisation licenses it whatever the study is called. A randomised
+    // quasi-experiment is an experiment, and refusing it because of the label
+    // picked from a dropdown was the bug this line records.
+    expect(mayClaimCause({ kind: "quasi_experimental", randomised: true })).toBe(true);
   });
 
   it.each([

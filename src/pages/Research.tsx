@@ -1,8 +1,96 @@
 import { useState } from "react";
 import { Loader2, Search } from "lucide-react";
+import { AnalyseData } from "@/components/AnalyseData.tsx";
+import { DataUpload } from "@/components/DataUpload.tsx";
+import { DatasetSummary } from "@/components/DatasetSummary.tsx";
 import { ReferenceList } from "@/components/ReferenceList.tsx";
 import { cn } from "@/lib/utils.ts";
+import type { Dataset } from "@shared/research/analytics/dataset.ts";
 import { searchReferences, type ResultOrder, type SearchedReference } from "@/lib/research-api.ts";
+
+/**
+ * The two stages that exist.
+ *
+ * Named for what the researcher is doing, not for what the software is doing.
+ * The specification's lifecycle has four — proposal, collection, analysis,
+ * write-up — and two of them are not built; putting all four here with two
+ * inert would be a menu that lies about the product.
+ */
+const STAGES = [
+  { id: "literature", name: "Literature", blurb: "Find and verify references" },
+  { id: "analyse", name: "Analyse data", blurb: "Upload a file and run a test" },
+] as const;
+type Stage = (typeof STAGES)[number]["id"];
+
+function ResearchHeader({ stage, onStage }: { stage: Stage; onStage: (stage: Stage) => void }) {
+  return (
+    <header className="mb-8">
+      <h1 className="text-2xl font-bold tracking-tight">Research</h1>
+      <nav aria-label="Stage" className="mt-3 flex flex-wrap gap-2">
+        {STAGES.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            aria-pressed={stage === option.id}
+            onClick={() => onStage(option.id)}
+            className={cn(
+              "rounded-lg border px-4 py-2 text-left transition-colors",
+              stage === option.id
+                ? "border-accent bg-accent/10"
+                : "border-rule bg-raised hover:border-muted",
+            )}
+          >
+            <span className="block text-sm font-medium">{option.name}</span>
+            <span className="block text-xs text-muted">{option.blurb}</span>
+          </button>
+        ))}
+      </nav>
+    </header>
+  );
+}
+
+/**
+ * What to do next, in the researcher's own words.
+ *
+ * The box is for instructions — "write this up as a results section", "compare
+ * these against the second cohort" — and it is not connected to anything that
+ * can carry them out. It is here rather than absent because a researcher
+ * finishing an analysis has a next instruction in mind and needs somewhere to
+ * put it; it says plainly that nothing acts on it yet, because a box that
+ * silently swallows an instruction is worse than no box.
+ *
+ * Report writing needs a model. When one is configured this becomes the way in;
+ * until then the honest state is this one. **Do not soften this copy while the
+ * button still does nothing.**
+ */
+function Instructions({ hasData }: { hasData: boolean }) {
+  const [text, setText] = useState("");
+  return (
+    <section aria-labelledby="instructions" className="rounded-lg border border-rule bg-raised p-5">
+      <h3 id="instructions" className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted">
+        What next
+      </h3>
+      <p className="mb-3 text-sm text-muted">
+        {hasData
+          ? "Anything else you want done with this — writing it up, another comparison, a different framing."
+          : "Load a file first, then say what you want done with it."}
+      </p>
+      <textarea
+        aria-label="Further instructions"
+        rows={3}
+        value={text}
+        onChange={(event) => setText(event.target.value)}
+        placeholder="Write this up as a results section in APA style…"
+        className="w-full resize-y rounded-lg border border-rule bg-paper px-3 py-2 outline-none focus:border-accent"
+      />
+      <p className="mt-2 text-sm leading-relaxed text-accent">
+        Nothing acts on this yet. Report writing needs a language model, which is not connected in
+        this build — so what you type here is not sent anywhere and nothing will come back. The
+        analysis above is complete and needs no model at all.
+      </p>
+    </section>
+  );
+}
 
 export default function Research() {
   const [query, setQuery] = useState("");
@@ -18,6 +106,9 @@ export default function Research() {
   // "most relevant first" while it is still sorted by date is the same lie as
   // before, told by a control instead of a sort.
   const [shownOrder, setShownOrder] = useState<ResultOrder>("relevance");
+  const [stage, setStage] = useState<Stage>("literature");
+  const [dataset, setDataset] = useState<Dataset | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -40,15 +131,37 @@ export default function Research() {
     setBusy(false);
   }
 
+  if (stage === "analyse") {
+    return (
+      <div>
+        <ResearchHeader stage={stage} onStage={setStage} />
+        <div className="space-y-4">
+          <DataUpload
+            fileName={fileName}
+            onLoaded={(loaded, name) => {
+              setDataset(loaded);
+              setFileName(name);
+            }}
+          />
+          {dataset && <DatasetSummary dataset={dataset} />}
+          {dataset && <AnalyseData dataset={dataset} />}
+          <Instructions hasData={dataset !== null} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight">Research</h1>
-        <p className="mt-1 text-sm text-muted">
-          Literature search. Every reference comes from a bibliographic provider and its identifier
-          is re-checked before it is shown to you.
-        </p>
-      </header>
+      <ResearchHeader stage={stage} onStage={setStage} />
+      {/* The heading lives in ResearchHeader, once. The old one was left here
+          with sr-only, which still renders the element — so the page had two
+          h1s reading "Research", and an outline with two top-level headings is
+          one nobody can navigate. The browser smoke check found it. */}
+      <p className="mb-6 text-sm text-muted">
+        Every reference comes from a bibliographic provider and its identifier is re-checked before
+        it is shown to you.
+      </p>
 
       <form onSubmit={onSubmit} className="mb-6">
         <label htmlFor="query" className="sr-only">
@@ -173,12 +286,6 @@ export default function Research() {
         )}
       </div>
 
-      <footer className="mt-12 border-t border-rule pt-5 text-sm leading-relaxed text-muted">
-        <p>
-          References come from OpenAlex and Crossref, never from a language model. An identifier
-          that does not resolve is dropped rather than shown, and what was dropped is counted above.
-        </p>
-      </footer>
     </div>
   );
 }
