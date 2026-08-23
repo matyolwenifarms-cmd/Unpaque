@@ -108,6 +108,33 @@ describe("numbers that disagree about the same thing", () => {
     expect(found).toHaveLength(1);
   });
 
+  // The rule a research corpus needs and a witness statement cannot afford.
+  // Without it, a year three words from a count overlaps with it quite enough
+  // to be reported as the same figure disagreeing.
+  it("can require both numbers to be followed by the same word", () => {
+    const a = "the 2018 cohort reported 40 incidents across the four stations";
+    const b = "the 2018 cohort reported 52 incidents across the four stations";
+
+    const loose = numericDisagreements(a, b);
+    expect(loose.length).toBeGreaterThan(1);
+    expect(loose.some((pair) => pair.left.value === 2018 || pair.right.value === 2018)).toBe(true);
+
+    const strict = numericDisagreements(a, b, { requireSameUnit: true });
+    expect(strict).toHaveLength(1);
+    expect(strict[0]!.left.value).toBe(40);
+    expect(strict[0]!.right.value).toBe(52);
+  });
+
+  // A number ending a sentence has no word after it. Treating two empty units
+  // as matching would pair every such number with every other.
+  it("does not treat two missing units as the same unit", () => {
+    expect(numericDisagreements(
+      "the ward reported cases numbering 40",
+      "the ward reported cases numbering 52",
+      { requireSameUnit: true },
+    )).toEqual([]);
+  });
+
   it("takes a stricter or looser threshold when the caller sets one", () => {
     const loose = numericDisagreements(
       "40 were affected by the outage",

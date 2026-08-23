@@ -60,6 +60,14 @@ export interface NumberInContext {
   raw: string;
   /** Up to three words before and after, normalised. */
   context: string;
+  /**
+   * The word immediately after, which in English is usually the unit.
+   *
+   * `40 incidents` and `52 incidents` measure the same thing; `2018 cohort`
+   * and `52 incidents` do not, and their surrounding words overlap enough to
+   * pass the context threshold anyway. Empty where the number ends the text.
+   */
+  unit: string;
 }
 
 export function numbersIn(text: string): NumberInContext[] {
@@ -79,6 +87,7 @@ export function numbersIn(text: string): NumberInContext[] {
         ...words.slice(Math.max(0, index - 3), index),
         ...words.slice(index + 1, index + 4),
       ].join(" "),
+      unit: words[index + 1] ?? "",
     });
   }
   return found;
@@ -107,6 +116,19 @@ export interface DisagreementOptions {
    * and flagging those is the wall of noise §10 warns about.
    */
   contextOverlap?: number;
+  /**
+   * Require both numbers to be followed by the same word.
+   *
+   * Off by default, and the two callers choose differently for a reason. A
+   * witness statement is short and its numbers often end a clause — "he
+   * arrived at 9" has no unit at all — so requiring one there discards the
+   * conflicts Detect exists to find. A research paper is long and full of
+   * years, and without this rule `the 2018 cohort reported 40 incidents`
+   * against `the 2018 cohort reported 52 incidents` yields three
+   * disagreements: the real one, and two pairing a year against a count whose
+   * surrounding words overlap quite enough to pass the threshold.
+   */
+  requireSameUnit?: boolean;
 }
 
 /**
@@ -133,6 +155,7 @@ export function numericDisagreements(
   for (const left of numbersIn(a)) {
     for (const right of numbersIn(b)) {
       if (left.value === right.value) continue;
+      if (options.requireSameUnit && (left.unit === "" || left.unit !== right.unit)) continue;
       if (overlap(left.context, right.context) < threshold) continue;
 
       const key = `${left.value}:${right.value}`;
