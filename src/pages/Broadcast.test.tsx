@@ -127,3 +127,57 @@ describe("a case laid out for a camera", () => {
     expect(screen.queryByText(/most likely|leading|score/i)).not.toBeInTheDocument();
   });
 });
+
+// §24: "The Detective should answer by navigating the dossier, not merely
+// generating text." A command moves to a record; the record says what it says.
+describe("commanding the broadcast", () => {
+  async function say(phrase: string) {
+    await userEvent.type(screen.getByLabelText("Type a command"), `${phrase}{Enter}`);
+  }
+
+  const SOURCES = [
+    { id: "s1", kind: "official_record", title: "Gate log", retrieved_from: "x", retrieved_at: "y", content_hash: null, reference: 3 },
+    { id: "s2", kind: "testimony", title: "Depot supervisor", retrieved_from: "x", retrieved_at: "y", content_hash: null, reference: 14 },
+  ];
+
+  it("opens the source that was named", async () => {
+    listSources.mockResolvedValue({ ok: true, data: SOURCES });
+    draw();
+    await screen.findByRole("heading", { name: "The depot", level: 2 });
+    await say("open source fourteen");
+    expect(await screen.findByText("Depot supervisor")).toBeInTheDocument();
+    expect(screen.queryByText("Gate log")).not.toBeInTheDocument();
+  });
+
+  it("shows both when two are compared", async () => {
+    listSources.mockResolvedValue({ ok: true, data: SOURCES });
+    draw();
+    await screen.findByRole("heading", { name: "The depot", level: 2 });
+    await say("compare sources three and fourteen");
+    expect(await screen.findByText("Gate log")).toBeInTheDocument();
+    expect(screen.getByText("Depot supervisor")).toBeInTheDocument();
+  });
+
+  // Showing the list unchanged would read as a mishearing, and the operator
+  // says it again, louder.
+  it("says when a named source is not in the case", async () => {
+    listSources.mockResolvedValue({ ok: true, data: SOURCES });
+    draw();
+    await screen.findByRole("heading", { name: "The depot", level: 2 });
+    await say("open source ninety nine");
+    expect(await screen.findByText(/SOURCE 099 is not in this case/)).toBeInTheDocument();
+  });
+
+  it("moves between panels on a spoken command", async () => {
+    listClaims.mockResolvedValue({
+      ok: true,
+      data: [{ id: "c1", statement: "The van left before nine.", status: "claim", asserted_by: null }],
+    });
+    draw();
+    await screen.findByRole("heading", { name: "The depot", level: 2 });
+    await say("show the timeline");
+    expect(await screen.findByText(/No events in this case yet/)).toBeInTheDocument();
+    await say("show the claims");
+    expect(await screen.findByText("The van left before nine.")).toBeInTheDocument();
+  });
+});

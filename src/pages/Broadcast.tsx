@@ -10,6 +10,7 @@ import {
 } from "@shared/detective/broadcast.ts";
 import { assembleHypotheses } from "@shared/detective/hypothesis.ts";
 import { RequireSession } from "@/components/RequireSession.tsx";
+import { VoiceCommand } from "@/components/VoiceCommand.tsx";
 import {
   getCase,
   listClaims,
@@ -62,6 +63,10 @@ function BroadcastCase({ id }: { id: string }) {
   const [hypotheses, setHypotheses] = useState<HypothesisRow[]>([]);
   const [links, setLinks] = useState<HypothesisEvidenceRow[]>([]);
   const [panel, setPanel] = useState<BroadcastPanel>("claims");
+  // What a command singled out, and why. Cleared whenever the panel changes,
+  // because a highlight left behind after a move points at the wrong thing.
+  const [singledOut, setSingledOut] = useState<{ reference: number; also?: number } | null>(null);
+  const [saying, setSaying] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -150,9 +155,49 @@ function BroadcastCase({ id }: { id: string }) {
           ))}
         </nav>
 
+        {/* Off to one side and small: a control surface, not the programme. */}
+        <div className="mb-[1.5vh] max-w-[34vw] text-[0.75vw] [&_h4]:text-[0.9vw] [&_input]:text-[0.85vw] [&_p]:text-[0.75vw]">
+          <VoiceCommand
+            onCommand={(command) => {
+              setSaying(null);
+              if (command.kind === "show_panel") {
+                setPanel(command.panel);
+                setSingledOut(null);
+                return;
+              }
+              if (command.kind === "open_source") {
+                setPanel("sources");
+                setSingledOut({ reference: command.reference });
+                return;
+              }
+              if (command.kind === "compare_sources") {
+                setPanel("sources");
+                setSingledOut({ reference: command.first, also: command.second });
+                return;
+              }
+              if (command.kind === "open_evidence") {
+                // Evidence has reference numbers and no panel of its own yet.
+                // Said rather than silently ignored.
+                setSaying("Evidence is shown against the claim it bears on, and there is no evidence panel in broadcast yet.");
+                return;
+              }
+              if (command.kind === "what_is_unknown") {
+                setSaying("The unknowns are assembled in the dossier on the case page, not in broadcast.");
+                return;
+              }
+              setSingledOut(null);
+            }}
+          />
+          {saying !== null && (
+            <p className="mt-[0.6vh] text-[0.8vw] text-muted" role="status">
+              {saying}
+            </p>
+          )}
+        </div>
+
         <div className="min-h-0 flex-1 overflow-hidden">
           {panel === "claims" && <Claims claims={claims} />}
-          {panel === "sources" && <Sources sources={sources} />}
+          {panel === "sources" && <Sources sources={sources} singledOut={singledOut} />}
           {panel === "timeline" && <Events events={events} sources={sources} />}
           {panel === "explanations" && <Explanations hypotheses={hypotheses} links={links} sources={sources} />}
         </div>
@@ -191,11 +236,40 @@ function Claims({ claims }: { claims: readonly ClaimRow[] }) {
   );
 }
 
-function Sources({ sources }: { sources: readonly SourceRow[] }) {
+function Sources({
+  sources,
+  singledOut,
+}: {
+  sources: readonly SourceRow[];
+  singledOut: { reference: number; also?: number } | null;
+}) {
   if (sources.length === 0) return <Empty what="sources" />;
+
+  const wanted = singledOut
+    ? [singledOut.reference, ...(singledOut.also === undefined ? [] : [singledOut.also])]
+    : [];
+  // A command naming a source that is not in the case must say so. Showing the
+  // list unchanged would read as a mishearing, and the operator says it again.
+  const missing = wanted.filter(
+    (reference) => !sources.some((source) => source.reference === reference),
+  );
+  const shown = wanted.length > 0
+    ? sources.filter((source) => source.reference != null && wanted.includes(source.reference))
+    : sources.slice(0, 8);
+
+  if (wanted.length > 0 && shown.length === 0) {
+    return (
+      <div className="flex h-full items-center">
+        <p className="text-[1.4vw] text-muted">
+          {missing.map((reference) => sourceLabel(reference)).join(" and ")} is not in this case.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <ul className="grid h-full grid-cols-2 gap-[1.5vw] overflow-hidden">
-      {sources.slice(0, 8).map((source) => (
+      {shown.map((source) => (
         <li key={source.id}>
           <p className="text-[0.9vw] uppercase tracking-[0.2em] text-accent">
             {sourceLabel(source.reference)}

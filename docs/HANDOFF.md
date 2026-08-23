@@ -47,7 +47,7 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 1072 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 1103 unit and component tests, four passing gates (typecheck, lint, test, build).
 - 221 SQL assertions across ten suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
@@ -98,6 +98,15 @@ The distinction matters more than the totals.
   were run on is named and not kept. Reopening a study shows the findings and
   the write-up assembles from them, but re-running anything needs the file
   again. A SQL assertion checks there is no column it could be hiding in.
+- **Voice is a closed grammar, not a conversation.** §24's commands are
+  navigation over records — "open source fourteen", "show the timeline" — and a
+  deterministic parser handles them with no model, which is *better* here than
+  a model would be: asked to interpret "source forty" against a case with
+  fourteen sources, a model picks one. This refuses and shows what it heard.
+  Speech recognition is the browser's own, so Firefox gets the typed path and
+  is told why. Nothing speaks back: reading a stored record aloud would be
+  honest and is not built; answering a question aloud would mean generating
+  one.
 - **Broadcast mode presents reasoning, not media.** §7 and §8 — video, audio,
   transcription — are not built, so there is no central media frame and the
   broadcast screen says so in its own footer. It shows claims with their
@@ -223,6 +232,7 @@ and all three are built the same way:
 | Detect | Draw a connection stronger than its weakest link | `Path.weakest` is derived; no field takes a strength |
 | Detect | Assert a relationship as fact with nothing behind it | A check constraint, not a client rule |
 | Detect | Broadcast a claim without its classification | `lowerThird` returns both fields or neither |
+| Detect | Act on a command it may have misheard | A closed grammar; every refusal carries the transcript |
 
 Research's passage engine is the strongest form: the model returns
 offsets, the server slices, and **the tool schema has no field a quotation
