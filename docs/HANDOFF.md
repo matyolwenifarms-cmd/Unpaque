@@ -47,7 +47,7 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 1274 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 1324 unit and component tests, four passing gates (typecheck, lint, test, build).
 - 246 SQL assertions across eleven suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
@@ -65,6 +65,13 @@ The distinction matters more than the totals.
 - The whole Unpack deployment path, end to end, in stub mode — gateway, JWT
   check, rate limiter against real Postgres, function under Deno, client,
   parser, rendering.
+- **The analyse stage driven in Chromium with a deliberately messy export**:
+  a column two survey answers turned into text, two levels that are the same
+  word, a constant, a row identifier, a quarter missing. Reading the result is
+  what found the two defects in it — `age` reported both as
+  numbers-stuck-as-text and as a row identifier, which contradict each other
+  on one column, and the second panel offering three tests on a column the
+  first had just called broken.
 - **The proposal stage driven in Chromium against the built bundle**: a
   methodology chapter pasted in, the report read end to end, console clean.
   That reading is what found the last three defects in it — a scope
@@ -246,6 +253,8 @@ and all three are built the same way:
 | Research | Write the researcher's argument for them | A `yours` section has no field a body could go in |
 | Research | Judge a design the proposal never declared | `designFrom` returns nothing without a declared paradigm; a `mentioned` reading cannot reach the coherence check |
 | Research | Say a reference does not exist when nobody could ask | `DoiCheck` has four states and no boolean; an unreachable agency and an absent record cannot be the same value |
+| Research | Turn a list of column pairs into a p-value hunt | `readOpportunities` has no field for a result and orders by nothing but the file; the panel says what choosing from it would do |
+| Research | Offer a test on a column it has just called broken | A `will_mislead` column is withdrawn from every pair, with the fix that brings it back |
 | Detect | State an allegation as fact | 11 epistemic classifications; the dossier concludes nothing |
 | Detect | Be forced into one theory | `assembleHypotheses` refuses a lone hypothesis; no column or field ranks one |
 | Detect | Hold a belief no evidence could touch | `falsifier` is `not null`, in the schema and the type |

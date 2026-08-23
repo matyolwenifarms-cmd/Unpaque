@@ -3,6 +3,7 @@ import { Loader2, Search } from "lucide-react";
 import { AnalyseData } from "@/components/AnalyseData.tsx";
 import { ChooseMethod } from "@/components/ChooseMethod.tsx";
 import { CodeText } from "@/components/CodeText.tsx";
+import { DataReview } from "@/components/DataReview.tsx";
 import { DataUpload } from "@/components/DataUpload.tsx";
 import { DatasetSummary } from "@/components/DatasetSummary.tsx";
 import { ProposalReview } from "@/components/ProposalReview.tsx";
@@ -343,6 +344,11 @@ export default function Research() {
             }}
           />
           {dataset && <DatasetSummary dataset={dataset} />}
+          {/* Between what was read and what to run: the sentences a
+              supervisor would say about the file. `DatasetSummary` shows the
+              same facts as a table, which only helps somebody who already
+              knows which of them is a problem. */}
+          {dataset && <DataReview dataset={dataset} />}
         {dataset && (
           <AnalyseData
             // Keyed on the study for the same reason the method form is.
