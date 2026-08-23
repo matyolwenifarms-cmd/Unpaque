@@ -1,3 +1,4 @@
+import { numericDisagreements } from "../relations/compare.ts";
 import type { Discrepancy, Explanation, TimelineEvent } from "./timeline.ts";
 
 // The contradiction engine, §10.
@@ -42,95 +43,20 @@ export interface ContradictionRecord {
   status: ContradictionStatus;
 }
 
-/**
- * Normalise for comparison: case, whitespace, typographic punctuation, and the
- * words that carry no propositional content.
- *
- * The stopword list is short on purpose. Stripping aggressively makes two
- * genuinely different statements collide, and a contradiction engine that
- * misses real conflicts is worse than one that reports a few extra.
- */
-const FILLER = new Set([
-  "a", "an", "the", "that", "this", "then", "just", "very", "quite",
-  "approximately", "about", "around", "roughly",
-]);
-
-export function normaliseStatement(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[‘’]/g, "'")
-    .replace(/[“”]/g, '"')
-    .replace(/[–—]/g, "-")
-    .replace(/[^\p{L}\p{N}\s'-]/gu, " ")
-    .split(/\s+/)
-    // A token of pure punctuation carries no content. Apostrophes and hyphens
-    // are kept inside words — "o'clock", "twenty-two" — but a dash left
-    // standing alone by the substitutions above would otherwise survive as a
-    // word and make an em-dash the difference between two identical accounts.
-    .filter((word) => word !== "" && /[\p{L}\p{N}]/u.test(word) && !FILLER.has(word))
-    .join(" ");
-}
-
-/**
- * Whether two statements say the same thing in different words.
- *
- * §10's warning, as a function that can be called rather than a caution that
- * has to be remembered. Deliberately conservative: it answers "are these
- * plainly the same", not "do these mean the same", which no deterministic
- * check can decide.
- */
-export function differsOnlyInWording(a: string, b: string): boolean {
-  return normaliseStatement(a) === normaliseStatement(b);
-}
-
-// A note on where this is and is not used, because it was briefly called from
-// findNumericConflicts and could not possibly fire there: if two statements
-// normalise identically then every number in them is identical too, so there
-// was never a numeric conflict for the guard to suppress. A negative control
-// found it — removing the guard changed nothing.
+// The comparison itself lives in `_shared/relations/compare.ts`, because
+// Research asks the same question of two papers and the arithmetic does not
+// change between them. What stays here is what §10 owes on top of it: the six
+// contradiction types, the explanations, the significance, and the rule that
+// nothing produced by software is ever `verified`.
 //
-// It belongs on any comparison of *prose* — narrative and direct
-// contradictions, where "the meeting was moved" and "the meeting was
-// rescheduled" must not be reported. Numeric comparison gets its safety from
-// the context-overlap threshold instead, which is a different mechanism doing
-// a different job.
-
-/** Numbers as they appear, with the words either side, so context survives. */
-interface NumberInContext {
-  value: number;
-  raw: string;
-  /** Up to three words before and after, normalised. */
-  context: string;
-}
-
-function numbersIn(text: string): NumberInContext[] {
-  const words = normaliseStatement(text).split(" ");
-  const found: NumberInContext[] = [];
-  for (const [index, word] of words.entries()) {
-    // Commas and spaces as thousands separators are already stripped by
-    // normalisation, so "1,200" arrives as "1" and "200". Rejoining is not
-    // worth it here: a split number produces two candidates that both fail to
-    // match rather than one that matches wrongly.
-    const value = Number(word.replace(/[^\d.-]/g, ""));
-    if (!Number.isFinite(value) || word.replace(/[^\d]/g, "") === "") continue;
-    found.push({
-      value,
-      raw: word,
-      context: [...words.slice(Math.max(0, index - 3), index), ...words.slice(index + 1, index + 4)].join(" "),
-    });
-  }
-  return found;
-}
-
-/** Proportion of words shared between two contexts. */
-function overlap(a: string, b: string): number {
-  const left = new Set(a.split(" ").filter(Boolean));
-  const right = new Set(b.split(" ").filter(Boolean));
-  if (left.size === 0 || right.size === 0) return 0;
-  let shared = 0;
-  for (const word of left) if (right.has(word)) shared += 1;
-  return shared / Math.min(left.size, right.size);
-}
+// Re-exported rather than left to callers to import from two places. The
+// dossier and the case view have imported `normaliseStatement` from this
+// module since before the seam existed, and moving a file should not be an
+// API change for everything that reads it.
+export {
+  differsOnlyInWording,
+  normaliseStatement,
+} from "../relations/compare.ts";
 
 export interface StatementUnderComparison {
   sourceId: string;
@@ -160,50 +86,39 @@ export function findNumericConflicts(
   b: StatementUnderComparison,
   options: NumericConflictOptions = {},
 ): ContradictionRecord[] {
-  const threshold = options.contextOverlap ?? 0.6;
-  const records: ContradictionRecord[] = [];
-  const seen = new Set<string>();
+  const disagreements = numericDisagreements(
+    a.text,
+    b.text,
+    options.contextOverlap === undefined ? {} : { contextOverlap: options.contextOverlap },
+  );
 
-  for (const left of numbersIn(a.text)) {
-    for (const right of numbersIn(b.text)) {
-      if (left.value === right.value) continue;
-      if (overlap(left.context, right.context) < threshold) continue;
-
-      const key = `${left.value}:${right.value}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-
-      records.push({
-        type: "documentary",
-        sourceA: a.sourceId,
-        sourceB: b.sourceId,
-        difference: `${left.raw} against ${right.raw}, in otherwise matching wording`,
-        explanations: [
-          {
-            summary: "The two figures count different things, despite similar phrasing.",
-            distinguishedBy: "The definition each source uses, stated in its own text or methodology.",
-          },
-          {
-            summary: "The figures are from different dates and both were correct when written.",
-            distinguishedBy: "The date each source's figure was compiled, as distinct from its publication date.",
-          },
-          {
-            summary: "One figure was revised and the other reproduces the earlier version.",
-            distinguishedBy: "Whether either source issued a correction, and which came first.",
-          },
-          {
-            summary: "One figure is wrong.",
-            distinguishedBy: "A third independent source, or the underlying record both are drawn from.",
-          },
-        ],
-        significance:
-          "The two sources cannot both be describing the same quantity accurately; which is correct affects anything resting on either.",
-        status: "potential",
-      });
-    }
-  }
-
-  return records;
+  return disagreements.map(({ left, right }) => ({
+    type: "documentary",
+    sourceA: a.sourceId,
+    sourceB: b.sourceId,
+    difference: `${left.raw} against ${right.raw}, in otherwise matching wording`,
+    explanations: [
+      {
+        summary: "The two figures count different things, despite similar phrasing.",
+        distinguishedBy: "The definition each source uses, stated in its own text or methodology.",
+      },
+      {
+        summary: "The figures are from different dates and both were correct when written.",
+        distinguishedBy: "The date each source's figure was compiled, as distinct from its publication date.",
+      },
+      {
+        summary: "One figure was revised and the other reproduces the earlier version.",
+        distinguishedBy: "Whether either source issued a correction, and which came first.",
+      },
+      {
+        summary: "One figure is wrong.",
+        distinguishedBy: "A third independent source, or the underlying record both are drawn from.",
+      },
+    ],
+    significance:
+      "The two sources cannot both be describing the same quantity accurately; which is correct affects anything resting on either.",
+    status: "potential",
+  }));
 }
 
 /**
