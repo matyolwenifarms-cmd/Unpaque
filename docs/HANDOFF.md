@@ -259,8 +259,13 @@ code is the same as absent. It is secondary to the consolidated spec by that
 spec's own instruction, and its section numbers are its own: its §3 is the
 epistemic model that the consolidated spec renumbers as §4.
 
-The second source document it names — the 44-page "Comprehensive Concept &
-Master Product Architecture" — is genuinely absent.
+`docs/the-detective-concept-and-architecture.md` is the second, 44 pages, also
+extracted from a PDF. It has no section numbers — it is prose under headings —
+so it cannot be cited as `§n` and must be quoted by heading.
+
+Both were supplied as PDFs in the project and neither was in the repository,
+which for anybody reading the code is the same as absent. That is what the
+consolidated spec's audit note was recording.
 
 ## Where the arguments live
 
@@ -268,6 +273,8 @@ Master Product Architecture" — is genuinely absent.
   Authoritative for that feature.
 - `the-detective-master-system-build.md` — its 89-page source, extracted from
   a PDF. Secondary, and numbered differently. See above.
+- `the-detective-concept-and-architecture.md` — its 44-page source. Secondary,
+  and has no section numbers to cite at all.
 - `ARCHITECTURE_ASSESSMENT.md` — the stack decision, the shared primitives, the
   known limits of the local test harness.
 - `DEPARTURES.md` — every deliberate divergence from a supplied specification,
