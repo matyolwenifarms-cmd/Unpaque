@@ -1,0 +1,400 @@
+{
+  "10.1017/cbo9780511818691": {
+    "best_oa_location": null,
+    "data_standard": 2,
+    "doi": "10.1017/cbo9780511818691",
+    "doi_url": "https://doi.org/10.1017/cbo9780511818691",
+    "first_oa_location": null,
+    "genre": "monograph",
+    "has_repository_copy": false,
+    "is_oa": false,
+    "is_paratext": false,
+    "journal_is_in_doaj": false,
+    "journal_is_oa": false,
+    "journal_issn_l": null,
+    "journal_issns": null,
+    "journal_name": "Cambridge University Press eBooks",
+    "oa_locations": [],
+    "oa_locations_embargoed": [],
+    "oa_status": "closed",
+    "published_date": "1992-08-28",
+    "publisher": "Cambridge University Press",
+    "title": "The Nature and Origins of Mass Opinion",
+    "updated": "2025-10-27T16:35:26Z",
+    "year": 1992,
+    "z_authors": [
+      {
+        "author_position": "first",
+        "is_corresponding": true,
+        "raw_affiliation_strings": [
+          "University of California, Los Angeles"
+        ],
+        "raw_author_name": "John R. Zaller"
+      }
+    ]
+  },
+  "10.1111/j.1460-2466.1999.tb02784.x": {
+    "best_oa_location": null,
+    "data_standard": 2,
+    "doi": "10.1111/j.1460-2466.1999.tb02784.x",
+    "doi_url": "https://doi.org/10.1111/j.1460-2466.1999.tb02784.x",
+    "first_oa_location": null,
+    "genre": "journal-article",
+    "has_repository_copy": false,
+    "is_oa": false,
+    "is_paratext": false,
+    "journal_is_in_doaj": false,
+    "journal_is_oa": false,
+    "journal_issn_l": "0021-9916",
+    "journal_issns": "0021-9916,1460-2466",
+    "journal_name": "Journal of Communication",
+    "oa_locations": [],
+    "oa_locations_embargoed": [],
+    "oa_status": "closed",
+    "published_date": "1999-03-01",
+    "publisher": "Oxford University Press (OUP)",
+    "title": "Framing as a Theory of Media Effects",
+    "updated": "2025-05-22T18:42:22Z",
+    "year": 1999,
+    "z_authors": [
+      {
+        "author_position": "first",
+        "is_corresponding": true,
+        "raw_affiliation_strings": [
+          "Mass Communications Research Center, University of Wisconsin-Madison, USA"
+        ],
+        "raw_author_name": "Dietram A. Scheufele"
+      }
+    ]
+  },
+  "10.2307/2074664": {
+    "best_oa_location": null,
+    "data_standard": 2,
+    "doi": "10.2307/2074664",
+    "doi_url": "https://doi.org/10.2307/2074664",
+    "first_oa_location": null,
+    "genre": "journal-article",
+    "has_repository_copy": false,
+    "is_oa": false,
+    "is_paratext": false,
+    "journal_is_in_doaj": false,
+    "journal_is_oa": false,
+    "journal_issn_l": "0094-3061",
+    "journal_issns": "0094-3061,1939-8638",
+    "journal_name": "Contemporary Sociology A Journal of Reviews",
+    "oa_locations": [],
+    "oa_locations_embargoed": [],
+    "oa_status": "closed",
+    "published_date": "1993-09-01",
+    "publisher": "SAGE Publications",
+    "title": "The Nature and Origins of Mass Opinion.",
+    "updated": "2025-05-22T18:42:22Z",
+    "year": 1993,
+    "z_authors": [
+      {
+        "author_position": "first",
+        "is_corresponding": true,
+        "raw_affiliation_strings": null,
+        "raw_author_name": "Henry C. Kenski"
+      },
+      {
+        "author_position": "last",
+        "is_corresponding": false,
+        "raw_affiliation_strings": null,
+        "raw_author_name": "John R. Zaller"
+      }
+    ]
+  },
+  "10.1023/a:1024834831093": {
+    "best_oa_location": null,
+    "data_standard": 2,
+    "doi": "10.1023/a:1024834831093",
+    "doi_url": "https://doi.org/10.1023/a:1024834831093",
+    "first_oa_location": null,
+    "genre": "journal-article",
+    "has_repository_copy": false,
+    "is_oa": false,
+    "is_paratext": false,
+    "journal_is_in_doaj": false,
+    "journal_is_oa": false,
+    "journal_issn_l": "0190-9320",
+    "journal_issns": "0190-9320,1573-6687",
+    "journal_name": "Political Behavior",
+    "oa_locations": [],
+    "oa_locations_embargoed": [],
+    "oa_status": "closed",
+    "published_date": "1997-09-01",
+    "publisher": "Springer Science and Business Media LLC",
+    "title": "Toward a Psychology of Framing Effects",
+    "updated": "2025-08-07T01:54:24Z",
+    "year": 1997,
+    "z_authors": [
+      {
+        "author_position": "first",
+        "is_corresponding": true,
+        "raw_affiliation_strings": [
+          "Department of Political Science, The Ohio State University, Columbus, OH, 43210-1373"
+        ],
+        "raw_author_name": "Thomas E. Nelson"
+      },
+      {
+        "author_position": "additional",
+        "is_corresponding": false,
+        "raw_affiliation_strings": null,
+        "raw_author_name": "Zoe M. Oxley"
+      },
+      {
+        "author_position": "last",
+        "is_corresponding": false,
+        "raw_affiliation_strings": null,
+        "raw_author_name": "Rosalee A. Clawson"
+      }
+    ]
+  },
+  "10.1057/palgrave.crr.1550049": {
+    "best_oa_location": {
+      "endpoint_id": null,
+      "evidence": "deprecated",
+      "host_type": "publisher",
+      "is_best": true,
+      "license": null,
+      "oa_date": "2007-09-01",
+      "pmh_id": null,
+      "repository_institution": null,
+      "updated": "deprecated",
+      "url": "https://link.springer.com/content/pdf/10.1057/palgrave.crr.1550049.pdf",
+      "url_for_landing_page": "https://doi.org/10.1057/palgrave.crr.1550049",
+      "url_for_pdf": "https://link.springer.com/content/pdf/10.1057/palgrave.crr.1550049.pdf",
+      "version": "publishedVersion"
+    },
+    "data_standard": 2,
+    "doi": "10.1057/palgrave.crr.1550049",
+    "doi_url": "https://doi.org/10.1057/palgrave.crr.1550049",
+    "first_oa_location": {
+      "endpoint_id": null,
+      "evidence": "deprecated",
+      "host_type": "publisher",
+      "is_best": true,
+      "license": null,
+      "oa_date": "2007-09-01",
+      "pmh_id": null,
+      "repository_institution": null,
+      "updated": "deprecated",
+      "url": "https://link.springer.com/content/pdf/10.1057/palgrave.crr.1550049.pdf",
+      "url_for_landing_page": "https://doi.org/10.1057/palgrave.crr.1550049",
+      "url_for_pdf": "https://link.springer.com/content/pdf/10.1057/palgrave.crr.1550049.pdf",
+      "version": "publishedVersion"
+    },
+    "genre": "journal-article",
+    "has_repository_copy": false,
+    "is_oa": true,
+    "is_paratext": false,
+    "journal_is_in_doaj": false,
+    "journal_is_oa": false,
+    "journal_issn_l": "1363-3589",
+    "journal_issns": "1363-3589,1479-1889",
+    "journal_name": "Corporate Reputation Review",
+    "oa_locations": [
+      {
+        "endpoint_id": null,
+        "evidence": "deprecated",
+        "host_type": "publisher",
+        "is_best": true,
+        "license": null,
+        "oa_date": "2007-09-01",
+        "pmh_id": null,
+        "repository_institution": null,
+        "updated": "deprecated",
+        "url": "https://link.springer.com/content/pdf/10.1057/palgrave.crr.1550049.pdf",
+        "url_for_landing_page": "https://doi.org/10.1057/palgrave.crr.1550049",
+        "url_for_pdf": "https://link.springer.com/content/pdf/10.1057/palgrave.crr.1550049.pdf",
+        "version": "publishedVersion"
+      }
+    ],
+    "oa_locations_embargoed": [],
+    "oa_status": "bronze",
+    "published_date": "2007-09-01",
+    "publisher": "Springer Science and Business Media LLC",
+    "title": "Protecting Organization Reputations During a Crisis: The Development and Application of Situational Crisis Communication Theory",
+    "updated": "2025-05-22T18:42:22Z",
+    "year": 2007,
+    "z_authors": [
+      {
+        "author_position": "first",
+        "is_corresponding": true,
+        "raw_affiliation_strings": [
+          "Department of Communication Studies, Eastern Illinois University, Charleston, IL, USA"
+        ],
+        "raw_author_name": "W Timothy Coombs"
+      }
+    ]
+  },
+  "10.1080/10584600590933160": {
+    "best_oa_location": {
+      "endpoint_id": null,
+      "evidence": "deprecated",
+      "host_type": "publisher",
+      "is_best": true,
+      "license": null,
+      "oa_date": "2005-04-01",
+      "pmh_id": null,
+      "repository_institution": null,
+      "updated": "deprecated",
+      "url": "https://www.tandfonline.com/doi/pdf/10.1080/10584600590933160?needAccess=true&role=button",
+      "url_for_landing_page": "https://doi.org/10.1080/10584600590933160",
+      "url_for_pdf": "https://www.tandfonline.com/doi/pdf/10.1080/10584600590933160?needAccess=true&role=button",
+      "version": "publishedVersion"
+    },
+    "data_standard": 2,
+    "doi": "10.1080/10584600590933160",
+    "doi_url": "https://doi.org/10.1080/10584600590933160",
+    "first_oa_location": {
+      "endpoint_id": null,
+      "evidence": "deprecated",
+      "host_type": "publisher",
+      "is_best": true,
+      "license": null,
+      "oa_date": "2005-04-01",
+      "pmh_id": null,
+      "repository_institution": null,
+      "updated": "deprecated",
+      "url": "https://www.tandfonline.com/doi/pdf/10.1080/10584600590933160?needAccess=true&role=button",
+      "url_for_landing_page": "https://doi.org/10.1080/10584600590933160",
+      "url_for_pdf": "https://www.tandfonline.com/doi/pdf/10.1080/10584600590933160?needAccess=true&role=button",
+      "version": "publishedVersion"
+    },
+    "genre": "journal-article",
+    "has_repository_copy": false,
+    "is_oa": true,
+    "is_paratext": false,
+    "journal_is_in_doaj": false,
+    "journal_is_oa": false,
+    "journal_issn_l": "1058-4609",
+    "journal_issns": "1058-4609,1091-7675",
+    "journal_name": "Political Communication",
+    "oa_locations": [
+      {
+        "endpoint_id": null,
+        "evidence": "deprecated",
+        "host_type": "publisher",
+        "is_best": true,
+        "license": null,
+        "oa_date": "2005-04-01",
+        "pmh_id": null,
+        "repository_institution": null,
+        "updated": "deprecated",
+        "url": "https://www.tandfonline.com/doi/pdf/10.1080/10584600590933160?needAccess=true&role=button",
+        "url_for_landing_page": "https://doi.org/10.1080/10584600590933160",
+        "url_for_pdf": "https://www.tandfonline.com/doi/pdf/10.1080/10584600590933160?needAccess=true&role=button",
+        "version": "publishedVersion"
+      }
+    ],
+    "oa_locations_embargoed": [],
+    "oa_status": "bronze",
+    "published_date": "2005-04-01",
+    "publisher": "Informa UK Limited",
+    "title": "The Internet, Public Spheres, and Political Communication: Dispersion and Deliberation",
+    "updated": "2026-08-05T12:02:07Z",
+    "year": 2005,
+    "z_authors": [
+      {
+        "author_position": "first",
+        "is_corresponding": true,
+        "raw_affiliation_strings": [
+          "Peter Dahlgren is Professor of Media and Communication Studies at Lund University, Sweden",
+          "Peter Dahlgren is Professor of Media and Communication Studies at Lund University , Sweden"
+        ],
+        "raw_author_name": "Peter Dahlgren"
+      }
+    ]
+  },
+  "10.2307/328761": {
+    "best_oa_location": null,
+    "data_standard": 2,
+    "doi": "10.2307/328761",
+    "doi_url": "https://doi.org/10.2307/328761",
+    "first_oa_location": null,
+    "genre": "journal-article",
+    "has_repository_copy": false,
+    "is_oa": false,
+    "is_paratext": false,
+    "journal_is_in_doaj": false,
+    "journal_is_oa": false,
+    "journal_issn_l": "0026-7902",
+    "journal_issns": "0026-7902,1540-4781",
+    "journal_name": "Modern Language Journal",
+    "oa_locations": [],
+    "oa_locations_embargoed": [],
+    "oa_status": "closed",
+    "published_date": "1991-01-01",
+    "publisher": "Wiley",
+    "title": "The Ethnography of Communication: An Introduction",
+    "updated": "2025-05-22T18:42:22Z",
+    "year": 1991,
+    "z_authors": [
+      {
+        "author_position": "first",
+        "is_corresponding": true,
+        "raw_affiliation_strings": null,
+        "raw_author_name": "Jill K. Welch"
+      },
+      {
+        "author_position": "last",
+        "is_corresponding": false,
+        "raw_affiliation_strings": null,
+        "raw_author_name": "Muriel Saville-Troike"
+      }
+    ]
+  },
+  "10.1080/15205436.2015.1068811": {
+    "best_oa_location": null,
+    "data_standard": 2,
+    "doi": "10.1080/15205436.2015.1068811",
+    "doi_url": "https://doi.org/10.1080/15205436.2015.1068811",
+    "first_oa_location": null,
+    "genre": "journal-article",
+    "has_repository_copy": false,
+    "is_oa": false,
+    "is_paratext": false,
+    "journal_is_in_doaj": false,
+    "journal_is_oa": false,
+    "journal_issn_l": "1520-5436",
+    "journal_issns": "1520-5436,1532-7825",
+    "journal_name": "Mass Communication & Society",
+    "oa_locations": [],
+    "oa_locations_embargoed": [],
+    "oa_status": "closed",
+    "published_date": "2015-08-11",
+    "publisher": "Informa UK Limited",
+    "title": "The End of Framing as we Know it … and the Future of Media Effects",
+    "updated": "2026-08-21T15:25:14Z",
+    "year": 2015,
+    "z_authors": [
+      {
+        "author_position": "first",
+        "is_corresponding": false,
+        "raw_affiliation_strings": [
+          "Department of Advertising and Public Relations, University of Georgia",
+          "Department of Advertising & Public Relations, University of Georgia"
+        ],
+        "raw_author_name": "Michael A. Cacciatore"
+      },
+      {
+        "author_position": "middle",
+        "is_corresponding": true,
+        "raw_affiliation_strings": [
+          "Department of Life Sciences Communication, University of Wisconsin and Annenberg Public Policy Center, University of Pennsylvania"
+        ],
+        "raw_author_name": "Dietram A. Scheufele"
+      },
+      {
+        "author_position": "last",
+        "is_corresponding": false,
+        "raw_affiliation_strings": [
+          "Department of Communication and Department of Political Science, Stanford University"
+        ],
+        "raw_author_name": "Shanto Iyengar"
+      }
+    ]
+  }
+}

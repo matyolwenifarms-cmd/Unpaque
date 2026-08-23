@@ -1,7 +1,7 @@
 {
   "meta": {
-    "count": 579279,
-    "recorded_at": "2026-08-21T22:38:34.274Z"
+    "count": 581561,
+    "recorded_at": "2026-08-22T00:13:35.611Z"
   },
   "results": [
     {
@@ -9,7 +9,7 @@
       "doi": null,
       "title": "McQuail's mass communication theory",
       "display_name": "McQuail's mass communication theory",
-      "relevance_score": 1165.1671,
+      "relevance_score": 1170.1868,
       "publication_year": 2000,
       "publication_date": "2000-05-15",
       "ids": {
@@ -2444,7 +2444,7 @@
       "doi": "https://doi.org/10.1017/cbo9780511818691",
       "title": "The Nature and Origins of Mass Opinion",
       "display_name": "The Nature and Origins of Mass Opinion",
-      "relevance_score": 1037.1516,
+      "relevance_score": 1047.032,
       "publication_year": 1992,
       "publication_date": "1992-08-28",
       "ids": {
@@ -3535,7 +3535,7 @@
       "doi": "https://doi.org/10.1111/j.1460-2466.1999.tb02784.x",
       "title": "Framing as a Theory of Media Effects",
       "display_name": "Framing as a Theory of Media Effects",
-      "relevance_score": 988.3812,
+      "relevance_score": 987.97723,
       "publication_year": 1999,
       "publication_date": "1999-03-01",
       "ids": {
@@ -3646,16 +3646,16 @@
         "https://openalex.org/I135310074"
       ],
       "apc_list": {
-        "value": 3878,
+        "value": 4235,
         "currency": "USD",
-        "value_usd": 3878
+        "value_usd": 4235
       },
       "apc_paid": null,
-      "fwci": 46.7417,
+      "fwci": 47.0668,
       "has_fulltext": false,
       "cited_by_count": 3285,
       "citation_normalized_percentile": {
-        "value": 0.99856459,
+        "value": 0.99857516,
         "is_in_top_1_percent": true,
         "is_in_top_10_percent": true
       },
@@ -4462,7 +4462,7 @@
           "cited_by_count": 156
         }
       ],
-      "updated_date": "2026-08-19T15:00:24.278416",
+      "updated_date": "2026-08-21T09:56:20.448147",
       "created_date": "2025-10-10T00:00:00"
     },
     {
@@ -4470,7 +4470,7 @@
       "doi": "https://doi.org/10.2307/2074664",
       "title": "The Nature and Origins of Mass Opinion.",
       "display_name": "The Nature and Origins of Mass Opinion.",
-      "relevance_score": 855.8341,
+      "relevance_score": 861.4263,
       "publication_year": 1993,
       "publication_date": "1993-09-01",
       "ids": {
@@ -4692,9 +4692,9 @@
       "best_oa_location": null,
       "sustainable_development_goals": [
         {
-          "display_name": "Peace, Justice and strong institutions",
           "id": "https://metadata.un.org/sdg/16",
-          "score": 0.5799999833106995
+          "score": 0.5799999833106995,
+          "display_name": "Peace, Justice and strong institutions"
         }
       ],
       "awards": [],
@@ -5276,7 +5276,7 @@
       "doi": "https://doi.org/10.1023/a:1024834831093",
       "title": "Toward a Psychology of Framing Effects",
       "display_name": "Toward a Psychology of Framing Effects",
-      "relevance_score": 669.7813,
+      "relevance_score": 673.5468,
       "publication_year": 1997,
       "publication_date": "1997-09-01",
       "ids": {
@@ -5454,16 +5454,16 @@
         "https://openalex.org/I52357470"
       ],
       "apc_list": {
-        "value": 2890,
+        "value": 2990,
         "currency": "USD",
-        "value_usd": 2890
+        "value_usd": 2990
       },
       "apc_paid": null,
-      "fwci": 12.4122,
+      "fwci": 12.4685,
       "has_fulltext": false,
       "cited_by_count": 932,
       "citation_normalized_percentile": {
-        "value": 0.986053,
+        "value": 0.98617257,
         "is_in_top_1_percent": false,
         "is_in_top_10_percent": true
       },
@@ -5767,9 +5767,9 @@
       "best_oa_location": null,
       "sustainable_development_goals": [
         {
-          "display_name": "Peace, Justice and strong institutions",
           "id": "https://metadata.un.org/sdg/16",
-          "score": 0.4399999976158142
+          "score": 0.4399999976158142,
+          "display_name": "Peace, Justice and strong institutions"
         }
       ],
       "awards": [],
@@ -5946,7 +5946,7 @@
           "cited_by_count": 44
         }
       ],
-      "updated_date": "2026-08-16T07:02:28.622633",
+      "updated_date": "2026-08-21T09:56:20.448147",
       "created_date": "2016-06-24T00:00:00"
     },
     {
@@ -5954,7 +5954,7 @@
       "doi": "https://doi.org/10.1057/palgrave.crr.1550049",
       "title": "Protecting Organization Reputations During a Crisis: The Development and Application of Situational Crisis Communication Theory",
       "display_name": "Protecting Organization Reputations During a Crisis: The Development and Application of Situational Crisis Communication Theory",
-      "relevance_score": 573.723,
+      "relevance_score": 580.00397,
       "publication_year": 2007,
       "publication_date": "2007-09-01",
       "ids": {
@@ -6626,7 +6626,7 @@
       "doi": "https://doi.org/10.1080/10584600590933160",
       "title": "The Internet, Public Spheres, and Political Communication: Dispersion and Deliberation",
       "display_name": "The Internet, Public Spheres, and Political Communication: Dispersion and Deliberation",
-      "relevance_score": 563.08795,
+      "relevance_score": 563.60724,
       "publication_year": 2005,
       "publication_date": "2005-04-01",
       "ids": {
@@ -7143,9 +7143,9 @@
       },
       "sustainable_development_goals": [
         {
-          "display_name": "Peace, Justice and strong institutions",
           "id": "https://metadata.un.org/sdg/16",
-          "score": 0.7699999809265137
+          "score": 0.7699999809265137,
+          "display_name": "Peace, Justice and strong institutions"
         }
       ],
       "awards": [],
@@ -7856,7 +7856,7 @@
       "doi": "https://doi.org/10.2307/328761",
       "title": "The Ethnography of Communication: An Introduction",
       "display_name": "The Ethnography of Communication: An Introduction",
-      "relevance_score": 489.97852,
+      "relevance_score": 492.92236,
       "publication_year": 1991,
       "publication_date": "1991-01-01",
       "ids": {
@@ -8157,9 +8157,9 @@
       "best_oa_location": null,
       "sustainable_development_goals": [
         {
-          "display_name": "Quality Education",
           "id": "https://metadata.un.org/sdg/4",
-          "score": 0.5299999713897705
+          "score": 0.5299999713897705,
+          "display_name": "Quality Education"
         }
       ],
       "awards": [],
@@ -8918,7 +8918,7 @@
       "doi": "https://doi.org/10.1080/15205436.2015.1068811",
       "title": "The End of Framing as we Know it … and the Future of Media Effects",
       "display_name": "The End of Framing as we Know it … and the Future of Media Effects",
-      "relevance_score": 485.49207,
+      "relevance_score": 485.732,
       "publication_year": 2015,
       "publication_date": "2015-08-11",
       "ids": {
@@ -9924,7 +9924,7 @@
       "doi": "https://doi.org/10.4324/9781315623016",
       "title": "Populist Political Communication in Europe",
       "display_name": "Populist Political Communication in Europe",
-      "relevance_score": 470.35223,
+      "relevance_score": 480.21127,
       "publication_year": 2016,
       "publication_date": "2016-07-01",
       "ids": {
@@ -10687,9 +10687,9 @@
       },
       "sustainable_development_goals": [
         {
-          "display_name": "Partnerships for the goals",
           "id": "https://metadata.un.org/sdg/17",
-          "score": 0.47999998927116394
+          "score": 0.47999998927116394,
+          "display_name": "Partnerships for the goals"
         }
       ],
       "awards": [],
@@ -13482,9 +13482,9 @@
       },
       "sustainable_development_goals": [
         {
+          "score": 0.699999988079071,
           "id": "https://metadata.un.org/sdg/1",
-          "display_name": "No poverty",
-          "score": 0.699999988079071
+          "display_name": "No poverty"
         }
       ],
       "awards": [
@@ -15957,9 +15957,9 @@
       "best_oa_location": null,
       "sustainable_development_goals": [
         {
+          "score": 0.5,
           "id": "https://metadata.un.org/sdg/3",
-          "display_name": "Good health and well-being",
-          "score": 0.5
+          "display_name": "Good health and well-being"
         }
       ],
       "awards": [],
@@ -19091,9 +19091,9 @@
       },
       "sustainable_development_goals": [
         {
+          "score": 0.7900000214576721,
           "id": "https://metadata.un.org/sdg/3",
-          "display_name": "Good health and well-being",
-          "score": 0.7900000214576721
+          "display_name": "Good health and well-being"
         }
       ],
       "awards": [
@@ -19740,8 +19740,8 @@
       "awards": [],
       "funders": [],
       "has_content": {
-        "grobid_xml": false,
-        "pdf": false
+        "pdf": false,
+        "grobid_xml": false
       },
       "content_urls": null,
       "referenced_works_count": 0,
@@ -20687,8 +20687,8 @@
       "awards": [],
       "funders": [],
       "has_content": {
-        "grobid_xml": false,
-        "pdf": false
+        "pdf": false,
+        "grobid_xml": false
       },
       "content_urls": null,
       "referenced_works_count": 0,
@@ -21513,8 +21513,8 @@
       "awards": [],
       "funders": [],
       "has_content": {
-        "grobid_xml": false,
-        "pdf": false
+        "pdf": false,
+        "grobid_xml": false
       },
       "content_urls": null,
       "referenced_works_count": 0,
