@@ -32,7 +32,7 @@ what deliberately did not change with it, is `DEPARTURES.md` §6.
 | Feature | What it does | State | Costs to run |
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
-| **Research** | Proposal, literature, method, analysis, coding, write-up | Six stages on screen — the whole lifecycle, opening on the supervisor pass. §6 and §7, quantitative and qualitative, with a second coder and inter-coder agreement | **Nothing** |
+| **Research** | Proposal, papers, literature, method, analysis, coding, write-up | Seven stages — the whole lifecycle, opening on the supervisor pass. A study holds its own corpus and can set one paper against another; §6 and §7, quantitative and qualitative, with a second coder and inter-coder agreement | **Nothing** |
 | **Detect** | Investigative intelligence — cases, evidence, timeline, dossier, explanations, case graph | Phase 0–1, plus §11's graph and §12's hypothesis, falsification and skeptic engines | Nothing |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
@@ -47,10 +47,10 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 1328 unit and component tests, four passing gates (typecheck, lint, test,
+- 1385 unit and component tests, four passing gates (typecheck, lint, test,
   build). Four of them read the recorded provider fixtures and **skip where
   those are absent** — which is every agent container, since OpenAlex,
-  Crossref and Unpaywall are all blocked there. A run reporting 1324 passed
+  Crossref and Unpaywall are all blocked there. A run reporting 1381 passed
   and 4 skipped has checked less than it looks; `npm run research:record` on
   a machine with network access is what closes them.
 - 246 SQL assertions across eleven suites, run against a real Postgres 16, with
@@ -84,6 +84,11 @@ The distinction matters more than the totals.
   never reachable, a bare "1 could not be checked", and the paradigm reading
   printed twice on one screen. None of the three was reachable from a unit
   test.
+- **A real PDF read in Chromium against the built bundle.** The check that was
+  missing: every earlier browser run used a CSV or pasted text, so the PDF path
+  had never once been exercised where it runs, and it was broken — pdfjs
+  takes a falsy `workerSrc` as an instruction to fetch a worker that is not
+  there, and returns a promise that never settles.
 - **`deno check` now covers `research-search` as well as `analyse`.** It was
   unchecked code, and the DOI-checking operation was added to it.
 
@@ -260,6 +265,9 @@ and all three are built the same way:
 | Research | Say a reference does not exist when nobody could ask | `DoiCheck` has four states and no boolean; an unreachable agency and an absent record cannot be the same value |
 | Research | Turn a list of column pairs into a p-value hunt | `readOpportunities` has no field for a result and orders by nothing but the file; the panel says what choosing from it would do |
 | Research | Offer a test on a column it has just called broken | A `will_mislead` column is withdrawn from every pair, with the fix that brings it back |
+| Research | Turn a disagreeing figure into a contradiction | A `Suggestion` has no field a relation or a basis could be written into; the reviewer supplies both |
+| Research | Record a relation nobody can check | `basis` is `not null` and not short, in the schema; direction is never normalised |
+| Both | Lose a batch to one unreadable file | Each file is read alone, and every reader that can hang is raced against a clock |
 | Detect | State an allegation as fact | 11 epistemic classifications; the dossier concludes nothing |
 | Detect | Be forced into one theory | `assembleHypotheses` refuses a lone hypothesis; no column or field ranks one |
 | Detect | Hold a belief no evidence could touch | `falsifier` is `not null`, in the schema and the type |

@@ -6,6 +6,7 @@ import { CodeText } from "@/components/CodeText.tsx";
 import { DataReview } from "@/components/DataReview.tsx";
 import { DataUpload } from "@/components/DataUpload.tsx";
 import { DatasetSummary } from "@/components/DatasetSummary.tsx";
+import { Papers } from "@/components/Papers.tsx";
 import { ProposalReview } from "@/components/ProposalReview.tsx";
 import { ReferenceList } from "@/components/ReferenceList.tsx";
 import { StudyBar } from "@/components/StudyBar.tsx";
@@ -74,6 +75,7 @@ import { searchReferences, type ResultOrder, type SearchedReference } from "@/li
 const STAGES = [
   { id: "proposal", name: "Proposal", blurb: "Check its references and its design" },
   { id: "literature", name: "Literature", blurb: "Find and verify references" },
+  { id: "papers", name: "Papers", blurb: "Hold the papers, and set them against each other" },
   { id: "method", name: "Method", blurb: "Declare the paradigm and approach" },
   { id: "analyse", name: "Analyse data", blurb: "Upload a file and run a test" },
   { id: "code", name: "Code text", blurb: "Code transcripts and build themes" },
@@ -273,6 +275,10 @@ export default function Research() {
             })}
       />,
     );
+  }
+
+  if (stage === "papers") {
+    return frame(<Papers studyId={studyId} />);
   }
 
   if (stage === "method") {
