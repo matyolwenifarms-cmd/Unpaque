@@ -47,8 +47,8 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 1103 unit and component tests, four passing gates (typecheck, lint, test, build).
-- 221 SQL assertions across ten suites, run against a real Postgres 16, with
+- 1116 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 246 SQL assertions across eleven suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
   responses. The recorded fixtures are committed.

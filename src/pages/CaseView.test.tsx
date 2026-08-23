@@ -12,6 +12,7 @@ const listHypotheses = vi.fn();
 const listHypothesisEvidence = vi.fn();
 const listEntities = vi.fn();
 const listEdges = vi.fn();
+const listLineage = vi.fn();
 // Every export the page reaches for. A missing one is not a missing assertion:
 // the page calls them inside a Promise.all, so an undefined mock rejects and
 // nothing renders at all — which shows up as five unrelated "cannot find text"
@@ -32,6 +33,9 @@ vi.mock("@/lib/detective-api.ts", () => ({
   listHypothesisEvidence: () => listHypothesisEvidence(),
   listEntities: () => listEntities(),
   listEdges: () => listEdges(),
+  listLineage: () => listLineage(),
+  declareLineage: vi.fn(),
+  withdrawLineage: vi.fn(),
   createEntity: vi.fn(),
   deleteEntity: vi.fn(),
   createEdge: vi.fn(),
@@ -72,6 +76,7 @@ describe("opening a case", () => {
     listHypothesisEvidence.mockReset().mockResolvedValue({ ok: true, data: [] });
     listEntities.mockReset().mockResolvedValue({ ok: true, data: [] });
     listEdges.mockReset().mockResolvedValue({ ok: true, data: [] });
+    listLineage.mockReset().mockResolvedValue({ ok: true, data: [] });
   });
 
   it("shows the title and the question", async () => {
@@ -154,6 +159,7 @@ describe("what the page will and will not do for you", () => {
     listHypothesisEvidence.mockReset().mockResolvedValue({ ok: true, data: [] });
     listEntities.mockReset().mockResolvedValue({ ok: true, data: [] });
     listEdges.mockReset().mockResolvedValue({ ok: true, data: [] });
+    listLineage.mockReset().mockResolvedValue({ ok: true, data: [] });
   });
 
   it("lists the evidence bearing on a claim, with its excerpt", async () => {
@@ -233,6 +239,7 @@ describe("the dossier", () => {
     listHypothesisEvidence.mockReset().mockResolvedValue({ ok: true, data: [] });
     listEntities.mockReset().mockResolvedValue({ ok: true, data: [] });
     listEdges.mockReset().mockResolvedValue({ ok: true, data: [] });
+    listLineage.mockReset().mockResolvedValue({ ok: true, data: [] });
   });
 
   it("appears at the foot of the case, after the records it reads", async () => {

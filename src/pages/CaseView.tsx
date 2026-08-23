@@ -7,6 +7,7 @@ import { AddSource } from "@/components/AddSource.tsx";
 import { CaseGraph } from "@/components/CaseGraph.tsx";
 import { DossierView } from "@/components/DossierView.tsx";
 import { Hypotheses } from "@/components/Hypotheses.tsx";
+import { Provenance } from "@/components/Provenance.tsx";
 import { EpistemicBadge } from "@/components/EpistemicBadge.tsx";
 import { LinkEvidence } from "@/components/LinkEvidence.tsx";
 import { Timeline } from "@/components/Timeline.tsx";
@@ -15,6 +16,7 @@ import type { Graph } from "@shared/detective/graph.ts";
 import {
   createEdge,
   createEntity,
+  declareLineage,
   createHypothesis,
   deleteEdge,
   deleteEntity,
@@ -24,11 +26,14 @@ import {
   listEntities,
   listHypotheses,
   listHypothesisEvidence,
+  listLineage,
   unlinkHypothesisEvidence,
+  withdrawLineage,
   type EdgeRow,
   type EntityRow,
   type HypothesisEvidenceRow,
   type HypothesisRow,
+  type LineageRow,
   getCase,
   listClaims,
   listEvents,
@@ -52,6 +57,7 @@ function CaseDetail({ id }: { id: string }) {
   const [hypothesisEvidence, setHypothesisEvidence] = useState<HypothesisEvidenceRow[]>([]);
   const [entities, setEntities] = useState<EntityRow[]>([]);
   const [edges, setEdges] = useState<EdgeRow[]>([]);
+  const [lineage, setLineage] = useState<LineageRow[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -68,10 +74,11 @@ function CaseDetail({ id }: { id: string }) {
 
       const [
         claimResult, sourceResult, evidenceResult, eventResult,
-        hypothesisResult, linkResult, entityResult, edgeResult,
+        hypothesisResult, linkResult, entityResult, edgeResult, lineageResult,
       ] = await Promise.all([
         listClaims(id), listSources(id), listEvidence(id), listEvents(id),
         listHypotheses(id), listHypothesisEvidence(id), listEntities(id), listEdges(id),
+        listLineage(id),
       ]);
       if (!active) return;
       if (claimResult.ok) setClaims(claimResult.data);
@@ -82,6 +89,7 @@ function CaseDetail({ id }: { id: string }) {
       if (linkResult.ok) setHypothesisEvidence(linkResult.data);
       if (entityResult.ok) setEntities(entityResult.data);
       if (edgeResult.ok) setEdges(edgeResult.data);
+      if (lineageResult.ok) setLineage(lineageResult.data);
     })();
     return () => {
       active = false;
@@ -283,6 +291,33 @@ function CaseDetail({ id }: { id: string }) {
             onAdded={(event) => setEvents((current) => [...current, event])}
           />
         </div>
+      </section>
+
+      {/* After the sources it traces and before the graph that is drawn from
+          them: §6's "never create an orphaned statement with no source
+          relationship", rendered. */}
+      <section className="mt-8" aria-labelledby="provenance-heading">
+        <h4 id="provenance-heading" className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted">
+          Where each claim comes from
+        </h4>
+        <Provenance
+          claims={claims}
+          sources={sources}
+          evidence={evidence}
+          lineage={lineage}
+          onDeclare={(input) => {
+            void declareLineage(id, input).then((result) => {
+              if (result.ok) setLineage((current) => [...current, result.data]);
+              else setError(result.message);
+            });
+          }}
+          onWithdraw={(lineageId) => {
+            void withdrawLineage(lineageId).then((result) => {
+              if (!result.ok) return setError(result.message);
+              setLineage((current) => current.filter((row) => row.id !== lineageId));
+            });
+          }}
+        />
       </section>
 
       {/* The graph reads the records above it, so it sits after them and

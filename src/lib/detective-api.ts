@@ -24,6 +24,8 @@ export interface ClaimRow {
   statement: string;
   status: EpistemicStatus;
   asserted_by: string | null;
+  /** The number the provenance path is drawn from: CLAIM 031. */
+  reference: number | null;
 }
 
 export interface SourceRow {
@@ -100,7 +102,7 @@ export async function getCase(id: string): Promise<Result<CaseSummary | null>> {
 export async function listClaims(caseId: string): Promise<Result<ClaimRow[]>> {
   const { data, error } = await supabase()
     .from("claims")
-    .select("id, statement, status, asserted_by")
+    .select("id, statement, status, asserted_by, reference")
     .eq("case_id", caseId)
     .order("created_at", { ascending: true });
   return wrap<ClaimRow[]>(data as ClaimRow[] | null, error);
@@ -112,6 +114,15 @@ export interface EvidenceRow {
   source_id: string;
   classification: EvidenceClassification;
   excerpt: string | null;
+  /**
+   * Page 42, timestamp 01:42:17, paragraph 3.
+   *
+   * The last step of the provenance path §6 draws. A path ending at the source
+   * says "it is in there somewhere", and somewhere in a 200-page transcript is
+   * not provenance — so this is selected, and its absence is rendered rather
+   * than hidden.
+   */
+  locator: string | null;
 }
 
 export async function createSource(
@@ -145,7 +156,7 @@ export async function createClaim(
       statement: input.statement.trim(),
       asserted_by: input.assertedBy.trim() || null,
     })
-    .select("id, statement, status, asserted_by")
+    .select("id, statement, status, asserted_by, reference")
     .single();
   return wrap<ClaimRow>(data as ClaimRow | null, error);
 }
@@ -163,7 +174,7 @@ export async function createEvidence(
       classification: input.classification,
       excerpt: input.excerpt.trim() || null,
     })
-    .select("id, claim_id, source_id, classification, excerpt")
+    .select("id, claim_id, source_id, classification, excerpt, locator")
     .single();
   return wrap<EvidenceRow>(data as EvidenceRow | null, error);
 }
@@ -171,7 +182,7 @@ export async function createEvidence(
 export async function listEvidence(caseId: string): Promise<Result<EvidenceRow[]>> {
   const { data, error } = await supabase()
     .from("evidence")
-    .select("id, claim_id, source_id, classification, excerpt")
+    .select("id, claim_id, source_id, classification, excerpt, locator")
     .eq("case_id", caseId)
     .order("created_at", { ascending: true });
   return wrap<EvidenceRow[]>(data as EvidenceRow[] | null, error);
@@ -461,5 +472,60 @@ export async function createEdge(
 
 export async function deleteEdge(id: string): Promise<Result<null>> {
   const { error } = await supabase().from("case_edges").delete().eq("id", id);
+  return wrap<null>(null, error);
+}
+
+// --- Provenance and lineage -------------------------------------------------
+
+export interface LineageRow {
+  id: string;
+  source_id: string;
+  derives_from_id: string;
+  kind: "syndication" | "republication" | "quotation" | "translation";
+  note: string | null;
+}
+
+export async function listLineage(caseId: string): Promise<Result<LineageRow[]>> {
+  const { data, error } = await supabase()
+    .from("source_lineage")
+    .select("id, source_id, derives_from_id, kind, note")
+    .eq("case_id", caseId)
+    .order("created_at", { ascending: true });
+  return wrap<LineageRow[]>(data, error);
+}
+
+/**
+ * Declare that one source derives from another.
+ *
+ * Declared, never inferred. §6 asks the system to "detect probable
+ * syndication", and a tool that guessed would be asserting that two reporters
+ * copied each other — which is an accusation, not a computation.
+ */
+export async function declareLineage(
+  caseId: string,
+  input: { sourceId: string; derivesFromId: string; kind: LineageRow["kind"]; note: string },
+): Promise<Result<LineageRow>> {
+  const { data, error } = await supabase()
+    .from("source_lineage")
+    .insert({
+      case_id: caseId,
+      source_id: input.sourceId,
+      derives_from_id: input.derivesFromId,
+      kind: input.kind,
+      note: input.note.trim() || null,
+    })
+    .select("id, source_id, derives_from_id, kind, note")
+    .single();
+  if (error && /source_lineage_one_parent/i.test(error.message)) {
+    return {
+      ok: false,
+      message: "That source already derives from something. A report deriving from two originals is either a new synthesis or two quotations — withdraw the other declaration first.",
+    };
+  }
+  return wrap<LineageRow>(data, error);
+}
+
+export async function withdrawLineage(id: string): Promise<Result<null>> {
+  const { error } = await supabase().from("source_lineage").delete().eq("id", id);
   return wrap<null>(null, error);
 }
