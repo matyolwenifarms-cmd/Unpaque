@@ -3,6 +3,7 @@ import type { Code } from "@shared/research/qualitative/codebook.ts";
 import type { Coding } from "@shared/research/qualitative/coding.ts";
 import type { ThemeDraft } from "@shared/research/qualitative/themes.ts";
 import * as api from "@/lib/qualitative-api.ts";
+import type { CoderRow } from "@/lib/qualitative-api.ts";
 
 export interface WorkingDocument {
   id: string;
@@ -15,6 +16,8 @@ export interface QualitativeStore {
   codes: Code[];
   codings: Coding[];
   drafts: ThemeDraft[];
+  /** Everybody invited to code, whether or not they have accepted. */
+  coders: CoderRow[];
   /** True while the first load is in flight. Only ever true when kept. */
   loading: boolean;
   /** Whether any of this survives the tab closing. */
@@ -28,6 +31,8 @@ export interface QualitativeStore {
   removeCoding: (id: string) => Promise<void>;
   addDraft: (draft: Omit<ThemeDraft, "id">) => Promise<void>;
   removeDraft: (id: string) => Promise<void>;
+  invite: (email: string) => Promise<void>;
+  uninvite: (email: string) => Promise<void>;
 }
 
 /**
@@ -51,6 +56,7 @@ export function useQualitativeStudy(studyId: string | null): QualitativeStore {
   const [codes, setCodes] = useState<Code[]>([]);
   const [codings, setCodings] = useState<Coding[]>([]);
   const [drafts, setDrafts] = useState<ThemeDraft[]>([]);
+  const [coders, setCoders] = useState<CoderRow[]>([]);
   const [loading, setLoading] = useState(studyId !== null);
   const [problem, setProblem] = useState<string | null>(null);
 
@@ -59,6 +65,7 @@ export function useQualitativeStudy(studyId: string | null): QualitativeStore {
     setCodes([]);
     setCodings([]);
     setDrafts([]);
+    setCoders([]);
     setProblem(null);
 
     if (studyId === null) {
@@ -79,6 +86,9 @@ export function useQualitativeStudy(studyId: string | null): QualitativeStore {
         setDrafts(result.data.drafts);
       }
       setLoading(false);
+    });
+    void api.listCoders(studyId).then((result) => {
+      if (active && result.ok) setCoders(result.data);
     });
     return () => {
       active = false;
@@ -209,11 +219,35 @@ export function useQualitativeStudy(studyId: string | null): QualitativeStore {
     [studyId],
   );
 
+  const invite = useCallback(
+    async (email: string) => {
+      if (studyId === null) return;
+      const result = await api.inviteCoder(studyId, email);
+      if (!result.ok) return setProblem(result.message);
+      setProblem(null);
+      const listed = await api.listCoders(studyId);
+      if (listed.ok) setCoders(listed.data);
+    },
+    [studyId],
+  );
+
+  const uninvite = useCallback(
+    async (email: string) => {
+      if (studyId === null) return;
+      const result = await api.removeCoder(studyId, email);
+      if (!result.ok) return setProblem(result.message);
+      setProblem(null);
+      setCoders((was) => was.filter((coder) => coder.email !== email));
+    },
+    [studyId],
+  );
+
   return {
     documents,
     codes,
     codings,
     drafts,
+    coders,
     loading,
     kept: studyId !== null,
     problem,
@@ -225,5 +259,7 @@ export function useQualitativeStudy(studyId: string | null): QualitativeStore {
     removeCoding,
     addDraft,
     removeDraft,
+    invite,
+    uninvite,
   };
 }

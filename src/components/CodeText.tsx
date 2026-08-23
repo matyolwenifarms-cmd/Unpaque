@@ -1,18 +1,29 @@
 import { useEffect, useMemo, useState } from "react";
 import { coOccurrence } from "@shared/research/qualitative/coding.ts";
 import { readSaturation } from "@shared/research/qualitative/saturation.ts";
+import { Agreement } from "@/components/Agreement.tsx";
 import { CodeDocument } from "@/components/CodeDocument.tsx";
+import { Coders } from "@/components/Coders.tsx";
 import { Codebook } from "@/components/Codebook.tsx";
 import { ThemeBoard } from "@/components/ThemeBoard.tsx";
 import { useQualitativeStudy } from "@/hooks/useQualitativeStudy.ts";
 import { useSession } from "@/hooks/useSession.ts";
-import { createStudy, listStudies, type StudySummary } from "@/lib/qualitative-api.ts";
+import {
+  acceptInvitation,
+  createStudy,
+  listStudies,
+  pendingInvitations,
+  unblindStudy,
+  type Invitation,
+  type StudySummary,
+} from "@/lib/qualitative-api.ts";
 import { cn } from "@/lib/utils.ts";
 
 const VIEWS = [
   { id: "code", name: "Code", blurb: "Read a transcript and apply codes" },
   { id: "themes", name: "Themes", blurb: "Assemble themes from the codes" },
   { id: "saturation", name: "Saturation", blurb: "What the coding record shows" },
+  { id: "agreement", name: "Agreement", blurb: "How closely two coders match" },
 ] as const;
 type View = (typeof VIEWS)[number]["id"];
 
@@ -33,6 +44,7 @@ export function CodeText() {
   const [naming, setNaming] = useState(false);
   const [title, setTitle] = useState("");
   const [question, setQuestion] = useState("");
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [listProblem, setListProblem] = useState<string | null>(null);
 
   const store = useQualitativeStudy(studyId);
@@ -41,9 +53,13 @@ export function CodeText() {
     if (!configured || !session) {
       setStudies(null);
       setStudyId(null);
+      setInvitations([]);
       return;
     }
     let active = true;
+    void pendingInvitations().then((result) => {
+      if (active && result.ok) setInvitations(result.data);
+    });
     void listStudies().then((result) => {
       if (!active) return;
       if (!result.ok) return setListProblem(result.message);
@@ -57,6 +73,25 @@ export function CodeText() {
       active = false;
     };
   }, [configured, session]);
+
+  async function accept(invitation: Invitation) {
+    const result = await acceptInvitation(invitation.study_id);
+    if (!result.ok) return setListProblem(result.message);
+    setListProblem(null);
+    setInvitations((was) => was.filter((other) => other.study_id !== invitation.study_id));
+    const listed = await listStudies();
+    if (listed.ok) setStudies(listed.data);
+    setStudyId(invitation.study_id);
+  }
+
+  async function unblind() {
+    if (studyId === null) return;
+    const result = await unblindStudy(studyId);
+    if (!result.ok) return setListProblem(result.message);
+    setListProblem(null);
+    const listed = await listStudies();
+    if (listed.ok) setStudies(listed.data);
+  }
 
   async function startStudy(event: React.FormEvent) {
     event.preventDefault();
@@ -73,6 +108,28 @@ export function CodeText() {
 
   return (
     <div className="space-y-4">
+      {invitations.map((invitation) => (
+        <section key={invitation.study_id} className="rounded-lg border border-rule bg-raised p-4">
+          <h3 className="text-sm font-medium">
+            You have been invited to code &ldquo;{invitation.title}&rdquo;
+          </h3>
+          <p className="mt-1 text-sm text-muted">
+            {invitation.invited_by_email
+              ? `${invitation.invited_by_email} asked you to apply their codebook to their transcripts.`
+              : "Somebody asked you to apply their codebook to their transcripts."}{" "}
+            You will not see anybody else&rsquo;s codings while the study is blind, which is what
+            makes the comparison worth making.
+          </p>
+          <button
+            type="button"
+            onClick={() => void accept(invitation)}
+            className="mt-3 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-ink"
+          >
+            Accept
+          </button>
+        </section>
+      ))}
+
       {session && studies !== null && (
         <StudyPicker
           studies={studies}
@@ -113,7 +170,16 @@ export function CodeText() {
         </p>
       )}
 
-      {store.loading ? <p className="text-sm text-muted">Opening the study…</p> : <Workspace store={store} />}
+      {store.loading ? (
+        <p className="text-sm text-muted">Opening the study…</p>
+      ) : (
+        <Workspace
+          store={store}
+          study={studies?.find((candidate) => candidate.id === studyId) ?? null}
+          userId={session?.user?.id ?? null}
+          onUnblind={() => void unblind()}
+        />
+      )}
     </div>
   );
 }
@@ -216,7 +282,17 @@ function StudyPicker({
   );
 }
 
-function Workspace({ store }: { store: ReturnType<typeof useQualitativeStudy> }) {
+function Workspace({
+  store,
+  study,
+  userId,
+  onUnblind,
+}: {
+  store: ReturnType<typeof useQualitativeStudy>;
+  study: StudySummary | null;
+  userId: string | null;
+  onUnblind: () => void;
+}) {
   const [openId, setOpenId] = useState<string | null>(null);
   const [view, setView] = useState<View>("code");
   const [pasting, setPasting] = useState(false);
@@ -257,6 +333,25 @@ function Workspace({ store }: { store: ReturnType<typeof useQualitativeStudy> })
 
   const labelOf = (id: string) => codes.find((code) => code.id === id)?.label ?? id;
   const nameOf = (id: string) => documents.find((document) => document.id === id)?.name ?? id;
+
+  // Whoever has actually applied a code, which is not the same as whoever was
+  // invited: an invited coder who has not started yet has nothing to compare,
+  // and offering them in the picker produces an empty table rather than an
+  // explanation.
+  const whoCoded = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const coding of codings) {
+      if (!coding.coderId || seen.has(coding.coderId)) continue;
+      const known = store.coders.find((coder) => coder.user_id === coding.coderId);
+      seen.set(
+        coding.coderId,
+        coding.coderId === userId
+          ? "You"
+          : known?.email ?? (coding.coderId === study?.owner_id ? "The study owner" : "Another coder"),
+      );
+    }
+    return [...seen].map(([id, name]) => ({ id, name }));
+  }, [codings, store.coders, userId, study]);
 
   return (
     <>
@@ -439,6 +534,28 @@ function Workspace({ store }: { store: ReturnType<typeof useQualitativeStudy> })
                 </section>
               )}
             </>
+          )}
+
+          {view === "agreement" && (
+            <div className="space-y-4">
+              <Agreement
+                codes={codes}
+                codings={codings}
+                documents={texts}
+                coders={whoCoded}
+                blind={study?.blind_coding ?? true}
+                isOwner={study !== null && study.owner_id === userId}
+                onUnblind={onUnblind}
+              />
+              {study !== null && study.owner_id === userId && (
+                <Coders
+                  coders={store.coders}
+                  blind={study.blind_coding}
+                  onInvite={store.invite}
+                  onRemove={store.uninvite}
+                />
+              )}
+            </div>
           )}
 
           {view === "saturation" && (

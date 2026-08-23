@@ -13,6 +13,11 @@ const addDocument = vi.fn();
 const addCode = vi.fn();
 const applyCoding = vi.fn();
 const setCodingOrder = vi.fn();
+const listCoders = vi.fn();
+const pendingInvitations = vi.fn();
+const acceptInvitation = vi.fn();
+const unblindStudy = vi.fn();
+const inviteCoder = vi.fn();
 vi.mock("@/lib/qualitative-api.ts", () => ({
   listStudies: () => listStudies(),
   createStudy: (...args: unknown[]) => createStudy(...args),
@@ -26,6 +31,12 @@ vi.mock("@/lib/qualitative-api.ts", () => ({
   removeCoding: vi.fn(),
   addThemeDraft: vi.fn(),
   removeThemeDraft: vi.fn(),
+  listCoders: (...args: unknown[]) => listCoders(...args),
+  pendingInvitations: () => pendingInvitations(),
+  acceptInvitation: (...args: unknown[]) => acceptInvitation(...args),
+  unblindStudy: (...args: unknown[]) => unblindStudy(...args),
+  inviteCoder: (...args: unknown[]) => inviteCoder(...args),
+  removeCoder: vi.fn(),
 }));
 
 const { CodeText } = await import("./CodeText.tsx");
@@ -59,12 +70,23 @@ function selectPhrase(phrase: string) {
   throw new Error(`"${phrase}" is not rendered as transcript text`);
 }
 
+const STUDY = {
+  id: "s1",
+  title: "Waiting",
+  question: null,
+  blind_coding: true,
+  owner_id: "me",
+  created_at: "2026-08-23",
+};
+
 const ONE = "The cost was the first thing everyone mentioned, and nobody trusted the process.";
 
 beforeEach(() => {
   vi.clearAllMocks();
   useSession.mockReturnValue({ session: null, loading: false, configured: false });
   listStudies.mockResolvedValue({ ok: true, data: [] });
+  listCoders.mockResolvedValue({ ok: true, data: [] });
+  pendingInvitations.mockResolvedValue({ ok: true, data: [] });
 });
 
 async function addTranscript(text: string, name: string) {
@@ -90,7 +112,7 @@ describe("what it says about whether the work is kept", () => {
   });
 
   it("tells a signed-in researcher with no study open that nothing is kept yet", async () => {
-    useSession.mockReturnValue({ session: { user: {} }, loading: false, configured: true });
+    useSession.mockReturnValue({ session: { user: { id: "me" } }, loading: false, configured: true });
     render(<CodeText />);
     expect(
       await screen.findByText(/Nothing here is saved until you open or start a study/),
@@ -98,10 +120,10 @@ describe("what it says about whether the work is kept", () => {
   });
 
   it("says nothing about losing work once a study is open", async () => {
-    useSession.mockReturnValue({ session: { user: {} }, loading: false, configured: true });
+    useSession.mockReturnValue({ session: { user: { id: "me" } }, loading: false, configured: true });
     listStudies.mockResolvedValue({
       ok: true,
-      data: [{ id: "s1", title: "Waiting", question: null, created_at: "2026-08-23" }],
+      data: [STUDY],
     });
     loadStudy.mockResolvedValue({
       ok: true,
@@ -158,10 +180,10 @@ describe("the qualitative workspace", () => {
 
 describe("when the work is kept", () => {
   beforeEach(() => {
-    useSession.mockReturnValue({ session: { user: {} }, loading: false, configured: true });
+    useSession.mockReturnValue({ session: { user: { id: "me" } }, loading: false, configured: true });
     listStudies.mockResolvedValue({
       ok: true,
-      data: [{ id: "s1", title: "Waiting", question: null, created_at: "2026-08-23" }],
+      data: [STUDY],
     });
     loadStudy.mockResolvedValue({
       ok: true,

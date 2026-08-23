@@ -14,6 +14,9 @@ export interface StudySummary {
   id: string;
   title: string;
   question: string | null;
+  /** False once every coder can see every coder's codings. Never goes back. */
+  blind_coding: boolean;
+  owner_id: string;
   created_at: string;
 }
 
@@ -42,7 +45,7 @@ function wrap<T>(data: T | null, error: { message: string } | null): Result<T> {
 export async function listStudies(): Promise<Result<StudySummary[]>> {
   const { data, error } = await supabase()
     .from("studies")
-    .select("id, title, question, created_at")
+    .select("id, title, question, blind_coding, owner_id, created_at")
     .order("created_at", { ascending: false });
   return wrap<StudySummary[]>(data, error);
 }
@@ -58,7 +61,7 @@ export async function createStudy(
   const { data, error } = await supabase()
     .from("studies")
     .insert({ owner_id: owner, title: title.trim(), question: question.trim() || null })
-    .select("id, title, question, created_at")
+    .select("id, title, question, blind_coding, owner_id, created_at")
     .single();
   return wrap<StudySummary>(data, error);
 }
@@ -257,4 +260,85 @@ export async function addThemeDraft(
 export async function removeThemeDraft(id: string): Promise<Result<null>> {
   const { error } = await supabase().from("theme_drafts").delete().eq("id", id);
   return wrap<null>(null, error);
+}
+
+export interface CoderRow {
+  email: string;
+  role: "coder" | "viewer";
+  user_id: string | null;
+  accepted_at: string | null;
+}
+
+export async function listCoders(studyId: string): Promise<Result<CoderRow[]>> {
+  const { data, error } = await supabase()
+    .from("study_coders")
+    .select("email, role, user_id, accepted_at")
+    .eq("study_id", studyId)
+    .order("created_at", { ascending: true });
+  return wrap<CoderRow[]>(data, error);
+}
+
+/**
+ * Invite somebody to code a study.
+ *
+ * By address, and through an RPC, because resolving the address to an account
+ * here would mean an endpoint that reports whether an account exists — and
+ * anybody could then enumerate the instance's users by inviting addresses to a
+ * study of their own. It also means a colleague who has not signed up yet can
+ * be invited, which is the ordinary case.
+ */
+export async function inviteCoder(studyId: string, email: string): Promise<Result<null>> {
+  const { error } = await supabase().rpc("invite_coder", {
+    p_study: studyId,
+    p_email: email,
+    p_role: "coder",
+  });
+  return wrap<null>(null, error);
+}
+
+export async function removeCoder(studyId: string, email: string): Promise<Result<null>> {
+  const { error } = await supabase()
+    .from("study_coders")
+    .delete()
+    .eq("study_id", studyId)
+    .eq("email", email.trim().toLowerCase());
+  return wrap<null>(null, error);
+}
+
+/** True when there was an invitation to accept. */
+export async function acceptInvitation(studyId: string): Promise<Result<boolean>> {
+  const { data, error } = await supabase().rpc("accept_coder_invitation", { p_study: studyId });
+  return wrap<boolean>(data, error);
+}
+
+/**
+ * Show every coder's codings to every coder. One-way.
+ *
+ * This is the act that makes agreement computable and the point after which
+ * nobody in the study is coding independently. The database refuses to undo
+ * it, because a coder who has seen the other codings cannot be returned to not
+ * having seen them — and a study that could flip back would let a methods
+ * section say "coded independently" about coding that was not.
+ */
+export async function unblindStudy(studyId: string): Promise<Result<null>> {
+  const { error } = await supabase().rpc("unblind_study", { p_study: studyId });
+  return wrap<null>(null, error);
+}
+
+export interface Invitation {
+  study_id: string;
+  title: string;
+  invited_by_email: string | null;
+}
+
+/**
+ * Studies this person has been invited to and not yet accepted.
+ *
+ * An RPC rather than a select, because an unaccepted invitation grants no read
+ * on `studies` — that is what makes it an invitation — so the invitee's own
+ * row carries a study id and nothing they would recognise.
+ */
+export async function pendingInvitations(): Promise<Result<Invitation[]>> {
+  const { data, error } = await supabase().rpc("pending_invitations");
+  return wrap<Invitation[]>(data, error);
 }

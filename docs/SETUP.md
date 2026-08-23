@@ -130,6 +130,11 @@ migration is applied and did not help".
 **Authentication → Providers → Email**, with magic links on. Then sign in once
 at `/sign-in`.
 
+It is also what a second coder needs. Research's coding workspace can invite
+somebody to code the same transcripts independently and then reports Cohen's
+kappa between them; the invitation names an email address, and only the person
+signing in with that address can turn it into access.
+
 Nothing that belongs to a person works until this is done, and two features
 fail differently without it. Detect shows the "this part of Unpaque is yours"
 gate and stops, which is obvious. Research's **Code text** stage does not stop:

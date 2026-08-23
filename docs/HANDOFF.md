@@ -32,7 +32,7 @@ what deliberately did not change with it, is `DEPARTURES.md` §6.
 | Feature | What it does | State | Costs to run |
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
-| **Research** | Literature, method, quantitative analysis, coding transcripts | Four stages on screen; §6 and §7, quantitative and qualitative. Qualitative work is kept in Postgres | **Nothing** |
+| **Research** | Literature, method, quantitative analysis, coding transcripts | Four stages on screen; §6 and §7, quantitative and qualitative, with a second coder and inter-coder agreement | **Nothing** |
 | **Detect** | Investigative intelligence — cases, evidence, timeline, dossier | Phase 0–1, case UI and the assembled document | Nothing |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
@@ -47,8 +47,8 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 873 unit and component tests, four passing gates (typecheck, lint, test, build).
-- 122 SQL assertions across six suites, run against a real Postgres 16, with
+- 913 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 160 SQL assertions across seven suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
   responses. The recorded fixtures are committed.
@@ -95,10 +95,15 @@ The distinction matters more than the totals.
   needs email auth enabled (step 4 below) before anybody can open a study at
   all. Signed out the workspace still runs and keeps nothing, and says which of
   those three states it is in.
-- **Inter-coder agreement is not built.** Cohen's kappa is the specified
-  measure and `codings.coder_id` is populated for it, but nothing reads it and
-  a study cannot yet have a second coder — `can_write_study` is owner-only, and
-  is a function precisely so that becomes one body to change.
+- **No second coder has ever accepted an invitation.** The whole path exists
+  and is asserted 33 times against a real Postgres — invite by address, accept
+  from your own token, code blind, unblind, compare — but no two accounts have
+  ever done it. It needs email auth (step 4) and two real users.
+- **Blinding is enforced in the database and cannot be undone.** While a study
+  is blind every coder sees only their own codings, because a second coder who
+  can see the first coder's highlights reaches the same passages by being shown
+  them. `unblind_study()` is owner-only and one-way; a trigger refuses
+  re-blinding, since nobody can be made to unsee.
 - **Relevance ordering has not been seen against a live provider.** The sort is
   unit-tested against ranked fixtures and the change is the difference between
   keeping and discarding the providers' own ordering, but no live OpenAlex or
