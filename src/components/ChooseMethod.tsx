@@ -1,8 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Copy, Download } from "lucide-react";
 import { PARADIGMS, PARADIGM_IDS, type ParadigmId } from "@shared/research/method/paradigms.ts";
 import { THEORIES, THEORY_IDS, type TheoryId } from "@shared/research/method/theories.ts";
-import { methodStatement, type MethodDeclaration } from "@shared/research/method/statement.ts";
+import {
+  methodStatement,
+  type MethodDeclaration,
+  type MethodStatement,
+} from "@shared/research/method/statement.ts";
 import { cn } from "@/lib/utils.ts";
 
 /**
@@ -17,7 +21,18 @@ import { cn } from "@/lib/utils.ts";
  * Nothing blocks. Every tension here is defensible in some study, and a tool
  * that refused a design would be overruling a supervisor it cannot hear.
  */
-export function ChooseMethod() {
+export function ChooseMethod({
+  onStatement,
+}: {
+  /**
+   * Reported upward so the write-up can transcribe it.
+   *
+   * A callback rather than lifting all thirteen fields into the page: what the
+   * write-up needs is the statement, and the declaration is this component's
+   * business. Lifting the fields would put the coherence rules in two places.
+   */
+  onStatement?: (statement: MethodStatement | null) => void;
+} = {}) {
   const [paradigm, setParadigm] = useState<ParadigmId | "">("");
   const [theory, setTheory] = useState<TheoryId | "">("");
   const [sampling, setSampling] = useState<"" | "statistical" | "purposive">("");
@@ -56,6 +71,14 @@ export function ChooseMethod() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [JSON.stringify(declaration)],
   );
+
+  // Depends on the statement, not on the callback: a parent that passes an
+  // inline arrow would otherwise make this fire on every render of the page,
+  // and setState in that loop never settles.
+  useEffect(() => {
+    onStatement?.(statement);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statement]);
 
   const chosen = paradigm ? PARADIGMS[paradigm] : null;
   const markdown = statement

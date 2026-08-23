@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { coOccurrence } from "@shared/research/qualitative/coding.ts";
+import { assembleThemes, uncoveredCodes } from "@shared/research/qualitative/themes.ts";
+import { findingsSection } from "@shared/research/writeup/findings.ts";
 import { readSaturation } from "@shared/research/qualitative/saturation.ts";
 import { Agreement } from "@/components/Agreement.tsx";
 import { CodeDocument } from "@/components/CodeDocument.tsx";
@@ -37,7 +39,12 @@ type View = (typeof VIEWS)[number]["id"];
  * and because a screen that quietly discards days of work is the worst thing
  * this feature could do.
  */
-export function CodeText() {
+export function CodeText({
+  onFindings,
+}: {
+  /** Reported upward so the write-up can transcribe the findings section. */
+  onFindings?: (markdown: string, from: string) => void;
+} = {}) {
   const { session, configured } = useSession();
   const [studies, setStudies] = useState<StudySummary[] | null>(null);
   const [studyId, setStudyId] = useState<string | null>(null);
@@ -178,6 +185,7 @@ export function CodeText() {
           study={studies?.find((candidate) => candidate.id === studyId) ?? null}
           userId={session?.user?.id ?? null}
           onUnblind={() => void unblind()}
+          onFindings={onFindings}
         />
       )}
     </div>
@@ -287,11 +295,13 @@ function Workspace({
   study,
   userId,
   onUnblind,
+  onFindings,
 }: {
   store: ReturnType<typeof useQualitativeStudy>;
   study: StudySummary | null;
   userId: string | null;
   onUnblind: () => void;
+  onFindings?: (markdown: string, from: string) => void;
 }) {
   const [openId, setOpenId] = useState<string | null>(null);
   const [view, setView] = useState<View>("code");
@@ -320,6 +330,32 @@ function Workspace({
     () => readSaturation(codings, documents.map((document) => document.id)),
     [codings, documents],
   );
+
+  // Assembled here as well as inside ThemeBoard, because the write-up needs
+  // the same answer and `assembleThemes` is the only thing that can give it —
+  // a draft with no extracts is not a theme, and the findings section must not
+  // print one.
+  const assembled = useMemo(
+    () => assembleThemes(drafts, codes, codings, texts),
+    [drafts, codes, codings, texts],
+  );
+
+  useEffect(() => {
+    if (assembled.themes.length === 0) {
+      onFindings?.("", "");
+      return;
+    }
+    onFindings?.(
+      findingsSection({
+        themes: assembled.themes,
+        uncovered: uncoveredCodes(assembled.themes, codes, codings),
+        saturation,
+        nameOf: (id) => documents.find((document) => document.id === id)?.name ?? id,
+      }),
+      `${assembled.themes.length} theme${assembled.themes.length === 1 ? "" : "s"} across ${documents.length} transcript${documents.length === 1 ? "" : "s"}`,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assembled, saturation, documents, codes, codings]);
 
   async function addDocument(event: React.FormEvent) {
     event.preventDefault();

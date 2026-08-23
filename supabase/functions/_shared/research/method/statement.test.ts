@@ -178,3 +178,48 @@ describe("what a generated statement got wrong before anyone read one", () => {
     expect(markdown).toMatch(/open coding, axial coding, selective coding, and theoretical sampling/);
   });
 });
+
+// Both of these were produced by generating a whole statement and reading it.
+// Neither is reachable from a test on a single field.
+describe("the sample sentence, whichever way it is described", () => {
+  const base = { paradigm: "interpretivism", sampling: "purposive" } as const;
+
+  it("reads correctly when the participants are a bare noun", () => {
+    const { markdown } = methodStatement({ ...base, sampleSize: 14, participants: "journalists" });
+    expect(markdown).toContain("The sample comprises 14 participants: journalists.");
+  });
+
+  // "The sample comprises 2 Two people who had been through the process.." was
+  // the first one generated — a numeral spliced onto a sentence, and a doubled
+  // full stop behind it.
+  it("reads correctly when they are described in a whole clause", () => {
+    const { markdown } = methodStatement({
+      ...base,
+      sampleSize: 2,
+      participants: "Two people who had been through the process in the last year.",
+    });
+    expect(markdown).toContain(
+      "The sample comprises 2 participants: two people who had been through the process in the last year.",
+    );
+    expect(markdown).not.toMatch(/\.\./);
+  });
+
+  it("inflects for a sample of one", () => {
+    expect(methodStatement({ ...base, sampleSize: 1 }).markdown)
+      .toContain("The sample comprises 1 participant.");
+  });
+
+  it("does not lower-case an acronym at the front of a description", () => {
+    const { markdown } = methodStatement({ ...base, sampleSize: 6, participants: "NHS staff" });
+    expect(markdown).toContain("6 participants: NHS staff.");
+  });
+
+  it("does not double a full stop the researcher already typed", () => {
+    const { markdown } = methodStatement({
+      ...base,
+      collection: "Semi-structured interviews, recorded and transcribed.",
+    });
+    expect(markdown).toContain("recorded and transcribed.");
+    expect(markdown).not.toMatch(/transcribed\.\./);
+  });
+});

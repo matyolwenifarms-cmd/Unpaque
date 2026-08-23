@@ -52,6 +52,34 @@ export interface MethodStatement {
  * sources are separated by "; " in the data, so they are split and rejoined
  * as prose instead.
  */
+/**
+ * A researcher's own words, ended once.
+ *
+ * They type "Semi-structured interviews, recorded and transcribed." with a
+ * full stop as often as without, and a template that appends one produces
+ * "transcribed.." — which reads as a typesetting fault in a chapter whose
+ * whole claim is care.
+ */
+function sentence(text: string): string {
+  const trimmed = text.trim();
+  return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
+}
+
+/**
+ * The same, for a fragment that has to continue a sentence already started.
+ *
+ * "Data are collected through Semi-structured interviews" capitalises
+ * mid-sentence. Only the first character is lowered, and only when the second
+ * is not itself a capital — so an acronym ("EEG recordings") survives.
+ */
+function lowerFirst(text: string): string {
+  const ended = sentence(text);
+  if (ended.length > 1 && ended[1] === ended[1]!.toUpperCase() && /[A-Z]/.test(ended[1]!)) {
+    return ended;
+  }
+  return ended.charAt(0).toLowerCase() + ended.slice(1);
+}
+
 function cite(tradition: string): string {
   const sources = tradition.split(";").map((source) => source.trim()).filter(Boolean);
   if (sources.length <= 1) return tradition;
@@ -101,12 +129,29 @@ export function methodStatement(declaration: MethodDeclaration): MethodStatement
     gaps.push("The sampling strategy, and why a sample of this kind answers this question.");
   }
   if (declaration.sampleSize !== undefined) {
-    design.push(`The sample comprises ${declaration.sampleSize} ${declaration.participants?.trim() || "participants"}.`);
+    // A colon, because the field takes either form and both arrive. Somebody
+    // types "journalists" and somebody else types "Two people who had been
+    // through the process in the last year", and there is no way to tell them
+    // apart that is not a guess.
+    //
+    // Spliced straight after the numeral, the second gives "The sample
+    // comprises 2 Two people who had been through the process..". Split into
+    // its own sentence, the first gives "14 participants. journalists." A
+    // colon and a lower-cased first letter read correctly for both.
+    const size = `The sample comprises ${declaration.sampleSize} participant${declaration.sampleSize === 1 ? "" : "s"}`;
+    design.push(
+      declaration.participants?.trim()
+        ? `${size}: ${lowerFirst(declaration.participants)}`
+        : `${size}.`,
+    );
   } else {
     gaps.push("The sample size, and how it was arrived at.");
+    if (declaration.participants?.trim()) {
+      design.push(`The sample comprises ${lowerFirst(declaration.participants)}`);
+    }
   }
   if (declaration.collection?.trim()) {
-    design.push(`Data are collected through ${declaration.collection.trim()}.`);
+    design.push(`Data are collected through ${lowerFirst(declaration.collection)}`);
   } else {
     design.push(
       `Methods coherent with this paradigm include ${list(paradigm.methods)}; the method used here is to be stated.`,

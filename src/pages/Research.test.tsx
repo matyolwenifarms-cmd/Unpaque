@@ -174,3 +174,67 @@ describe("the method stage", () => {
     expect(screen.queryByLabelText(/what are you looking for/i)).toBeNull();
   });
 });
+
+// The stages own their own state, and the write-up transcribes four of them.
+// If a callback stops firing the write-up quietly reports "not written yet"
+// about work the researcher can see on the previous screen, which reads as
+// data loss.
+describe("the write-up, assembled from the other stages", () => {
+  beforeEach(() => searchReferences.mockReset());
+
+  it("says nothing is written when nothing has been done", async () => {
+    const user = userEvent.setup();
+    render(<Research />);
+    await user.click(screen.getByRole("button", { name: /^Write up/ }));
+    expect(screen.getByText(/0 of 9 sections are assembled/)).toBeInTheDocument();
+    expect(screen.getByText(/4 are waiting on work not done yet/)).toBeInTheDocument();
+  });
+
+  it("transcribes a methodology declared on the Method stage", async () => {
+    const user = userEvent.setup();
+    render(<Research />);
+    await user.click(screen.getByRole("button", { name: /^MethodDeclare/ }));
+    await user.selectOptions(screen.getByLabelText(/choose a paradigm/i), "interpretivism");
+
+    await user.click(screen.getByRole("button", { name: /^Write up/ }));
+    await waitFor(() =>
+      expect(screen.getByText(/1 of 9 sections are assembled/)).toBeInTheDocument(),
+    );
+    expect(screen.getByText(/interpretivist/)).toBeInTheDocument();
+  });
+
+  // The five that nothing here will ever write, on screen as well as in the
+  // export.
+  it("marks the introduction, literature, discussion, limitations and conclusion as the researcher's", async () => {
+    const user = userEvent.setup();
+    render(<Research />);
+    await user.click(screen.getByRole("button", { name: /^Write up/ }));
+    expect(screen.getAllByText("yours to write")).toHaveLength(5);
+    expect(screen.getByText(/the one sentence you are answerable for/)).toBeInTheDocument();
+  });
+
+  it("lists references found on the Literature stage", async () => {
+    searchReferences.mockResolvedValue({
+      status: "ok",
+      references: [
+        {
+          id: "r1", source: "openalex", title: "Waiting and trust",
+          authors: [{ name: "Jane Smith" }], year: 2021, venue: "Journal of Things",
+          preprint: false, retraction: "none", openAccess: true,
+          verification: "verified", availability: "metadata_only",
+          sources: ["openalex"], caveat: null, quotationCaveat: null,
+        },
+      ],
+      notes: [], reportedTotal: 1,
+    });
+    const user = userEvent.setup();
+    render(<Research />);
+    await user.type(screen.getByLabelText(/what are you looking for/i), "waiting times");
+    await user.click(screen.getByRole("button", { name: /^search$/i }));
+    await screen.findByText(/Waiting and trust/);
+
+    await user.click(screen.getByRole("button", { name: /^Write up/ }));
+    expect(screen.getByText(/Smith, J\. \(2021\)\./)).toBeInTheDocument();
+    expect(screen.getByText(/1 reference, resolved against a bibliographic provider/)).toBeInTheDocument();
+  });
+});

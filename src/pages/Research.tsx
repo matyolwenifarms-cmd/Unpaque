@@ -6,8 +6,15 @@ import { CodeText } from "@/components/CodeText.tsx";
 import { DataUpload } from "@/components/DataUpload.tsx";
 import { DatasetSummary } from "@/components/DatasetSummary.tsx";
 import { ReferenceList } from "@/components/ReferenceList.tsx";
+import { WriteUp } from "@/components/WriteUp.tsx";
 import { cn } from "@/lib/utils.ts";
 import type { Dataset } from "@shared/research/analytics/dataset.ts";
+import { resultsSection } from "@shared/research/analytics/apa.ts";
+import type { Descriptives } from "@shared/research/analytics/describe.ts";
+import type { Finding } from "@shared/research/analytics/result.ts";
+import type { MethodStatement } from "@shared/research/method/statement.ts";
+import type { Supplied } from "@shared/research/writeup/document.ts";
+import { referenceList } from "@shared/research/writeup/references.ts";
 import { searchReferences, type ResultOrder, type SearchedReference } from "@/lib/research-api.ts";
 
 /**
@@ -28,6 +35,7 @@ const STAGES = [
   { id: "method", name: "Method", blurb: "Declare the paradigm and approach" },
   { id: "analyse", name: "Analyse data", blurb: "Upload a file and run a test" },
   { id: "code", name: "Code text", blurb: "Code transcripts and build themes" },
+  { id: "writeup", name: "Write up", blurb: "Assemble what is written, and what is not" },
 ] as const;
 type Stage = (typeof STAGES)[number]["id"];
 
@@ -117,6 +125,13 @@ export default function Research() {
   const [shownOrder, setShownOrder] = useState<ResultOrder>("relevance");
   const [stage, setStage] = useState<Stage>("literature");
   const [dataset, setDataset] = useState<Dataset | null>(null);
+  // What the other stages have produced. Held here because the write-up
+  // transcribes all four and each is owned by a different stage; a stage that
+  // has not been visited simply reports nothing, and the write-up says so.
+  const [method, setMethod] = useState<MethodStatement | null>(null);
+  const [findings, setFindings] = useState<Finding[]>([]);
+  const [described, setDescribed] = useState<Array<{ label: string; stats: Descriptives }>>([]);
+  const [qualitative, setQualitative] = useState<{ markdown: string; from: string } | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
 
   async function onSubmit(event: React.FormEvent) {
@@ -144,7 +159,37 @@ export default function Research() {
     return (
       <div>
         <ResearchHeader stage={stage} onStage={setStage} />
-        <ChooseMethod />
+        <ChooseMethod onStatement={setMethod} />
+      </div>
+    );
+  }
+
+  if (stage === "writeup") {
+    // Assembled at render rather than kept in state: every input is already
+    // state, and a fifth copy would be a fifth thing to keep in step.
+    const supplied: Supplied = {
+      ...(method ? { method: { markdown: method.markdown, gaps: method.gaps } } : {}),
+      ...(findings.length > 0
+        ? {
+            results: {
+              markdown: resultsSection({
+                findings: [...findings].reverse(),
+                descriptives: described,
+                ...(dataset ? { rowsInFile: dataset.rows } : {}),
+              }),
+              from: `${findings.length} ${findings.length === 1 ? "analysis" : "analyses"}${fileName ? ` on ${fileName}` : ""}`,
+            },
+          }
+        : {}),
+      ...(qualitative ? { findings: qualitative } : {}),
+      ...(references && references.length > 0
+        ? { references: { markdown: referenceList(references), count: references.length } }
+        : {}),
+    };
+    return (
+      <div>
+        <ResearchHeader stage={stage} onStage={setStage} />
+        <WriteUp title={query.trim() || "Untitled study"} supplied={supplied} />
       </div>
     );
   }
@@ -153,7 +198,11 @@ export default function Research() {
     return (
       <div>
         <ResearchHeader stage={stage} onStage={setStage} />
-        <CodeText />
+        <CodeText
+          onFindings={(markdown, from) =>
+            setQualitative(markdown === "" ? null : { markdown, from })
+          }
+        />
       </div>
     );
   }
@@ -171,7 +220,15 @@ export default function Research() {
             }}
           />
           {dataset && <DatasetSummary dataset={dataset} />}
-          {dataset && <AnalyseData dataset={dataset} />}
+          {dataset && (
+            <AnalyseData
+              dataset={dataset}
+              onFindings={(ran, stats) => {
+                setFindings(ran);
+                setDescribed(stats);
+              }}
+            />
+          )}
           <Instructions hasData={dataset !== null} />
         </div>
       </div>

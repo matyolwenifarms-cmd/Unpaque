@@ -120,7 +120,11 @@ describe("the statement", () => {
     await waitFor(() => {
       const statement = screen.getByLabelText(/methodology statement/i);
       expect(statement.textContent).toMatch(/Sampling is purposive/);
-      expect(statement.textContent).toMatch(/comprises 14 journalists/);
+      // Two sentences, not one. "comprises 14 journalists" was the earlier
+      // form and it broke the moment somebody described their participants in
+      // a phrase rather than a noun — "The sample comprises 2 Two people who
+      // had been through the process.." was the first one generated.
+      expect(statement.textContent).toMatch(/The sample comprises 14 participants: journalists\./);
       expect(statement.textContent).toMatch(/collected through semi-structured interviews/);
     });
   });

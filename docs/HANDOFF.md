@@ -32,7 +32,7 @@ what deliberately did not change with it, is `DEPARTURES.md` §6.
 | Feature | What it does | State | Costs to run |
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
-| **Research** | Literature, method, quantitative analysis, coding transcripts | Four stages on screen; §6 and §7, quantitative and qualitative, with a second coder and inter-coder agreement | **Nothing** |
+| **Research** | Literature, method, analysis, coding, write-up | Five stages on screen — the whole lifecycle. §6 and §7, quantitative and qualitative, with a second coder and inter-coder agreement | **Nothing** |
 | **Detect** | Investigative intelligence — cases, evidence, timeline, dossier | Phase 0–1, case UI and the assembled document | Nothing |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
@@ -47,7 +47,7 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 913 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 955 unit and component tests, four passing gates (typecheck, lint, test, build).
 - 160 SQL assertions across seven suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
@@ -88,6 +88,12 @@ The distinction matters more than the totals.
   a byte-order mark — and those are committed as fixtures. The shapes are
   right; the data is invented. A real export is still the thing to try, and it
   needs no key.
+- **The write-up assembles only what this session produced.** The stages
+  report their output upward and the page holds it; nothing is persisted, so a
+  refresh empties four of the nine sections. Method and quantitative findings
+  are the two that would need a table to survive — the qualitative half already
+  has one. Nothing is lost silently: the write-up says "not written yet" and
+  names the stage to go back to.
 - **The qualitative workspace has never written to a live database.** Six
   tables, an RPC that checks a coding's offsets against the document it points
   into, and 33 assertions against a real Postgres 16 — but no study, transcript
@@ -200,6 +206,7 @@ and all three are built the same way:
 | Unpack | Read minds or judge honesty | 8 communication frameworks |
 | Research | Cite anything that does not exist | providers, never the model |
 | Research | Report a p-value alone, or a causal claim from a correlation | `Finding` has no p without n and an effect |
+| Research | Write the researcher's argument for them | A `yours` section has no field a body could go in |
 | Detect | State an allegation as fact | 11 epistemic classifications; the dossier concludes nothing |
 
 Research's passage engine is the strongest form: the model returns

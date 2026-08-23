@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Play } from "lucide-react";
 import type { Dataset } from "@shared/research/analytics/dataset.ts";
 import {
@@ -25,7 +25,14 @@ import { cn } from "@/lib/utils.ts";
  * whether the write-up may say "causes" — and asking afterwards would mean
  * asking somebody to revise a conclusion they have already formed.
  */
-export function AnalyseData({ dataset }: { dataset: Dataset }) {
+export function AnalyseData({
+  dataset,
+  onFindings,
+}: {
+  dataset: Dataset;
+  /** Reported upward so the write-up can transcribe the results section. */
+  onFindings?: (findings: Finding[], descriptives: Array<{ label: string; stats: Descriptives }>) => void;
+}) {
   const usable = dataset.columns.filter((column) => column.kind !== "empty");
   const [aName, setA] = useState("");
   const [bName, setB] = useState("");
@@ -90,6 +97,15 @@ export function AnalyseData({ dataset }: { dataset: Dataset }) {
           return stats ? { label: column.name, stats } : null;
         })
         .filter((entry): entry is { label: string; stats: Descriptives } => entry !== null);
+
+  // Keyed on the findings themselves, not on the callback: a parent passing an
+  // inline arrow would make this fire every render, and setState in that loop
+  // never settles. `described` is derived from `findings` and the two column
+  // names, so it moves with them.
+  useEffect(() => {
+    onFindings?.(findings, described);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [findings]);
 
   return (
     <div className="space-y-4">
