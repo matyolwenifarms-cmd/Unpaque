@@ -190,6 +190,50 @@ begin
     perform pg_temp.check('a relation cannot reach a paper in another study', true);
   end;
 
+  -- Coding a paper: the flattening is recorded, so an offset is still a page.
+  insert into public.study_documents (study_id, name, body, coding_position, source_id, page_starts)
+  values (v_study, 'Ndlovu 2019', 'page one text' || E'\n\n' || 'page two text',
+          1, v_a, array[0, 15])
+  returning id into v_row;
+  perform pg_temp.check('a paper can be coded, with its page map', v_row is not null);
+
+  perform pg_temp.check('an offset on the first page reads as page 1',
+    public.page_at(array[0, 15], 3) = 1);
+  perform pg_temp.check('an offset past the boundary reads as page 2',
+    public.page_at(array[0, 15], 20) = 2);
+  perform pg_temp.check('the boundary itself belongs to the page it opens',
+    public.page_at(array[0, 15], 15) = 2);
+
+  -- A pasted transcript has neither, and that is a different kind of document
+  -- rather than a broken one.
+  insert into public.study_documents (study_id, name, body, coding_position)
+  values (v_study, 'Interview 1', 'Q: Where were you?', 2) returning id into v_row;
+  perform pg_temp.check('a pasted transcript needs neither a source nor a map', v_row is not null);
+
+  begin
+    insert into public.study_documents (study_id, name, body, coding_position, source_id)
+    values (v_study, 'half a link', 'text', 3, v_a);
+    perform pg_temp.check('a source with no page map must be refused', false);
+  exception when check_violation then
+    perform pg_temp.check('a document from a paper cannot arrive without its page map', true);
+  end;
+
+  begin
+    insert into public.study_documents (study_id, name, body, coding_position, source_id, page_starts)
+    values (v_study, 'doubles back', 'text', 4, v_a, array[0, 20, 12]);
+    perform pg_temp.check('a page map that doubles back must be refused', false);
+  exception when check_violation then
+    perform pg_temp.check('a page map that doubles back is refused, because it mislabels every quotation after it', true);
+  end;
+
+  begin
+    insert into public.study_documents (study_id, name, body, coding_position, source_id, page_starts)
+    values (v_study, 'starts late', 'text', 5, v_a, array[4, 20]);
+    perform pg_temp.check('a page map not starting at nought must be refused', false);
+  exception when check_violation then
+    perform pg_temp.check('a page map must start at the beginning of the body', true);
+  end;
+
   reset role;
 end $$;
 

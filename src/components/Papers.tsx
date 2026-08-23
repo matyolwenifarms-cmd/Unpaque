@@ -5,6 +5,7 @@ import { PaperView, type Passage } from "@/components/PaperView.tsx";
 import {
   addRelation,
   addSource,
+  codedSourceIds,
   dropRelation,
   dropSource,
   loadPages,
@@ -16,6 +17,8 @@ import {
 } from "@/lib/corpus-api.ts";
 import { STUDY_RELATIONS, basisProblem, readRelation, type StudyRelation }
   from "@shared/relations/corpus.ts";
+import { flattenPages } from "@shared/research/corpus/flatten.ts";
+import { addDocument } from "@/lib/qualitative-api.ts";
 import {
   suggestDisagreements,
   suggestionSummary,
@@ -53,11 +56,21 @@ export function Papers({ studyId }: { studyId: string | null }) {
   const [draft, setDraft] = useState<Draft | null>(null);
   const [working, setWorking] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
+  const [coded, setCoded] = useState<Set<string>>(new Set());
+  const [said, setSaid] = useState<string | null>(null);
 
   const refresh = useCallback(async (id: string) => {
-    const [listed, related] = await Promise.all([loadSources(id), loadRelations(id)]);
+    const [listed, related, documents] = await Promise.all([
+      loadSources(id),
+      loadRelations(id),
+      codedSourceIds(id),
+    ]);
     if (listed.ok) setSources(listed.data);
     if (related.ok) setRelations(related.data);
+    // Which papers are already open on the coding stage. Read from the
+    // documents rather than remembered here, so the button tells the truth
+    // after a reload and after somebody removes one there.
+    if (documents.ok) setCoded(new Set(documents.data));
     if (!listed.ok) setProblem(listed.message);
   }, []);
 
@@ -126,6 +139,37 @@ export function Papers({ studyId }: { studyId: string | null }) {
     }
   }
 
+  /**
+   * Open a paper on the coding stage.
+   *
+   * The pages are flattened into the one body the coding surface works over,
+   * and the flattening is recorded alongside it. Without that map a coding is
+   * a pair of offsets into a wall of text and the page it came from is gone
+   * — which is the whole reason the pages were stored separately.
+   */
+  async function openForCoding(source: CorpusSource) {
+    if (studyId === null) return;
+    const paper = papers.find((candidate) => candidate.id === source.id);
+    if (!paper || paper.pages.length === 0) {
+      setProblem("There is no text in that one to code.");
+      return;
+    }
+    setWorking(true);
+    setProblem(null);
+    const { body, pageStarts } = flattenPages(paper.pages);
+    const result = await addDocument(studyId, source.name, body, Date.now(), {
+      sourceId: source.id,
+      pageStarts,
+    });
+    setWorking(false);
+    if (!result.ok) {
+      setProblem(result.message);
+      return;
+    }
+    setSaid(`${source.name} is now on the Code text stage, with its page numbers.`);
+    await refresh(studyId);
+  }
+
   async function record() {
     if (studyId === null || draft === null) return;
     // No basis check here. It would be unreachable: the button is disabled
@@ -165,6 +209,7 @@ export function Papers({ studyId }: { studyId: string | null }) {
           {problem}
         </p>
       )}
+      {said !== null && <p className="text-sm text-muted">{said}</p>}
 
       <section aria-labelledby="held" className="rounded-lg border border-rule bg-raised p-4">
         <h3 id="held" className="text-sm font-medium">
@@ -196,6 +241,16 @@ export function Papers({ studyId }: { studyId: string | null }) {
                     {source.doi !== null && ` · ${source.doi}`}
                   </span>
                 </button>
+                {source.pageCount > 0 && (
+                  <button
+                    type="button"
+                    disabled={working || coded.has(source.id)}
+                    onClick={() => void openForCoding(source)}
+                    className="rounded-md border border-rule px-3 py-2 text-xs hover:border-accent disabled:opacity-40"
+                  >
+                    {coded.has(source.id) ? "On the coding stage" : "Code this"}
+                  </button>
+                )}
                 <button
                   type="button"
                   aria-label={`Remove ${source.name}`}

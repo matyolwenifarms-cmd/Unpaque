@@ -188,3 +188,26 @@ export async function dropRelation(id: string): Promise<Result<null>> {
   if (error) return { ok: false, message: error.message };
   return { ok: true, data: null };
 }
+
+/**
+ * Which papers are already open on the coding stage.
+ *
+ * By `source_id` rather than by name. Two papers in a reading list can share a
+ * filename — `article.pdf` twice, from two different downloads — and
+ * matching on it would grey out the wrong button and, worse, tell somebody a
+ * paper had been opened for coding when it had not.
+ */
+export async function codedSourceIds(studyId: string): Promise<Result<string[]>> {
+  const { data, error } = await supabase()
+    .from("study_documents")
+    .select("source_id")
+    .eq("study_id", studyId)
+    .not("source_id", "is", null);
+  if (error) return { ok: false, message: error.message };
+  return {
+    ok: true,
+    data: (data ?? [])
+      .map((row) => row.source_id)
+      .filter((id): id is string => typeof id === "string"),
+  };
+}

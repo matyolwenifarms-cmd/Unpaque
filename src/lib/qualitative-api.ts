@@ -143,15 +143,34 @@ export async function loadStudy(studyId: string): Promise<Result<StudyContents>>
   };
 }
 
+export interface FromPaper {
+  /** The paper in this study's corpus the text was read out of. */
+  sourceId: string;
+  /** Where each page begins in `body`. See `research/corpus/flatten.ts`. */
+  pageStarts: number[];
+}
+
 export async function addDocument(
   studyId: string,
   name: string,
   body: string,
   position: number,
+  /**
+   * Both fields or neither, which the check constraint also enforces. A
+   * document claiming a paper it has no page map for cannot cite a page, and
+   * a page map belonging to nothing is a map of somewhere else.
+   */
+  from?: FromPaper,
 ): Promise<Result<DocumentRow>> {
   const { data, error } = await supabase()
     .from("study_documents")
-    .insert({ study_id: studyId, name, body, coding_position: position })
+    .insert({
+      study_id: studyId,
+      name,
+      body,
+      coding_position: position,
+      ...(from === undefined ? {} : { source_id: from.sourceId, page_starts: from.pageStarts }),
+    })
     .select("id, name, body, coding_position")
     .single();
   return wrap<DocumentRow>(data, error);

@@ -4,11 +4,17 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Papers } from "./Papers.tsx";
 
+const addDocument = vi.fn();
+vi.mock("@/lib/qualitative-api.ts", () => ({
+  addDocument: (...a: unknown[]) => addDocument(...a),
+}));
+
 const api = {
   loadSources: vi.fn(),
   loadRelations: vi.fn(),
   loadPages: vi.fn(),
   addSource: vi.fn(),
+  codedSourceIds: vi.fn(),
   addRelation: vi.fn(),
   dropSource: vi.fn(),
   dropRelation: vi.fn(),
@@ -21,6 +27,7 @@ vi.mock("@/lib/corpus-api.ts", async () => {
     loadRelations: (...a: unknown[]) => api.loadRelations(...a),
     loadPages: (...a: unknown[]) => api.loadPages(...a),
     addSource: (...a: unknown[]) => api.addSource(...a),
+    codedSourceIds: (...a: unknown[]) => api.codedSourceIds(...a),
     addRelation: (...a: unknown[]) => api.addRelation(...a),
     dropSource: (...a: unknown[]) => api.dropSource(...a),
     dropRelation: (...a: unknown[]) => api.dropRelation(...a),
@@ -45,10 +52,13 @@ const PAGES: Record<string, { number: number; body: string }[]> = {
 
 beforeEach(() => {
   for (const fn of Object.values(api)) fn.mockReset();
+  addDocument.mockReset();
   api.loadSources.mockResolvedValue({ ok: true, data: SOURCES });
   api.loadRelations.mockResolvedValue({ ok: true, data: [] });
   api.loadPages.mockImplementation(async (id: string) => ({ ok: true, data: PAGES[id] ?? [] }));
+  api.codedSourceIds.mockResolvedValue({ ok: true, data: [] });
   api.addRelation.mockResolvedValue({ ok: true, data: null });
+  addDocument.mockResolvedValue({ ok: true, data: { id: "d1", name: "x", body: "y", coding_position: 1 } });
   api.dropRelation.mockResolvedValue({ ok: true, data: null });
 });
 
@@ -162,5 +172,51 @@ describe("recording what the reviewer decides", () => {
     render(<Papers studyId="s1" />);
     expect(await screen.findByText("Ndlovu 2019 corroborates Smith 2020")).toBeTruthy();
     expect(screen.getByText("Both use the same framing categories.")).toBeTruthy();
+  });
+});
+
+describe("opening a paper for coding", () => {
+  it("flattens the pages and sends the map that turns an offset back into a page", async () => {
+    const user = userEvent.setup();
+    render(<Papers studyId="s1" />);
+    // Two papers, so the button is named twice. The first row is Ndlovu.
+    await user.click((await screen.findAllByRole("button", { name: "Code this" }))[0]!);
+
+    await waitFor(() => expect(addDocument).toHaveBeenCalledTimes(1));
+    const [, name, body, , from] = addDocument.mock.calls[0]!;
+    expect(name).toBe("Ndlovu 2019");
+    expect(body).toContain("Background to the study.");
+    expect(body).toContain("The cohort reported 40 incidents");
+    // Without this the coding surface has a wall of text and no page numbers,
+    // which is the whole reason the pages were stored apart.
+    expect(from).toMatchObject({ sourceId: "a" });
+    expect((from as { pageStarts: number[] }).pageStarts[0]).toBe(0);
+    expect((from as { pageStarts: number[] }).pageStarts).toHaveLength(2);
+  });
+
+  it("says where it went, rather than appearing to do nothing", async () => {
+    const user = userEvent.setup();
+    render(<Papers studyId="s1" />);
+    await user.click((await screen.findAllByRole("button", { name: "Code this" }))[0]!);
+    expect(await screen.findByText(/is now on the Code text stage, with its page numbers/))
+      .toBeTruthy();
+  });
+
+  // By id, not by name. Two papers in a reading list can share a filename.
+  it("marks a paper already open for coding, and only that one", async () => {
+    api.codedSourceIds.mockResolvedValue({ ok: true, data: ["a"] });
+    render(<Papers studyId="s1" />);
+    expect(await screen.findByRole("button", { name: "On the coding stage" })).toBeTruthy();
+    expect(screen.getAllByRole("button", { name: "Code this" })).toHaveLength(1);
+  });
+
+  it("offers nothing to code on a paper with no text layer", async () => {
+    api.loadSources.mockResolvedValue({
+      ok: true,
+      data: [{ id: "c", name: "photocopy.pdf", kind: "pdf" as const, doi: null, pageCount: 0, addedAt: "2026-08-03" }],
+    });
+    render(<Papers studyId="s1" />);
+    await screen.findByText("photocopy.pdf");
+    expect(screen.queryByRole("button", { name: "Code this" })).toBeNull();
   });
 });

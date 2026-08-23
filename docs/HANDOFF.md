@@ -47,10 +47,10 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 1385 unit and component tests, four passing gates (typecheck, lint, test,
+- 1403 unit and component tests, four passing gates (typecheck, lint, test,
   build). Four of them read the recorded provider fixtures and **skip where
   those are absent** — which is every agent container, since OpenAlex,
-  Crossref and Unpaywall are all blocked there. A run reporting 1381 passed
+  Crossref and Unpaywall are all blocked there. A run reporting 1399 passed
   and 4 skipped has checked less than it looks; `npm run research:record` on
   a machine with network access is what closes them.
 - 246 SQL assertions across eleven suites, run against a real Postgres 16, with
@@ -267,6 +267,7 @@ and all three are built the same way:
 | Research | Offer a test on a column it has just called broken | A `will_mislead` column is withdrawn from every pair, with the fix that brings it back |
 | Research | Turn a disagreeing figure into a contradiction | A `Suggestion` has no field a relation or a basis could be written into; the reviewer supplies both |
 | Research | Record a relation nobody can check | `basis` is `not null` and not short, in the schema; direction is never normalised |
+| Research | Cite a page a sentence is not on | The flattening is recorded as a page map and the page derived from it; no coding stores a page number of its own |
 | Both | Lose a batch to one unreadable file | Each file is read alone, and every reader that can hang is raced against a clock |
 | Detect | State an allegation as fact | 11 epistemic classifications; the dossier concludes nothing |
 | Detect | Be forced into one theory | `assembleHypotheses` refuses a lone hypothesis; no column or field ranks one |
