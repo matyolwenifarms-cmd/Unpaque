@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { ResolveOutcome } from "../providers/crossref.ts";
 import type { Reference } from "../reference.ts";
 import type { LiteratureResult } from "../search.ts";
-import { superviseNotes, superviseProposal } from "./supervise.ts";
+import { checksFrom, superviseNotes, superviseProposal } from "./supervise.ts";
 
 const PROPOSAL = `Chapter Three: Methodology
 
@@ -44,14 +44,14 @@ const results = (references: Reference[]): LiteratureResult => ({
 
 describe("checking the identifiers", () => {
   it("resolves what resolves", async () => {
-    const supervision = await superviseProposal(PROPOSAL, { resolve: async () => found() });
+    const supervision = await superviseProposal(PROPOSAL, { check: checksFrom(async () => found()) });
     expect(supervision.checks).toHaveLength(2);
     expect(supervision.checks.every((check) => check.kind === "resolved")).toBe(true);
   });
 
   it("reports what the agency says does not exist", async () => {
     const supervision = await superviseProposal(PROPOSAL, {
-      resolve: async (doi) => (doi.startsWith("10.1234") ? { state: "not_found" } : found()),
+      check: checksFrom(async (doi) => (doi.startsWith("10.1234") ? { state: "not_found" } : found())),
     });
     expect(supervision.checks.filter((check) => check.kind === "absent")).toHaveLength(1);
     expect(superviseNotes(supervision).join(" ")).toContain("did not resolve");
@@ -61,7 +61,7 @@ describe("checking the identifiers", () => {
   // become a sentence telling a student their reference does not exist.
   it("never turns an unreachable agency into an accusation", async () => {
     const supervision = await superviseProposal(PROPOSAL, {
-      resolve: async () => ({ state: "unreachable" }),
+      check: checksFrom(async () => ({ state: "unreachable" })),
     });
     expect(supervision.checks.every((check) => check.kind === "unchecked")).toBe(true);
     const notes = superviseNotes(supervision).join(" ");
@@ -71,20 +71,39 @@ describe("checking the identifiers", () => {
 
   it("treats a resolver that throws the same way", async () => {
     const supervision = await superviseProposal(PROPOSAL, {
-      resolve: async () => {
+      check: checksFrom(async () => {
         throw new Error("socket hang up");
-      },
+      }),
     });
     expect(supervision.checks.every((check) => check.kind === "unchecked")).toBe(true);
     expect(superviseNotes(supervision).join(" ")).not.toContain("did not resolve");
   });
 
+  it("treats a checker that throws as unchecked, not as absent", async () => {
+    const supervision = await superviseProposal(PROPOSAL, {
+      check: async () => {
+        throw new Error("429 from our own endpoint");
+      },
+    });
+    expect(supervision.checks).toHaveLength(2);
+    expect(supervision.checks.every((check) => check.kind === "unchecked")).toBe(true);
+    expect(superviseNotes(supervision).join(" ")).not.toContain("did not resolve");
+  });
+
+  it("asks for the whole list in one call", async () => {
+    const check = vi.fn(async (dois: readonly string[]) =>
+      dois.map((doi) => ({ doi, kind: "resolved" as const, title: null, retracted: false })));
+    await superviseProposal(PROPOSAL, { check });
+    expect(check).toHaveBeenCalledOnce();
+    expect(check.mock.calls[0]![0]).toHaveLength(2);
+  });
+
   it("names a retracted reference, and says it can still be cited", async () => {
     const supervision = await superviseProposal(PROPOSAL, {
-      resolve: async (doi) =>
+      check: checksFrom(async (doi) =>
         doi.startsWith("10.1234")
           ? { state: "found", retracted: true, record: ref() }
-          : found(),
+          : found()),
     });
     const notes = superviseNotes(supervision).join(" ");
     expect(notes).toContain("registered as retracted");
@@ -94,7 +113,7 @@ describe("checking the identifiers", () => {
 
   it("says how many of how many it checked, rather than implying all of them", async () => {
     const supervision = await superviseProposal(PROPOSAL, {
-      resolve: async () => found(),
+      check: checksFrom(async () => found()),
       maxChecks: 1,
     });
     expect(supervision.checks).toHaveLength(1);
@@ -173,6 +192,11 @@ describe("suggesting work the proposal does not cite", () => {
     expect(terms).not.toContain("study");
   });
 
+  it("says the search did not run, rather than leaving it as an absence", async () => {
+    const supervision = await superviseProposal(PROPOSAL);
+    expect(superviseNotes(supervision).join(" ")).toContain("No related work was looked for");
+  });
+
   it("degrades when the search throws, rather than losing the rest of the report", async () => {
     const supervision = await superviseProposal(PROPOSAL, {
       search: async () => {
@@ -181,7 +205,9 @@ describe("suggesting work the proposal does not cite", () => {
     });
     expect(supervision.related.kind).toBe("not_searched");
     expect(supervision.citations.listed).toHaveLength(2);
-    expect(superviseNotes(supervision).length).toBeGreaterThan(0);
+    expect(superviseNotes(supervision).join(" ")).toContain(
+      "because the literature search could not be reached",
+    );
   });
 
   it("says so when the list already has everything the search found", async () => {
@@ -219,7 +245,12 @@ describe("the coherence check", () => {
 describe("the order the report is given in", () => {
   it("puts the design before the reference arithmetic", async () => {
     const notes = superviseNotes(await superviseProposal(PROPOSAL));
-    const design = notes.findIndex((note) => note.includes("interpretivism"));
+    // The design side of the report, whether it found a tension or reported
+    // that it found none. Not the readings themselves: those are carried on
+    // `DesignReading` and shown beside the prose, never repeated into it.
+    const design = notes.findIndex(
+      (note) => note.includes("pulls against") || note.includes("Nothing in the proposal states"),
+    );
     const references = notes.findIndex((note) => note.includes("listed and never cited"));
     expect(design).toBeGreaterThanOrEqual(0);
     expect(references).toBeGreaterThan(design);

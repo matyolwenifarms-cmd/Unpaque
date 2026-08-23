@@ -98,8 +98,8 @@ export interface Supervision {
 }
 
 export interface SuperviseDeps {
-  /** Resolves a DOI at its registration agency. Absent means none are checked. */
-  readonly resolve?: Resolver;
+  /** Checks the DOIs at their registration agency. Absent means none are checked. */
+  readonly check?: Checker;
   /** Finds related work. Absent means none is suggested. */
   readonly search?: (request: LiteratureRequest) => Promise<LiteratureResult>;
   /**
@@ -114,7 +114,24 @@ const DEFAULT_MAX_CHECKS = 30;
 const DEFAULT_MAX_SUGGESTIONS = 8;
 const RESOLVE_CONCURRENCY = 4;
 
-async function checkDois(dois: readonly string[], resolve: Resolver): Promise<DoiCheck[]> {
+/** Checks a whole list at once. See `SuperviseDeps.check`. */
+export type Checker = (dois: readonly string[]) => Promise<readonly DoiCheck[]>;
+
+/**
+ * A checker built from a one-at-a-time resolver.
+ *
+ * The seam is the list rather than the identifier because of where the two
+ * callers sit. A browser has to reach the registration agency through this
+ * product's own endpoint — it is rate-limited per request, and one request
+ * per DOI would spend a student's whole hourly allowance on a single
+ * proposal. A server, and a test, has a resolver already. So the dependency
+ * takes the list, and this turns a resolver into one.
+ */
+export function checksFrom(resolve: Resolver): Checker {
+  return (dois) => checkEach(dois, resolve);
+}
+
+async function checkEach(dois: readonly string[], resolve: Resolver): Promise<DoiCheck[]> {
   const checks: DoiCheck[] = [];
 
   for (let start = 0; start < dois.length; start += RESOLVE_CONCURRENCY) {
@@ -222,9 +239,17 @@ export async function superviseProposal(
     : { kind: "checked", tensions: checkCoherence(forCoherence) };
 
   const maxChecks = Math.max(0, deps.maxChecks ?? DEFAULT_MAX_CHECKS);
-  const checks = deps.resolve
-    ? await checkDois(citations.dois.slice(0, maxChecks), deps.resolve)
-    : [];
+  let checks: readonly DoiCheck[] = [];
+  if (deps.check && citations.dois.length > 0) {
+    const asked = citations.dois.slice(0, maxChecks);
+    try {
+      checks = await deps.check(asked);
+    } catch {
+      // Same rule as a thrown resolver: an unreachable service must never
+      // become a sentence about a student's references.
+      checks = asked.map((doi) => ({ doi, kind: "unchecked", because: "the lookup failed" }));
+    }
+  }
 
   let related: RelatedWork = {
     kind: "not_searched",
@@ -253,6 +278,11 @@ export async function superviseProposal(
   return { citations, design, coherence, checks, doiTotal: citations.dois.length, related };
 }
 
+/** "One DOI", "3 DOIs" — never a bare number in front of a verb. */
+function countOf(n: number, noun: string): string {
+  return n === 1 ? `One ${noun}` : `${n} ${noun}s`;
+}
+
 function checkNotes(supervision: Supervision): string[] {
   const { checks, doiTotal } = supervision;
   if (checks.length === 0) return [];
@@ -262,6 +292,16 @@ function checkNotes(supervision: Supervision): string[] {
   const retracted = checks.filter((check) => check.kind === "resolved" && check.retracted);
   const unchecked = checks.filter((check) => check.kind === "unchecked");
   const resolved = checks.length - absent.length - unchecked.length;
+
+  // Nothing came back at all. Reporting scope first — "the one DOI was
+  // checked: 0 resolved" — is the accusation this module is built to
+  // prevent, arriving through the sentence that was supposed to be neutral.
+  // A reader stops at "0 resolved"; the correction underneath it is too late.
+  if (unchecked.length === checks.length) {
+    return [
+      `${countOf(checks.length, "DOI")} could not be checked, because ${unchecked[0]!.kind === "unchecked" ? unchecked[0]!.because : "the lookup failed"}. Nothing follows from that about whether ${checks.length === 1 ? "it exists" : "they exist"}.`,
+    ];
+  }
 
   const all = checks.length === 1
     ? "The one DOI in the proposal was checked"
@@ -288,7 +328,7 @@ function checkNotes(supervision: Supervision): string[] {
 
   if (unchecked.length > 0) {
     notes.push(
-      `${unchecked.length} could not be checked, because ${unchecked[0]!.kind === "unchecked" ? unchecked[0]!.because : "the lookup failed"}. Nothing follows from that about whether they exist.`,
+      `${countOf(unchecked.length, "DOI")} could not be checked, because ${unchecked[0]!.kind === "unchecked" ? unchecked[0]!.because : "the lookup failed"}. Nothing follows from that about whether ${unchecked.length === 1 ? "it exists" : "they exist"}.`,
     );
   }
 
@@ -297,7 +337,12 @@ function checkNotes(supervision: Supervision): string[] {
 
 function relatedNotes(supervision: Supervision): string[] {
   const { related } = supervision;
-  if (related.kind === "not_searched") return [];
+  // Said out loud rather than left as an absence. A student who sees no
+  // suggestions cannot tell "your field is well covered in your list" from
+  // "the search never ran", and the two call for opposite next steps.
+  if (related.kind === "not_searched") {
+    return [`No related work was looked for, because ${related.because}.`];
+  }
   if (related.suggestions.length === 0) {
     return [
       "The literature search found nothing your reference list does not already have. That is a good sign about the list, and a weak one about the search: it matches words in titles and abstracts, and it does not read.",

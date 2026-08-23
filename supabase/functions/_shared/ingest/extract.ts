@@ -11,6 +11,11 @@
 // because the first is a fact about the document and the second sounds like a
 // bug in the software.
 //
+//
+// It sits in `_shared/ingest/` rather than under `detective/` because both
+// features hand it a file now: a case folder on one side, a research proposal
+// on the other. Nothing in here knows which.
+//
 // PDF is deliberately absent from this module. It needs pdfjs, which is a
 // megabyte and only exists in a browser or Node, and `_shared` is imported by
 // both the Edge Runtime and the browser. The browser layer loads it lazily and
@@ -23,6 +28,15 @@ export interface Page {
   number: number;
   body: string;
 }
+
+/**
+ * A PDF's text, supplied by the caller because pdfjs does not belong in here.
+ *
+ * The seam is a function rather than an import for the reason in the header:
+ * this module is loaded by the Edge Runtime, where pdfjs cannot run, and by
+ * the browser, where it can but should not be in the first megabyte.
+ */
+export type ReadPdf = (bytes: Uint8Array) => Promise<Page[]>;
 
 export interface Extraction {
   pages: Page[];

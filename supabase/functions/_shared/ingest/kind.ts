@@ -8,6 +8,11 @@
 // upload silently fails to extract and nobody finds out until the case is
 // built on nothing.
 //
+//
+// It sits in `_shared/ingest/` rather than under `detective/` because both
+// features hand it a file now: a case folder on one side, a research proposal
+// on the other. Nothing in here knows which.
+//
 // So the extension is read, the bytes are read, and **a disagreement between
 // them is reported rather than resolved.** A renamed file is the interesting
 // case: it is either an export quirk or somebody hiding something, and neither

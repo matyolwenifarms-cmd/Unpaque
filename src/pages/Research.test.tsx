@@ -4,15 +4,29 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 const searchReferences = vi.fn();
+const checkDois = vi.fn(async () => ({ status: "ok" as const, checks: [], total: 0 }));
 vi.mock("@/lib/research-api.ts", () => ({
   searchReferences: (...args: unknown[]) => searchReferences(...args),
+  checkDois: (...args: unknown[]) => checkDois(...(args as [])),
 }));
 
 const { default: Research } = await import("./Research.tsx");
 
+/**
+ * Render, and get to the literature stage.
+ *
+ * The page opens on Proposal now — the one screen that asks nothing of
+ * somebody who has not used this before. Every test below that was written
+ * when literature was the first thing rendered has to say so.
+ */
+async function openLiterature(user: ReturnType<typeof userEvent.setup>) {
+  render(<Research />);
+  await user.click(screen.getByRole("button", { name: /^Literature/ }));
+}
+
 async function search(term = "framing theory") {
   const user = userEvent.setup();
-  render(<Research />);
+  await openLiterature(user);
   await user.type(screen.getByLabelText(/what are you looking for/i), term);
   await user.click(screen.getByRole("button", { name: /^search$/i }));
 }
@@ -22,7 +36,7 @@ describe("the search page", () => {
 
   it("will not search on fewer than three characters", async () => {
     const user = userEvent.setup();
-    render(<Research />);
+    await openLiterature(user);
     await user.type(screen.getByLabelText(/what are you looking for/i), "ab");
     expect(screen.getByRole("button", { name: /^search$/i })).toBeDisabled();
   });
@@ -30,7 +44,7 @@ describe("the search page", () => {
   it("passes a four-digit year through as a filter and ignores anything else", async () => {
     searchReferences.mockResolvedValue({ status: "ok", references: [], reportedTotal: 0, notes: [] });
     const user = userEvent.setup();
-    render(<Research />);
+    await openLiterature(user);
     await user.type(screen.getByLabelText(/what are you looking for/i), "framing");
     await user.type(screen.getByLabelText(/published from year/i), "banana");
     await user.click(screen.getByRole("button", { name: /^search$/i }));
@@ -45,7 +59,7 @@ describe("the search page", () => {
   it("asks for relevance unless the reader chooses otherwise", async () => {
     searchReferences.mockResolvedValue({ status: "ok", references: [], reportedTotal: 0, notes: [] });
     const user = userEvent.setup();
-    render(<Research />);
+    await openLiterature(user);
     await user.type(screen.getByLabelText(/what are you looking for/i), "media framing");
     await user.click(screen.getByRole("button", { name: /^search$/i }));
     await waitFor(() =>
@@ -76,7 +90,7 @@ describe("the search page", () => {
       notes: [],
     });
     const user = userEvent.setup();
-    render(<Research />);
+    await openLiterature(user);
     await user.type(screen.getByLabelText(/what are you looking for/i), "media framing");
     await user.click(screen.getByRole("button", { name: /^search$/i }));
     await waitFor(() => expect(screen.getByText(/most relevant first/i)).toBeInTheDocument());
@@ -127,9 +141,17 @@ describe("the search page", () => {
 });
 
 describe("the two stages", () => {
-  it("starts on literature and switches to the data workspace", async () => {
-    const user = userEvent.setup();
+  // Opening on Proposal is the point of that stage: it is the only one that
+  // asks nothing of a researcher who does not yet know what this product is.
+  it("opens on the proposal stage", async () => {
     render(<Research />);
+    expect(screen.getByText(/Hand over your proposal/i)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/what are you looking for/i)).toBeNull();
+  });
+
+  it("switches from literature to the data workspace", async () => {
+    const user = userEvent.setup();
+    await openLiterature(user);
     expect(screen.getByLabelText(/what are you looking for/i)).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: /analyse data/i }));
@@ -228,7 +250,7 @@ describe("the write-up, assembled from the other stages", () => {
       notes: [], reportedTotal: 1,
     });
     const user = userEvent.setup();
-    render(<Research />);
+    await openLiterature(user);
     await user.type(screen.getByLabelText(/what are you looking for/i), "waiting times");
     await user.click(screen.getByRole("button", { name: /^search$/i }));
     await screen.findByText(/Waiting and trust/);

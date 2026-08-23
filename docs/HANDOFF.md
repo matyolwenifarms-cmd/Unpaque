@@ -32,7 +32,7 @@ what deliberately did not change with it, is `DEPARTURES.md` §6.
 | Feature | What it does | State | Costs to run |
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
-| **Research** | Literature, method, analysis, coding, write-up | Five stages on screen — the whole lifecycle. §6 and §7, quantitative and qualitative, with a second coder and inter-coder agreement | **Nothing** |
+| **Research** | Proposal, literature, method, analysis, coding, write-up | Six stages on screen — the whole lifecycle, opening on the supervisor pass. §6 and §7, quantitative and qualitative, with a second coder and inter-coder agreement | **Nothing** |
 | **Detect** | Investigative intelligence — cases, evidence, timeline, dossier, explanations, case graph | Phase 0–1, plus §11's graph and §12's hypothesis, falsification and skeptic engines | Nothing |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
@@ -47,7 +47,7 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 1182 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 1274 unit and component tests, four passing gates (typecheck, lint, test, build).
 - 246 SQL assertions across eleven suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
@@ -65,6 +65,15 @@ The distinction matters more than the totals.
 - The whole Unpack deployment path, end to end, in stub mode — gateway, JWT
   check, rate limiter against real Postgres, function under Deno, client,
   parser, rendering.
+- **The proposal stage driven in Chromium against the built bundle**: a
+  methodology chapter pasted in, the report read end to end, console clean.
+  That reading is what found the last three defects in it — a scope
+  sentence that said a DOI "was checked: 0 resolved" when the service was
+  never reachable, a bare "1 could not be checked", and the paradigm reading
+  printed twice on one screen. None of the three was reachable from a unit
+  test.
+- **`deno check` now covers `research-search` as well as `analyse`.** It was
+  unchecked code, and the DOI-checking operation was added to it.
 
 **Not verified, and worth saying plainly:**
 
@@ -235,6 +244,8 @@ and all three are built the same way:
 | Research | Cite anything that does not exist | providers, never the model |
 | Research | Report a p-value alone, or a causal claim from a correlation | `Finding` has no p without n and an effect |
 | Research | Write the researcher's argument for them | A `yours` section has no field a body could go in |
+| Research | Judge a design the proposal never declared | `designFrom` returns nothing without a declared paradigm; a `mentioned` reading cannot reach the coherence check |
+| Research | Say a reference does not exist when nobody could ask | `DoiCheck` has four states and no boolean; an unreachable agency and an absent record cannot be the same value |
 | Detect | State an allegation as fact | 11 epistemic classifications; the dossier concludes nothing |
 | Detect | Be forced into one theory | `assembleHypotheses` refuses a lone hypothesis; no column or field ranks one |
 | Detect | Hold a belief no evidence could touch | `falsifier` is `not null`, in the schema and the type |
@@ -263,6 +274,9 @@ could be written into**.
    which is the six tables the coding workspace writes to — until it runs,
    opening a study fails with a message about a missing relation. Then run
    `npm run smoke` and the `/research` route against the deployed functions.
+   `research-search` also gained a second operation, so until it is redeployed
+   the proposal stage reports every identifier unchecked. That is the correct
+   degradation and it says so on screen, but it is not the feature.
 4. **Enable email auth** in the Supabase dashboard (Authentication → Providers →
    Email, with magic links on) and sign in once. Nothing that belongs to a
    person works until that is done — and the coding workspace is the first

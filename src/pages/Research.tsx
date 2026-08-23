@@ -5,6 +5,7 @@ import { ChooseMethod } from "@/components/ChooseMethod.tsx";
 import { CodeText } from "@/components/CodeText.tsx";
 import { DataUpload } from "@/components/DataUpload.tsx";
 import { DatasetSummary } from "@/components/DatasetSummary.tsx";
+import { ProposalReview } from "@/components/ProposalReview.tsx";
 import { ReferenceList } from "@/components/ReferenceList.tsx";
 import { StudyBar } from "@/components/StudyBar.tsx";
 import { useStudies } from "@/hooks/useStudies.ts";
@@ -62,8 +63,15 @@ import { searchReferences, type ResultOrder, type SearchedReference } from "@/li
  * with different evidence. A researcher with transcripts is not choosing a
  * t-test, and a menu that sends them to a column picker teaches them the tool
  * is not for them.
+ *
+ * Proposal is first, and is the only stage that needs nothing chosen first.
+ * Everything after it asks the researcher to already know which part of their
+ * work the software is for; that one takes the document they have and tells
+ * them. Somebody who has never seen this product should be able to start
+ * there and find out what the rest of it is for.
  */
 const STAGES = [
+  { id: "proposal", name: "Proposal", blurb: "Check its references and its design" },
   { id: "literature", name: "Literature", blurb: "Find and verify references" },
   { id: "method", name: "Method", blurb: "Declare the paradigm and approach" },
   { id: "analyse", name: "Analyse data", blurb: "Upload a file and run a test" },
@@ -156,7 +164,11 @@ export default function Research() {
   // "most relevant first" while it is still sorted by date is the same lie as
   // before, told by a control instead of a sort.
   const [shownOrder, setShownOrder] = useState<ResultOrder>("relevance");
-  const [stage, setStage] = useState<Stage>("literature");
+  // Proposal, not literature. The first screen a researcher sees should be
+  // the one that asks nothing of them: a literature search asks for a query,
+  // and somebody who does not yet know what this product does has no way to
+  // know a good one. They have a document; this reads it.
+  const [stage, setStage] = useState<Stage>("proposal");
   const [dataset, setDataset] = useState<Dataset | null>(null);
   // What the other stages have produced. Held here because the write-up
   // transcribes all four and each is owned by a different stage; a stage that
@@ -245,6 +257,22 @@ export default function Research() {
       {body}
     </div>
   );
+
+  if (stage === "proposal") {
+    return frame(
+      <ProposalReview
+        kept={new Set(kept.map((reference) => reference.id))}
+        {...(studyId === null
+          ? {}
+          : {
+              onKeep: (reference: Reference) => {
+                setKept((was) => [...was, reference]);
+                void keepReference(studyId, reference);
+              },
+            })}
+      />,
+    );
+  }
 
   if (stage === "method") {
     return frame(

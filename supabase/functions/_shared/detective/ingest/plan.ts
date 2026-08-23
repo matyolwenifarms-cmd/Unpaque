@@ -16,8 +16,10 @@
 // shrink the case to whatever happened to be typed, so they arrive marked
 // rather than missing.
 
-import { detect, type Detection, type FileKind } from "./kind.ts";
-import { extractText, extractWord, readArchive, type Page } from "./extract.ts";
+import { detect, type Detection, type FileKind } from "../../ingest/kind.ts";
+import { extractText, extractWord, readArchive, type Page, type ReadPdf } from "../../ingest/extract.ts";
+
+export type { ReadPdf };
 import { readByFormat, readDocument, type Reading } from "./classify.ts";
 
 export interface IncomingFile {
@@ -62,8 +64,6 @@ async function hash(bytes: Uint8Array): Promise<string> {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-/** A PDF's text, supplied by the caller because pdfjs does not belong in here. */
-export type ReadPdf = (bytes: Uint8Array) => Promise<Page[]>;
 
 /**
  * Read a pile of files, expanding archives, and say what each one is.

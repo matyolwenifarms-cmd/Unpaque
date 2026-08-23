@@ -8,7 +8,7 @@ import {
   type PlannedSource,
 } from "@shared/detective/ingest/plan.ts";
 import { SOURCE_KINDS, type SourceKind } from "@shared/detective/epistemic.ts";
-import type { Page } from "@shared/detective/ingest/extract.ts";
+import type { Page } from "@shared/ingest/extract.ts";
 import { readPdf } from "@/lib/read-pdf.ts";
 import { cn } from "@/lib/utils.ts";
 

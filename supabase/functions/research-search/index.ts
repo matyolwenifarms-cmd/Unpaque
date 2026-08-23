@@ -3,6 +3,7 @@ import { crossref } from "../_shared/research/providers/crossref.ts";
 import { openAlex } from "../_shared/research/providers/openalex.ts";
 import type { Fetcher } from "../_shared/research/providers/types.ts";
 import { leadingCaveat, quotationCaveat } from "../_shared/research/reference.ts";
+import { checksFrom, type DoiCheck } from "../_shared/research/proposal/supervise.ts";
 import { searchLiterature } from "../_shared/research/search.ts";
 
 // Literature search. Notably, there is no model in this file and no vendor
@@ -22,6 +23,18 @@ const CORS = {
 const PER_CALLER = Number(Deno.env.get("SEARCHES_PER_CALLER") ?? 30);
 const WINDOW = Deno.env.get("SEARCH_WINDOW") ?? "1 hour";
 const PER_DAY = Number(Deno.env.get("SEARCHES_PER_DAY") ?? 2000);
+
+/**
+ * How many identifiers one request may ask about.
+ *
+ * A proposal check is one request that becomes up to this many calls to
+ * Crossref, which is the same order as the verification pass a search already
+ * runs. Over the cap the request is served for the first CHECK_LIMIT rather
+ * than refused, and the response says how many there were — a 400 here
+ * would fail somebody's ninety-reference thesis and tell them to do it by
+ * hand.
+ */
+const CHECK_LIMIT = 30;
 
 /**
  * Both APIs ask callers to identify themselves for the faster pool. It is a
@@ -50,15 +63,24 @@ Deno.serve(async (request: Request): Promise<Response> => {
   if (request.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
-  let body: { query?: unknown; fromYear?: unknown; order?: unknown };
+  let body: { query?: unknown; fromYear?: unknown; order?: unknown; dois?: unknown };
   try {
     body = await request.json();
   } catch {
     return json({ error: "bad_json" }, 400);
   }
 
+  // Two operations, one endpoint, one quota. They call the same two free
+  // services under the same politeness obligation, and a separate function
+  // would be a second thing for the operator to deploy and a second bucket to
+  // exhaust independently of the first.
+  const asked = Array.isArray(body.dois)
+    ? body.dois.filter((doi): doi is string => typeof doi === "string" && doi.trim() !== "")
+    : null;
+  const checking = asked !== null && asked.length > 0;
+
   const query = typeof body.query === "string" ? body.query.trim() : "";
-  if (query.length < 3) {
+  if (!checking && query.length < 3) {
     return json({ error: "too_short", message: "Give at least three characters to search on." }, 400);
   }
   const fromYear = typeof body.fromYear === "number" && Number.isInteger(body.fromYear)
@@ -112,6 +134,33 @@ Deno.serve(async (request: Request): Promise<Response> => {
   const fetcher: Fetcher = (url, init) => fetch(url, init);
   const options = CONTACT ? { contactEmail: CONTACT } : {};
   const registry = crossref(options);
+
+  if (checking) {
+    const total = asked.length;
+    const toCheck = asked.slice(0, CHECK_LIMIT).map((doi) => doi.trim().toLowerCase());
+    try {
+      const checks: readonly DoiCheck[] = await checksFrom((doi) => registry.resolve(doi, fetcher))(
+        toCheck,
+      );
+      return json({ checks, total }, 200);
+    } catch (error) {
+      console.error("check_failed", error);
+      // Not an error status. The caller has a report to render either way, and
+      // the honest answer to "we could not ask" is every identifier unchecked
+      // — which is a state the client already knows how to say out loud.
+      return json(
+        {
+          checks: toCheck.map((doi) => ({
+            doi,
+            kind: "unchecked",
+            because: "the registration agency could not be reached",
+          })),
+          total,
+        },
+        200,
+      );
+    }
+  }
 
   try {
     const result = await searchLiterature(

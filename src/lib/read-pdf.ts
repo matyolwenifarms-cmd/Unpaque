@@ -1,5 +1,4 @@
-import type { Page } from "@shared/detective/ingest/extract.ts";
-import type { ReadPdf } from "@shared/detective/ingest/plan.ts";
+import type { Page, ReadPdf } from "@shared/ingest/extract.ts";
 
 /**
  * A PDF's text, one entry per page.

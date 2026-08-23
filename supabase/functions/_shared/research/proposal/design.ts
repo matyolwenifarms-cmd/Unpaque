@@ -42,7 +42,7 @@
 
 import type { Design } from "../method/coherence.ts";
 import { PARADIGMS, type ParadigmId } from "../method/paradigms.ts";
-import { THEORIES, type TheoryId } from "../method/theories.ts";
+import type { TheoryId } from "../method/theories.ts";
 
 /** One thing read out of the prose, with the words it was read from. */
 export interface Read<T> {
@@ -505,18 +505,14 @@ export function designFrom(reading: DesignReading): Design | null {
 export function designNotes(reading: DesignReading): string[] {
   const notes: string[] = [];
 
-  if (reading.paradigm !== null) {
-    const named = PARADIGMS[reading.paradigm.value].name;
+  // What was read is not reported here. `DesignReading` carries every reading
+  // with the sentence it came from, and any surface worth showing this on
+  // shows those next to each other; repeating them as prose puts the same
+  // words on one screen twice, which is how a reader learns that half of a
+  // report is padding. These notes are the findings only.
+  if (reading.paradigm !== null && reading.paradigm.how === "mentioned") {
     notes.push(
-      reading.paradigm.how === "declared"
-        ? `Read as ${named.toLowerCase()}, from: "${reading.paradigm.evidence}"`
-        : `${named} appears in the proposal, but not in a sentence about this study: "${reading.paradigm.evidence}" — so the coherence check was not run. Saying which paradigm the study works in, in one sentence, is what turns that on.`,
-    );
-  }
-
-  if (reading.theory !== null && reading.theory.how === "declared") {
-    notes.push(
-      `Analytic theory read as ${THEORIES[reading.theory.value].name.toLowerCase()}, from: "${reading.theory.evidence}"`,
+      `${PARADIGMS[reading.paradigm.value].name} appears in the proposal, but not in a sentence about this study: "${reading.paradigm.evidence}" — so the coherence check was not run. Saying which paradigm the study works in, in one sentence, is what turns that on.`,
     );
   }
 

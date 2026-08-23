@@ -44,6 +44,7 @@ jobs:
         with:
           deno-version: v2.x
       - run: deno check supabase/functions/analyse/index.ts
+      - run: deno check supabase/functions/research-search/index.ts
 
   # Migrations applied three times against a fresh Postgres, then the
   # behavioural suites. `supabase db push` re-runs the directory, so a migration

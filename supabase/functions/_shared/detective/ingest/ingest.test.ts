@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { detect, extensionOf, looksLikeText } from "./kind.ts";
+import { detect, extensionOf, looksLikeText } from "../../ingest/kind.ts";
 import { readByFormat, readDocument } from "./classify.ts";
 
 const bytes = (...values: number[]) => new Uint8Array(values);
