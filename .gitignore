@@ -11,3 +11,6 @@ coverage
 
 # Function secrets for local serving. The example beside it is committed.
 supabase/functions/.env
+# Supabase CLI state: the linked project ref and pooler URL. Local to whoever
+# ran `supabase link`, and not a fact about the repository.
+supabase/.temp/

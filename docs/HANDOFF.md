@@ -47,7 +47,12 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 1324 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 1328 unit and component tests, four passing gates (typecheck, lint, test,
+  build). Four of them read the recorded provider fixtures and **skip where
+  those are absent** — which is every agent container, since OpenAlex,
+  Crossref and Unpaywall are all blocked there. A run reporting 1324 passed
+  and 4 skipped has checked less than it looks; `npm run research:record` on
+  a machine with network access is what closes them.
 - 246 SQL assertions across eleven suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
