@@ -5,8 +5,8 @@ import { Timeline } from "./Timeline.tsx";
 import type { EventRow, SourceRow } from "@/lib/detective-api.ts";
 
 const sources: SourceRow[] = [
-  { id: "s1", kind: "testimony", title: "A statement", retrieved_from: "transcript", retrieved_at: "x", content_hash: null },
-  { id: "s2", kind: "video", title: "CCTV footage", retrieved_from: "operator export", retrieved_at: "x", content_hash: null },
+  { id: "s1", kind: "testimony", title: "A statement", retrieved_from: "transcript", retrieved_at: "x", content_hash: null, reference: 1 },
+  { id: "s2", kind: "video", title: "CCTV footage", retrieved_from: "operator export", retrieved_at: "x", content_hash: null, reference: 1 },
 ];
 
 const event = (over: Partial<EventRow> & { id: string }): EventRow => ({

@@ -11,8 +11,8 @@ vi.mock("@/lib/detective-api.ts", () => ({
 const { LinkEvidence } = await import("./LinkEvidence.tsx");
 
 const sources = [
-  { id: "s1", kind: "official_record", title: "A gazette notice", retrieved_from: "f", retrieved_at: "x", content_hash: null },
-  { id: "s2", kind: "reporting", title: "A newspaper report", retrieved_from: "f", retrieved_at: "x", content_hash: null },
+  { id: "s1", kind: "official_record", title: "A gazette notice", retrieved_from: "f", retrieved_at: "x", content_hash: null, reference: 1 },
+  { id: "s2", kind: "reporting", title: "A newspaper report", retrieved_from: "f", retrieved_at: "x", content_hash: null, reference: 1 },
 ];
 
 const draw = (over = {}) =>

@@ -287,6 +287,15 @@ function CaseDetail({ id }: { id: string }) {
 
       {/* The graph reads the records above it, so it sits after them and
           before the explanations that are argued from it. */}
+      {/* The route exists to be pointed at by a capture source, but a route
+          with no link is a route nobody finds. */}
+      <p className="mt-6 text-sm text-muted">
+        <Link to={`/cases/${id}/broadcast`} className="underline hover:text-ink">
+          Open this case in broadcast mode
+        </Link>{" "}
+        — 16:9, title-safe, keyboard-driven.
+      </p>
+
       <section className="mt-8" aria-labelledby="graph-heading">
         <h4 id="graph-heading" className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted">
           The case graph

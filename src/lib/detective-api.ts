@@ -41,6 +41,13 @@ export interface SourceRow {
    * than it is.
    */
   content_hash: string | null;
+  /**
+   * The per-case number this is read aloud by: SOURCE 014.
+   *
+   * Assigned once and never reused, so a dossier quoting it still points at
+   * this record after something earlier is deleted.
+   */
+  reference: number | null;
 }
 
 export type Result<T> = { ok: true; data: T } | { ok: false; message: string };
@@ -119,7 +126,7 @@ export async function createSource(
       title: input.title.trim(),
       retrieved_from: input.retrievedFrom.trim(),
     })
-    .select("id, kind, title, retrieved_from, retrieved_at, content_hash")
+    .select("id, kind, title, retrieved_from, retrieved_at, content_hash, reference")
     .single();
   return wrap<SourceRow>(data as SourceRow | null, error);
 }
@@ -223,7 +230,7 @@ export async function createEvent(
 export async function listSources(caseId: string): Promise<Result<SourceRow[]>> {
   const { data, error } = await supabase()
     .from("sources")
-    .select("id, kind, title, retrieved_from, retrieved_at, content_hash")
+    .select("id, kind, title, retrieved_from, retrieved_at, content_hash, reference")
     .eq("case_id", caseId)
     .order("retrieved_at", { ascending: false });
   return wrap<SourceRow[]>(data as SourceRow[] | null, error);

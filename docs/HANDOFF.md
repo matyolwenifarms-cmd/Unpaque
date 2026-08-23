@@ -47,7 +47,7 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 1054 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 1072 unit and component tests, four passing gates (typecheck, lint, test, build).
 - 221 SQL assertions across ten suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
@@ -98,6 +98,12 @@ The distinction matters more than the totals.
   were run on is named and not kept. Reopening a study shows the findings and
   the write-up assembles from them, but re-running anything needs the file
   again. A SQL assertion checks there is no column it could be hiding in.
+- **Broadcast mode presents reasoning, not media.** §7 and §8 — video, audio,
+  transcription — are not built, so there is no central media frame and the
+  broadcast screen says so in its own footer. It shows claims with their
+  epistemic status, sources by reference number, the timeline and the competing
+  explanations. Do not add a media frame until there is media; there is a test
+  asserting the notice is still there.
 - **The qualitative workspace has never written to a live database.** Six
   tables, an RPC that checks a coding's offsets against the document it points
   into, and 33 assertions against a real Postgres 16 — but no study, transcript
@@ -216,6 +222,7 @@ and all three are built the same way:
 | Detect | Hold a belief no evidence could touch | `falsifier` is `not null`, in the schema and the type |
 | Detect | Draw a connection stronger than its weakest link | `Path.weakest` is derived; no field takes a strength |
 | Detect | Assert a relationship as fact with nothing behind it | A check constraint, not a client rule |
+| Detect | Broadcast a claim without its classification | `lowerThird` returns both fields or neither |
 
 Research's passage engine is the strongest form: the model returns
 offsets, the server slices, and **the tool schema has no field a quotation

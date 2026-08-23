@@ -217,8 +217,8 @@ describe("the dossier", () => {
     listSources.mockReset().mockResolvedValue({
       ok: true,
       data: [
-        { id: "s1", kind: "official_record", title: "Tender register", retrieved_from: "portal", retrieved_at: "2026-08-01T00:00:00Z", content_hash: "a" },
-        { id: "s2", kind: "reporting", title: "Local paper", retrieved_from: "url", retrieved_at: "2026-08-01T00:00:00Z", content_hash: "b" },
+        { id: "s1", kind: "official_record", title: "Tender register", retrieved_from: "portal", retrieved_at: "2026-08-01T00:00:00Z", content_hash: "a", reference: 1 },
+        { id: "s2", kind: "reporting", title: "Local paper", retrieved_from: "url", retrieved_at: "2026-08-01T00:00:00Z", content_hash: "b", reference: 1 },
       ],
     });
     listEvidence.mockReset().mockResolvedValue({

@@ -23,7 +23,7 @@ const SOURCES: SourceRow[] = [
     title: "Media report",
     kind: "reporting",
     retrieved_from: "https://example.org",
-    retrieved_at: "2026-08-21T09:00:00Z", content_hash: null,
+    retrieved_at: "2026-08-21T09:00:00Z", content_hash: null, reference: 1,
   },
 ];
 

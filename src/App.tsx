@@ -1,4 +1,5 @@
 import { NavLink, Route, Routes, useLocation } from "react-router-dom";
+import Broadcast from "@/pages/Broadcast.tsx";
 import CaseView from "@/pages/CaseView.tsx";
 import Cases from "@/pages/Cases.tsx";
 import Landing from "@/pages/Landing.tsx";
@@ -71,6 +72,9 @@ export default function App() {
         <Route path="/research" element={<Research />} />
         <Route path="/cases" element={<Cases />} />
         <Route path="/cases/:id" element={<CaseView />} />
+        {/* Its own route rather than a mode, because the way this is used is by
+            pointing a capture source at a URL. */}
+        <Route path="/cases/:id/broadcast" element={<Broadcast />} />
         <Route path="/sign-in" element={<SignIn />} />
       </Routes>
     </div>

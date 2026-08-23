@@ -43,7 +43,10 @@ function findChromium() {
 // shell that is running this.
 const PORT = 4100 + Math.floor(Math.random() * 800);
 const BASE = `http://127.0.0.1:${PORT}`;
-const ROUTES = ["/", "/unpack", "/research", "/cases", "/sign-in"];
+// A case id that cannot exist, on purpose: the broadcast route must boot and
+// render its "not available" state rather than throwing, which is what it will
+// do on air the first time somebody opens a stale link.
+const ROUTES = ["/", "/unpack", "/research", "/cases", "/sign-in", "/cases/no-such-case/broadcast"];
 
 // The tab a reader clicks and the heading they land on must be the same word.
 // Each name is written twice — in `src/lib/features.ts` and in the page's own

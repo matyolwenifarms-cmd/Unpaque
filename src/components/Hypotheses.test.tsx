@@ -7,9 +7,9 @@ import type { SourceRow } from "@/lib/detective-api.ts";
 import { Hypotheses } from "./Hypotheses.tsx";
 
 const SOURCES: SourceRow[] = [
-  { id: "s1", kind: "testimony", title: "Depot supervisor", retrieved_from: "https://e.org/a", retrieved_at: "2026-08-01", content_hash: null },
-  { id: "s2", kind: "reporting", title: "The Herald", retrieved_from: "https://e.org/b", retrieved_at: "2026-08-01", content_hash: "wire" },
-  { id: "s3", kind: "reporting", title: "The Post", retrieved_from: "https://e.org/c", retrieved_at: "2026-08-01", content_hash: "wire" },
+  { id: "s1", kind: "testimony", title: "Depot supervisor", retrieved_from: "https://e.org/a", retrieved_at: "2026-08-01", content_hash: null, reference: 1 },
+  { id: "s2", kind: "reporting", title: "The Herald", retrieved_from: "https://e.org/b", retrieved_at: "2026-08-01", content_hash: "wire", reference: 1 },
+  { id: "s3", kind: "reporting", title: "The Post", retrieved_from: "https://e.org/c", retrieved_at: "2026-08-01", content_hash: "wire", reference: 1 },
 ];
 
 const draft = (id: string, statement: string, over: Partial<HypothesisDraft> = {}): HypothesisDraft => ({

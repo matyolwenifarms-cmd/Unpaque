@@ -8,7 +8,7 @@ import type { EntityRow, SourceRow } from "@/lib/detective-api.ts";
 import { CaseGraph } from "./CaseGraph.tsx";
 
 const SOURCES: SourceRow[] = [
-  { id: "src1", kind: "official_record", title: "Gate log", retrieved_from: "https://e.org/a", retrieved_at: "2026-08-01", content_hash: null },
+  { id: "src1", kind: "official_record", title: "Gate log", retrieved_from: "https://e.org/a", retrieved_at: "2026-08-01", content_hash: null, reference: 1 },
 ];
 
 const ENTITIES: EntityRow[] = [
