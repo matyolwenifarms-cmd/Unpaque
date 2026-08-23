@@ -32,7 +32,7 @@ what deliberately did not change with it, is `DEPARTURES.md` §6.
 | Feature | What it does | State | Costs to run |
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
-| **Research** | Proposal, papers, literature, method, analysis, coding, write-up | Seven stages — the whole lifecycle, opening on the supervisor pass. A study holds its own corpus and can set one paper against another; §6 and §7, quantitative and qualitative, with a second coder and inter-coder agreement | **Nothing** |
+| **Research** | Proposal, papers, screening, literature, method, analysis, coding, write-up | Eight stages — the whole lifecycle, opening on the supervisor pass. PRISMA screening with a flow counted from the decisions. A study holds its own corpus and can set one paper against another; §6 and §7, quantitative and qualitative, with a second coder and inter-coder agreement | **Nothing** |
 | **Detect** | Investigative intelligence — cases, evidence, timeline, dossier, explanations, case graph | Phase 0–1, plus §11's graph and §12's hypothesis, falsification and skeptic engines | Nothing |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
@@ -47,13 +47,13 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 1403 unit and component tests, four passing gates (typecheck, lint, test,
+- 1429 unit and component tests, four passing gates (typecheck, lint, test,
   build). Four of them read the recorded provider fixtures and **skip where
   those are absent** — which is every agent container, since OpenAlex,
-  Crossref and Unpaywall are all blocked there. A run reporting 1399 passed
+  Crossref and Unpaywall are all blocked there. A run reporting 1425 passed
   and 4 skipped has checked less than it looks; `npm run research:record` on
   a machine with network access is what closes them.
-- 246 SQL assertions across eleven suites, run against a real Postgres 16, with
+- 373 SQL assertions across thirteen suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
   responses. The recorded fixtures are committed.
@@ -267,6 +267,7 @@ and all three are built the same way:
 | Research | Offer a test on a column it has just called broken | A `will_mislead` column is withdrawn from every pair, with the fix that brings it back |
 | Research | Turn a disagreeing figure into a contradiction | A `Suggestion` has no field a relation or a basis could be written into; the reviewer supplies both |
 | Research | Record a relation nobody can check | `basis` is `not null` and not short, in the schema; direction is never normalised |
+| Research | Draw a PRISMA diagram whose numbers do not reconcile | No count is typed anywhere; `Flow` is a union, so an unfinished review has no counts at all |
 | Research | Cite a page a sentence is not on | The flattening is recorded as a page map and the page derived from it; no coding stores a page number of its own |
 | Both | Lose a batch to one unreadable file | Each file is read alone, and every reader that can hang is raced against a clock |
 | Detect | State an allegation as fact | 11 epistemic classifications; the dossier concludes nothing |
