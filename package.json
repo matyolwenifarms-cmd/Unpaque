@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Unpaque \u2014 communication diagnostics engine. Names the rhetorical structure of a text, traceable to communication theory.",
+  "description": "Unpaque — communication diagnostics engine. Names the rhetorical structure of a text, traceable to communication theory.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -25,6 +25,7 @@
     "@supabase/supabase-js": "^2.47.10",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "fflate": "^0.8.3",
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
