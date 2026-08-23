@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, Search } from "lucide-react";
 import { AnalyseData } from "@/components/AnalyseData.tsx";
 import { ChooseMethod } from "@/components/ChooseMethod.tsx";
@@ -6,6 +6,38 @@ import { CodeText } from "@/components/CodeText.tsx";
 import { DataUpload } from "@/components/DataUpload.tsx";
 import { DatasetSummary } from "@/components/DatasetSummary.tsx";
 import { ReferenceList } from "@/components/ReferenceList.tsx";
+import { StudyBar } from "@/components/StudyBar.tsx";
+import { useStudies } from "@/hooks/useStudies.ts";
+import {
+  clearFindings,
+  keepReference,
+  loadFindings,
+  loadMethodDeclaration,
+  loadReferences,
+  saveFinding,
+  saveMethodDeclaration,
+} from "@/lib/qualitative-api.ts";
+
+/**
+ * Replace a study's stored analyses with the list on screen.
+ *
+ * Cleared and re-inserted rather than diffed. There are a handful of analyses
+ * in a study, `study_findings` has no update policy on purpose — a finding is
+ * re-run, not edited — and a diff would need a stable identity for a value
+ * object that has none. Whole-list replacement is the only version that cannot
+ * end up half-applied.
+ */
+async function storeFindings(
+  studyId: string,
+  findings: readonly Finding[],
+  descriptives: Array<{ label: string; stats: Descriptives }>,
+  datasetName: string | null,
+): Promise<void> {
+  await clearFindings(studyId);
+  for (const [index, finding] of findings.entries()) {
+    await saveFinding(studyId, finding, descriptives, datasetName, index + 1);
+  }
+}
 import { WriteUp } from "@/components/WriteUp.tsx";
 import { cn } from "@/lib/utils.ts";
 import type { Dataset } from "@shared/research/analytics/dataset.ts";
@@ -13,6 +45,7 @@ import { resultsSection } from "@shared/research/analytics/apa.ts";
 import type { Descriptives } from "@shared/research/analytics/describe.ts";
 import type { Finding } from "@shared/research/analytics/result.ts";
 import type { MethodStatement } from "@shared/research/method/statement.ts";
+import type { Reference } from "@shared/research/reference.ts";
 import type { Supplied } from "@shared/research/writeup/document.ts";
 import { referenceList } from "@shared/research/writeup/references.ts";
 import { searchReferences, type ResultOrder, type SearchedReference } from "@/lib/research-api.ts";
@@ -132,7 +165,48 @@ export default function Research() {
   const [findings, setFindings] = useState<Finding[]>([]);
   const [described, setDescribed] = useState<Array<{ label: string; stats: Descriptives }>>([]);
   const [qualitative, setQualitative] = useState<{ markdown: string; from: string } | null>(null);
+  /** The declaration as it was stored, handed back to the Method form. */
+  const [declaration, setDeclaration] = useState<unknown>(null);
+  /** References kept for this study, which is not the search result list. */
+  const [kept, setKept] = useState<Reference[]>([]);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [dropped, setDropped] = useState(0);
+  const studies = useStudies();
+  const studyId = studies.studyId;
+
+  // Loaded when a study is opened, and cleared when one is closed. Cleared
+  // rather than left standing: showing the previous study's analyses under a
+  // new study's name is the failure this whole lift was meant to prevent.
+  useEffect(() => {
+    if (studyId === null) {
+      setMethod(null);
+      setFindings([]);
+      setDescribed([]);
+      setKept([]);
+      setDropped(0);
+      return;
+    }
+    let active = true;
+    void loadMethodDeclaration(studyId).then((result) => {
+      if (!active || !result.ok) return;
+      setDeclaration(result.data ?? null);
+    });
+    void loadFindings(studyId).then((result) => {
+      if (!active || !result.ok) return;
+      setFindings(result.data.findings);
+      setDescribed(result.data.descriptives);
+      setFileName(result.data.datasetName);
+      setDropped((was) => was + result.data.dropped);
+    });
+    void loadReferences(studyId).then((result) => {
+      if (!active || !result.ok) return;
+      setKept(result.data.references);
+      setDropped((was) => was + result.data.dropped);
+    });
+    return () => {
+      active = false;
+    };
+  }, [studyId]);
 
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -155,16 +229,41 @@ export default function Research() {
     setBusy(false);
   }
 
+  // One wrapper, so the header and the study bar are rendered in one place.
+  // Five copies of them was five places to forget one.
+  const frame = (body: React.ReactNode) => (
+    <div>
+      <ResearchHeader stage={stage} onStage={setStage} />
+      <StudyBar studies={studies} />
+      {dropped > 0 && (
+        <p className="mb-4 rounded-lg border border-rule bg-raised p-3 text-sm text-muted">
+          {dropped} stored {dropped === 1 ? "record" : "records"} could not be read back and{" "}
+          {dropped === 1 ? "was" : "were"} left out. Nothing was guessed at: a half-read analysis or
+          reference is not shown at all.
+        </p>
+      )}
+      {body}
+    </div>
+  );
+
   if (stage === "method") {
-    return (
-      <div>
-        <ResearchHeader stage={stage} onStage={setStage} />
-        <ChooseMethod onStatement={setMethod} />
-      </div>
+    return frame(
+      <ChooseMethod
+        // Keyed on the study so that opening a different one remounts the
+        // form. Without it React keeps the previous study's thirteen fields
+        // and the researcher edits one study's methodology into another's.
+        key={studyId ?? "unsaved"}
+        initial={declaration}
+        onStatement={setMethod}
+        onDeclaration={(next) => {
+          if (studyId !== null) void saveMethodDeclaration(studyId, next);
+        }}
+      />,
     );
   }
 
   if (stage === "writeup") {
+    const shownReferences: Reference[] = studyId !== null ? kept : (references ?? []);
     // Assembled at render rather than kept in state: every input is already
     // state, and a fifth copy would be a fifth thing to keep in step.
     const supplied: Supplied = {
@@ -182,36 +281,32 @@ export default function Research() {
           }
         : {}),
       ...(qualitative ? { findings: qualitative } : {}),
-      ...(references && references.length > 0
-        ? { references: { markdown: referenceList(references), count: references.length } }
+      // The study's reading list when there is one, and the search results
+      // otherwise. Not both: a bibliography assembled from whatever happened
+      // to be on screen is one that changes when somebody searches again.
+      ...(shownReferences.length > 0
+        ? { references: { markdown: referenceList(shownReferences), count: shownReferences.length } }
         : {}),
     };
-    return (
-      <div>
-        <ResearchHeader stage={stage} onStage={setStage} />
-        <WriteUp title={query.trim() || "Untitled study"} supplied={supplied} />
-      </div>
+    return frame(
+      <WriteUp title={studies.study?.title ?? query.trim() ?? ""} supplied={supplied} />,
     );
   }
 
   if (stage === "code") {
-    return (
-      <div>
-        <ResearchHeader stage={stage} onStage={setStage} />
-        <CodeText
-          onFindings={(markdown, from) =>
-            setQualitative(markdown === "" ? null : { markdown, from })
-          }
-        />
-      </div>
+    return frame(
+      <CodeText
+        studies={studies}
+        onFindings={(markdown, from) =>
+          setQualitative(markdown === "" ? null : { markdown, from })
+        }
+      />,
     );
   }
 
   if (stage === "analyse") {
-    return (
-      <div>
-        <ResearchHeader stage={stage} onStage={setStage} />
-        <div className="space-y-4">
+    return frame(
+      <div className="space-y-4">
           <DataUpload
             fileName={fileName}
             onLoaded={(loaded, name) => {
@@ -220,24 +315,26 @@ export default function Research() {
             }}
           />
           {dataset && <DatasetSummary dataset={dataset} />}
-          {dataset && (
-            <AnalyseData
-              dataset={dataset}
-              onFindings={(ran, stats) => {
-                setFindings(ran);
-                setDescribed(stats);
-              }}
-            />
-          )}
-          <Instructions hasData={dataset !== null} />
-        </div>
-      </div>
+        {dataset && (
+          <AnalyseData
+            // Keyed on the study for the same reason the method form is.
+            key={studyId ?? "unsaved"}
+            dataset={dataset}
+            initialFindings={findings}
+            onFindings={(ran, stats) => {
+              setFindings(ran);
+              setDescribed(stats);
+              if (studyId !== null) void storeFindings(studyId, ran, stats, fileName);
+            }}
+          />
+        )}
+        <Instructions hasData={dataset !== null} />
+      </div>,
     );
   }
 
-  return (
-    <div>
-      <ResearchHeader stage={stage} onStage={setStage} />
+  return frame(
+    <>
       {/* The heading lives in ResearchHeader, once. The old one was left here
           with sr-only, which still renders the element — so the page had two
           h1s reading "Research", and an outline with two top-level headings is
@@ -356,7 +453,21 @@ export default function Research() {
               Showing {references.length} of about {total.toLocaleString("en-GB")},{" "}
               {shownOrder === "recency" ? "newest first" : "most relevant first"}.
             </p>
-            <ReferenceList references={references} />
+            <ReferenceList
+              references={references}
+              kept={new Set(kept.map((reference) => reference.id))}
+              {...(studyId === null
+                ? {}
+                : {
+                    onKeep: (reference) => {
+                      // Optimistic, and safe to be: the unique index refuses a
+                      // duplicate and the client treats that as success, so the
+                      // worst case is a button that was already true.
+                      setKept((was) => [...was, reference]);
+                      void keepReference(studyId, reference);
+                    },
+                  })}
+            />
           </>
         )}
 
@@ -369,7 +480,6 @@ export default function Research() {
           </div>
         )}
       </div>
-
-    </div>
+    </>,
   );
 }

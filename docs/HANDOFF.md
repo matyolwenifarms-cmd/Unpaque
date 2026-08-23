@@ -47,8 +47,8 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 955 unit and component tests, four passing gates (typecheck, lint, test, build).
-- 160 SQL assertions across seven suites, run against a real Postgres 16, with
+- 979 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 180 SQL assertions across eight suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
   responses. The recorded fixtures are committed.
@@ -88,12 +88,16 @@ The distinction matters more than the totals.
   a byte-order mark — and those are committed as fixtures. The shapes are
   right; the data is invented. A real export is still the thing to try, and it
   needs no key.
-- **The write-up assembles only what this session produced.** The stages
-  report their output upward and the page holds it; nothing is persisted, so a
-  refresh empties four of the nine sections. Method and quantitative findings
-  are the two that would need a table to survive — the qualitative half already
-  has one. Nothing is lost silently: the write-up says "not written yet" and
-  names the stage to go back to.
+- **A study now holds the whole of a piece of research**, and the picker moved
+  from the coding stage to the top of Research to say so. It was right while a
+  study held only transcripts; it stopped being right when the write-up needed
+  the method declaration and the analyses, which were sitting in a different
+  component's state. Two containers for one piece of research is how somebody
+  ends up with a methodology that does not describe the coding beneath it.
+- **The dataset itself is never uploaded.** Analyses are stored; the file they
+  were run on is named and not kept. Reopening a study shows the findings and
+  the write-up assembles from them, but re-running anything needs the file
+  again. A SQL assertion checks there is no column it could be hiding in.
 - **The qualitative workspace has never written to a live database.** Six
   tables, an RPC that checks a coding's offsets against the document it points
   into, and 33 assertions against a real Postgres 16 — but no study, transcript

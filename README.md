@@ -45,7 +45,7 @@ That boundary is enforced structurally, not by asking a model nicely:
 npm run dev          # Vite dev server
 npm run typecheck    # tsc -b --noEmit
 npm run lint         # eslint .
-npm test             # vitest run — 955 tests
+npm test             # vitest run — 979 tests
 npm run build        # tsc -b && vite build
 npm run smoke:ui     # every route, in Chromium, console asserted empty
 npm run smoke:coding # the coding surface, driven with a real pointer

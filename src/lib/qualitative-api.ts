@@ -1,6 +1,10 @@
 import type { Code } from "@shared/research/qualitative/codebook.ts";
 import type { Coding } from "@shared/research/qualitative/coding.ts";
 import type { ThemeDraft } from "@shared/research/qualitative/themes.ts";
+import type { Descriptives } from "@shared/research/analytics/describe.ts";
+import type { Finding } from "@shared/research/analytics/result.ts";
+import type { Reference } from "@shared/research/reference.ts";
+import { parseAll, parseFinding, parseReference } from "@shared/research/writeup/stored.ts";
 import { supabase } from "@/lib/supabase.ts";
 
 // Straight to Postgres through supabase-js, with no edge function in between,
@@ -341,4 +345,133 @@ export interface Invitation {
 export async function pendingInvitations(): Promise<Result<Invitation[]>> {
   const { data, error } = await supabase().rpc("pending_invitations");
   return wrap<Invitation[]>(data, error);
+}
+
+// --- What a write-up is assembled from -------------------------------------
+//
+// Three jsonb columns, and every read goes through the parsers in
+// writeup/stored.ts. What does not parse is dropped and counted, never cast:
+// a `Finding` admitted without checking would carry a p-value with no effect
+// beside it, which is the one thing `result.ts` exists to make impossible.
+
+export interface StoredFindings {
+  findings: Finding[];
+  descriptives: Array<{ label: string; stats: Descriptives }>;
+  datasetName: string | null;
+  /** Rows that did not parse. Surfaced, never swallowed. */
+  dropped: number;
+}
+
+export async function loadMethodDeclaration(studyId: string): Promise<Result<unknown>> {
+  const { data, error } = await supabase()
+    .from("studies")
+    .select("method_declaration")
+    .eq("id", studyId)
+    .single();
+  if (error) return { ok: false, message: error.message };
+  return { ok: true, data: data.method_declaration };
+}
+
+export async function saveMethodDeclaration(
+  studyId: string,
+  declaration: unknown,
+): Promise<Result<null>> {
+  const { error } = await supabase()
+    .from("studies")
+    .update({ method_declaration: declaration })
+    .eq("id", studyId);
+  return wrap<null>(null, error);
+}
+
+export async function loadFindings(studyId: string): Promise<Result<StoredFindings>> {
+  const { data, error } = await supabase()
+    .from("study_findings")
+    .select("finding, descriptives, dataset_name, position")
+    .eq("study_id", studyId)
+    .order("position", { ascending: true });
+  if (error) return { ok: false, message: error.message };
+
+  const rows = data ?? [];
+  const parsed = parseAll(rows.map((row) => row.finding), parseFinding);
+  // The descriptives and the file name come from the most recent row: they
+  // describe the dataset, and every finding in a study was run on one.
+  const last = rows[rows.length - 1];
+  return {
+    ok: true,
+    data: {
+      findings: parsed.items,
+      descriptives: (last?.descriptives ?? []) as Array<{ label: string; stats: Descriptives }>,
+      datasetName: last?.dataset_name ?? null,
+      dropped: parsed.dropped,
+    },
+  };
+}
+
+export async function saveFinding(
+  studyId: string,
+  finding: Finding,
+  descriptives: Array<{ label: string; stats: Descriptives }>,
+  datasetName: string | null,
+  position: number,
+): Promise<Result<null>> {
+  const { error } = await supabase().from("study_findings").insert({
+    study_id: studyId,
+    finding,
+    descriptives,
+    dataset_name: datasetName,
+    position,
+  });
+  return wrap<null>(null, error);
+}
+
+export async function clearFindings(studyId: string): Promise<Result<null>> {
+  const { error } = await supabase().from("study_findings").delete().eq("study_id", studyId);
+  return wrap<null>(null, error);
+}
+
+export async function loadReferences(
+  studyId: string,
+): Promise<Result<{ references: Reference[]; dropped: number }>> {
+  const { data, error } = await supabase()
+    .from("study_references")
+    .select("reference")
+    .eq("study_id", studyId)
+    .order("created_at", { ascending: true });
+  if (error) return { ok: false, message: error.message };
+  const parsed = parseAll((data ?? []).map((row) => row.reference), parseReference);
+  return { ok: true, data: { references: parsed.items, dropped: parsed.dropped } };
+}
+
+export async function keepReference(
+  studyId: string,
+  reference: Reference,
+): Promise<Result<null>> {
+  const { error } = await supabase().from("study_references").insert({
+    study_id: studyId,
+    reference,
+    doi: reference.doi ?? null,
+    provider_id: reference.providerId ?? null,
+  });
+  // Adding the same work twice is not a failure worth a message. The unique
+  // index is what stops it; the researcher clicked a button that was already
+  // done, and telling them off for it teaches nothing.
+  if (error && /duplicate key|unique constraint/i.test(error.message)) {
+    return { ok: true, data: null };
+  }
+  return wrap<null>(null, error);
+}
+
+export async function dropReference(studyId: string, referenceId: string): Promise<Result<null>> {
+  const { data, error } = await supabase()
+    .from("study_references")
+    .select("id, reference")
+    .eq("study_id", studyId);
+  if (error) return { ok: false, message: error.message };
+  const row = (data ?? []).find((candidate) => {
+    const reference = candidate.reference as { id?: unknown } | null;
+    return reference !== null && reference.id === referenceId;
+  });
+  if (!row) return { ok: true, data: null };
+  const removal = await supabase().from("study_references").delete().eq("id", row.id);
+  return wrap<null>(null, removal.error);
 }

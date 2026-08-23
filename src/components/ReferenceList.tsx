@@ -35,7 +35,23 @@ function Caveat({ text, severe }: { text: string; severe: boolean }) {
   );
 }
 
-export function ReferenceList({ references }: { references: SearchedReference[] }) {
+export function ReferenceList({
+  references,
+  kept,
+  onKeep,
+}: {
+  references: SearchedReference[];
+  /**
+   * Ids already in the open study's reading list.
+   *
+   * Passed in rather than tracked here, because "kept" is a fact about the
+   * study and this component is rendered for a search that has no study behind
+   * it just as often.
+   */
+  kept?: ReadonlySet<string>;
+  /** Absent when no study is open, and then no button is offered. */
+  onKeep?: (reference: SearchedReference) => void;
+}) {
   return (
     <ol className="space-y-3">
       {references.map((reference) => {
@@ -53,6 +69,16 @@ export function ReferenceList({ references }: { references: SearchedReference[] 
             {reference.caveat && <Caveat text={reference.caveat} severe={severe} />}
 
             <div className="mt-3 flex flex-wrap items-center gap-3 text-xs">
+              {onKeep && (
+                <button
+                  type="button"
+                  onClick={() => onKeep(reference)}
+                  disabled={kept?.has(reference.id)}
+                  className="rounded-lg border border-rule px-3 py-1 hover:border-accent disabled:opacity-50"
+                >
+                  {kept?.has(reference.id) ? "In your study" : "Keep for this study"}
+                </button>
+              )}
               {reference.doi && (
                 <a
                   href={`https://doi.org/${reference.doi}`}

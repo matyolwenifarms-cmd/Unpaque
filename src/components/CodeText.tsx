@@ -9,16 +9,8 @@ import { Coders } from "@/components/Coders.tsx";
 import { Codebook } from "@/components/Codebook.tsx";
 import { ThemeBoard } from "@/components/ThemeBoard.tsx";
 import { useQualitativeStudy } from "@/hooks/useQualitativeStudy.ts";
-import { useSession } from "@/hooks/useSession.ts";
-import {
-  acceptInvitation,
-  createStudy,
-  listStudies,
-  pendingInvitations,
-  unblindStudy,
-  type Invitation,
-  type StudySummary,
-} from "@/lib/qualitative-api.ts";
+import type { StudiesState } from "@/hooks/useStudies.ts";
+import type { StudySummary } from "@/lib/qualitative-api.ts";
 import { cn } from "@/lib/utils.ts";
 
 const VIEWS = [
@@ -40,134 +32,25 @@ type View = (typeof VIEWS)[number]["id"];
  * this feature could do.
  */
 export function CodeText({
+  studies,
   onFindings,
 }: {
+  studies: StudiesState;
   /** Reported upward so the write-up can transcribe the findings section. */
   onFindings?: (markdown: string, from: string) => void;
-} = {}) {
-  const { session, configured } = useSession();
-  const [studies, setStudies] = useState<StudySummary[] | null>(null);
-  const [studyId, setStudyId] = useState<string | null>(null);
-  const [naming, setNaming] = useState(false);
-  const [title, setTitle] = useState("");
-  const [question, setQuestion] = useState("");
-  const [invitations, setInvitations] = useState<Invitation[]>([]);
-  const [listProblem, setListProblem] = useState<string | null>(null);
-
-  const store = useQualitativeStudy(studyId);
-
-  useEffect(() => {
-    if (!configured || !session) {
-      setStudies(null);
-      setStudyId(null);
-      setInvitations([]);
-      return;
-    }
-    let active = true;
-    void pendingInvitations().then((result) => {
-      if (active && result.ok) setInvitations(result.data);
-    });
-    void listStudies().then((result) => {
-      if (!active) return;
-      if (!result.ok) return setListProblem(result.message);
-      setListProblem(null);
-      setStudies(result.data);
-      // Opened rather than offered when there is exactly one. A picker with a
-      // single entry is a click that teaches nothing.
-      if (result.data.length === 1) setStudyId(result.data[0]!.id);
-    });
-    return () => {
-      active = false;
-    };
-  }, [configured, session]);
-
-  async function accept(invitation: Invitation) {
-    const result = await acceptInvitation(invitation.study_id);
-    if (!result.ok) return setListProblem(result.message);
-    setListProblem(null);
-    setInvitations((was) => was.filter((other) => other.study_id !== invitation.study_id));
-    const listed = await listStudies();
-    if (listed.ok) setStudies(listed.data);
-    setStudyId(invitation.study_id);
-  }
-
-  async function unblind() {
-    if (studyId === null) return;
-    const result = await unblindStudy(studyId);
-    if (!result.ok) return setListProblem(result.message);
-    setListProblem(null);
-    const listed = await listStudies();
-    if (listed.ok) setStudies(listed.data);
-  }
-
-  async function startStudy(event: React.FormEvent) {
-    event.preventDefault();
-    if (title.trim() === "") return;
-    const result = await createStudy(title, question);
-    if (!result.ok) return setListProblem(result.message);
-    setListProblem(null);
-    setStudies((was) => [result.data, ...(was ?? [])]);
-    setStudyId(result.data.id);
-    setTitle("");
-    setQuestion("");
-    setNaming(false);
-  }
+}) {
+  const store = useQualitativeStudy(studies.studyId);
 
   return (
     <div className="space-y-4">
-      {invitations.map((invitation) => (
-        <section key={invitation.study_id} className="rounded-lg border border-rule bg-raised p-4">
-          <h3 className="text-sm font-medium">
-            You have been invited to code &ldquo;{invitation.title}&rdquo;
-          </h3>
-          <p className="mt-1 text-sm text-muted">
-            {invitation.invited_by_email
-              ? `${invitation.invited_by_email} asked you to apply their codebook to their transcripts.`
-              : "Somebody asked you to apply their codebook to their transcripts."}{" "}
-            You will not see anybody else&rsquo;s codings while the study is blind, which is what
-            makes the comparison worth making.
-          </p>
-          <button
-            type="button"
-            onClick={() => void accept(invitation)}
-            className="mt-3 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-ink"
-          >
-            Accept
-          </button>
-        </section>
-      ))}
-
-      {session && studies !== null && (
-        <StudyPicker
-          studies={studies}
-          studyId={studyId}
-          onOpen={setStudyId}
-          naming={naming}
-          onNaming={setNaming}
-          title={title}
-          onTitle={setTitle}
-          question={question}
-          onQuestion={setQuestion}
-          onStart={startStudy}
-        />
-      )}
-
-      {listProblem && (
-        <p className="rounded-lg border border-rule bg-raised p-3 text-sm" role="alert">
-          {listProblem}
-        </p>
-      )}
-
       {/* The notice tracks the behaviour rather than the feature existing.
           Copy changes with behaviour, in the same commit — a warning somebody
           finds decorative teaches them to discount the next one. */}
       {!store.kept && (
         <p className="rounded-lg border border-rule bg-raised p-3 text-sm text-muted">
-          {session
-            ? "Nothing here is saved until you open or start a study. Transcripts, codes and themes live in this browser tab only."
-            : configured
-              ? "Nothing here is saved. Transcripts, codes and themes live in this browser tab, and closing or refreshing it loses them — sign in and start a study to keep your coding."
-              : "This build is not connected to an Unpaque project, so nothing here is saved. Transcripts, codes and themes live in this browser tab only."}
+          {studies.studies !== null
+            ? "Nothing here is saved until you open or start a study above. Transcripts, codes and themes live in this browser tab only."
+            : "Nothing here is saved. Transcripts, codes and themes live in this browser tab, and closing or refreshing it loses them — sign in and start a study to keep your coding."}
         </p>
       )}
 
@@ -182,111 +65,13 @@ export function CodeText({
       ) : (
         <Workspace
           store={store}
-          study={studies?.find((candidate) => candidate.id === studyId) ?? null}
-          userId={session?.user?.id ?? null}
-          onUnblind={() => void unblind()}
+          study={studies.study}
+          userId={studies.userId}
+          onUnblind={() => void studies.unblind()}
           onFindings={onFindings}
         />
       )}
     </div>
-  );
-}
-
-function StudyPicker({
-  studies,
-  studyId,
-  onOpen,
-  naming,
-  onNaming,
-  title,
-  onTitle,
-  question,
-  onQuestion,
-  onStart,
-}: {
-  studies: readonly StudySummary[];
-  studyId: string | null;
-  onOpen: (id: string) => void;
-  naming: boolean;
-  onNaming: (naming: boolean) => void;
-  title: string;
-  onTitle: (title: string) => void;
-  question: string;
-  onQuestion: (question: string) => void;
-  onStart: (event: React.FormEvent) => void;
-}) {
-  return (
-    <section className="rounded-lg border border-rule bg-raised p-4">
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <h3 className="mr-auto text-sm font-medium">Your studies</h3>
-        <button
-          type="button"
-          onClick={() => onNaming(!naming)}
-          className="rounded-lg border border-rule px-3 py-1.5 text-xs hover:border-accent"
-        >
-          {naming ? "Close" : "New study"}
-        </button>
-      </div>
-
-      {studies.length === 0 && !naming && (
-        <p className="text-sm text-muted">
-          A study holds its transcripts, its codebook and everything coded in it. Start one and the
-          work is kept.
-        </p>
-      )}
-
-      {studies.length > 0 && (
-        <ul className="flex flex-wrap gap-2">
-          {studies.map((study) => (
-            <li key={study.id}>
-              <button
-                type="button"
-                aria-pressed={studyId === study.id}
-                onClick={() => onOpen(study.id)}
-                className={cn(
-                  "rounded-lg border px-3 py-1.5 text-xs",
-                  studyId === study.id
-                    ? "border-accent bg-accent/10"
-                    : "border-rule hover:border-accent",
-                )}
-              >
-                {study.title}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {naming && (
-        <form onSubmit={onStart} className="mt-3">
-          <label htmlFor="study-title" className="mb-1 block text-xs text-muted">
-            What is the study called?
-          </label>
-          <input
-            id="study-title"
-            value={title}
-            onChange={(event) => onTitle(event.target.value)}
-            className="mb-3 w-full rounded-lg border border-rule bg-paper px-3 py-2 text-sm outline-none focus:border-accent"
-          />
-          <label htmlFor="study-question" className="mb-1 block text-xs text-muted">
-            The research question (optional)
-          </label>
-          <input
-            id="study-question"
-            value={question}
-            onChange={(event) => onQuestion(event.target.value)}
-            className="mb-3 w-full rounded-lg border border-rule bg-paper px-3 py-2 text-sm outline-none focus:border-accent"
-          />
-          <button
-            type="submit"
-            disabled={title.trim() === ""}
-            className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-ink disabled:opacity-40"
-          >
-            Start study
-          </button>
-        </form>
-      )}
-    </section>
   );
 }
 

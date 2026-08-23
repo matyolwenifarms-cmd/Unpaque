@@ -21,9 +21,38 @@ import { cn } from "@/lib/utils.ts";
  * Nothing blocks. Every tension here is defensible in some study, and a tool
  * that refused a design would be overruling a supervisor it cannot hear.
  */
+/**
+ * Whether a value read back out of jsonb is a declaration at all.
+ *
+ * Only the paradigm is checked, and deliberately: every other field is
+ * optional in `MethodDeclaration`, and a stricter guard here would throw away
+ * a half-filled declaration — which is the ordinary state of one, since the
+ * form saves as it is typed. The fields are read defensively below.
+ */
+function isDeclaration(value: unknown): value is MethodDeclaration {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as { paradigm?: unknown }).paradigm === "string"
+  );
+}
+
 export function ChooseMethod({
+  initial,
   onStatement,
+  onDeclaration,
 }: {
+  /**
+   * A declaration read back from a study, or null.
+   *
+   * Read once, at mount. The parent remounts this component when the open
+   * study changes (it is keyed on the study id), which is what makes "read
+   * once" correct rather than a bug — a prop watched continuously would fight
+   * the researcher's typing every time the save round-tripped.
+   */
+  initial?: unknown;
+  /** The declaration itself, for storing. The statement is derived from it. */
+  onDeclaration?: (declaration: MethodDeclaration | null) => void;
   /**
    * Reported upward so the write-up can transcribe it.
    *
@@ -33,19 +62,26 @@ export function ChooseMethod({
    */
   onStatement?: (statement: MethodStatement | null) => void;
 } = {}) {
-  const [paradigm, setParadigm] = useState<ParadigmId | "">("");
-  const [theory, setTheory] = useState<TheoryId | "">("");
-  const [sampling, setSampling] = useState<"" | "statistical" | "purposive">("");
-  const [sampleSize, setSampleSize] = useState("");
-  const [participants, setParticipants] = useState("");
-  const [collection, setCollection] = useState("");
+  const restored = isDeclaration(initial) ? initial : null;
+  const [paradigm, setParadigm] = useState<ParadigmId | "">(restored?.paradigm ?? "");
+  const [theory, setTheory] = useState<TheoryId | "">(restored?.theory ?? "");
+  const [sampling, setSampling] = useState<"" | "statistical" | "purposive">(
+    restored?.sampling ?? "",
+  );
+  const [sampleSize, setSampleSize] = useState(
+    restored?.sampleSize === undefined ? "" : String(restored.sampleSize),
+  );
+  const [participants, setParticipants] = useState(restored?.participants ?? "");
+  const [collection, setCollection] = useState(restored?.collection ?? "");
   const [questionType, setQuestionType] =
-    useState<"" | "causal" | "associational" | "descriptive" | "exploratory">("");
-  const [randomised, setRandomised] = useState(false);
-  const [strategy, setStrategy] = useState("");
-  const [apriori, setApriori] = useState(false);
-  const [claimsSaturation, setClaimsSaturation] = useState(false);
-  const [saturationAccount, setSaturationAccount] = useState("");
+    useState<"" | "causal" | "associational" | "descriptive" | "exploratory">(
+      restored?.questionType ?? "",
+    );
+  const [randomised, setRandomised] = useState(restored?.randomised ?? false);
+  const [strategy, setStrategy] = useState(restored?.identificationStrategy ?? "");
+  const [apriori, setApriori] = useState(restored?.apriorCodingFrame ?? false);
+  const [claimsSaturation, setClaimsSaturation] = useState(restored?.claimsSaturation ?? false);
+  const [saturationAccount, setSaturationAccount] = useState(restored?.saturationAccount ?? "");
   const [copied, setCopied] = useState(false);
 
   const size = Number.parseInt(sampleSize, 10);
@@ -79,6 +115,14 @@ export function ChooseMethod({
     onStatement?.(statement);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statement]);
+
+  // Saved on every change rather than behind a button. The alternative is a
+  // "save" somebody forgets to press, and the thing they lose is thirteen
+  // fields they will have to remember rather than re-read.
+  useEffect(() => {
+    onDeclaration?.(declaration);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(declaration)]);
 
   const chosen = paradigm ? PARADIGMS[paradigm] : null;
   const markdown = statement

@@ -238,3 +238,25 @@ describe("the write-up, assembled from the other stages", () => {
     expect(screen.getByText(/1 reference, resolved against a bibliographic provider/)).toBeInTheDocument();
   });
 });
+
+// The failure this whole lift was meant to prevent: work belonging to one
+// study appearing under another's name. Closing a study must empty what was
+// loaded from it, and the seeding must not wipe what was loaded.
+describe("a study's own work, and nobody else's", () => {
+  it("keeps nothing loaded when no study is open", async () => {
+    const user = userEvent.setup();
+    render(<Research />);
+    await user.click(screen.getByRole("button", { name: /^Write up/ }));
+    expect(screen.getByText(/0 of 9 sections are assembled/)).toBeInTheDocument();
+  });
+
+  // A stored row that will not parse is dropped and counted, never coerced.
+  // Nothing here can produce one, so the notice is asserted for its absence:
+  // it must not appear when everything read cleanly.
+  it("says nothing about dropped records when none were dropped", async () => {
+    const user = userEvent.setup();
+    render(<Research />);
+    await user.click(screen.getByRole("button", { name: /^Write up/ }));
+    expect(screen.queryByText(/could not be read back/)).not.toBeInTheDocument();
+  });
+});

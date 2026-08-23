@@ -27,9 +27,19 @@ import { cn } from "@/lib/utils.ts";
  */
 export function AnalyseData({
   dataset,
+  initialFindings,
   onFindings,
 }: {
   dataset: Dataset;
+  /**
+   * Analyses already stored against the open study.
+   *
+   * Seeded rather than merged by the parent, so this component owns the whole
+   * list and what it reports upward is authoritative. Without it, uploading a
+   * file into a study that already had analyses mounted this component with an
+   * empty list, which it then reported — wiping them.
+   */
+  initialFindings?: readonly Finding[];
   /** Reported upward so the write-up can transcribe the results section. */
   onFindings?: (findings: Finding[], descriptives: Array<{ label: string; stats: Descriptives }>) => void;
 }) {
@@ -45,7 +55,7 @@ export function AnalyseData({
   // run, and a workspace that forgot the previous one would make the write-up
   // a copy-and-paste exercise — which is the administration this feature exists
   // to take off the researcher.
-  const [findings, setFindings] = useState<Finding[]>([]);
+  const [findings, setFindings] = useState<Finding[]>([...(initialFindings ?? [])]);
   const [problem, setProblem] = useState<string | null>(null);
 
   const a = usable.find((column) => column.name === aName) ?? null;
