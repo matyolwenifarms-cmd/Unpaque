@@ -18,6 +18,7 @@
 
 import { detect, type Detection, type FileKind } from "../../ingest/kind.ts";
 import { extractText, extractWord, readArchive, type Page, type ReadPdf } from "../../ingest/extract.ts";
+import { DEFAULT_READ_TIMEOUT_MS, TIMED_OUT, inSeconds, withinTime } from "../../ingest/timeout.ts";
 
 export type { ReadPdf };
 import { readByFormat, readDocument, type Reading } from "./classify.ts";
@@ -73,10 +74,23 @@ async function hash(bytes: Uint8Array): Promise<string> {
  * Runtime too. Absent, a PDF arrives as a source with no text and says so —
  * which is the same state a scan arrives in, and correct.
  */
+export interface PlanOptions {
+  /**
+   * How long one file gets before the rest of the upload goes on without it.
+   *
+   * Settable so a test can use fifty milliseconds. Left at the default it is
+   * thirty seconds, which is long enough for a three-hundred-page bundle on a
+   * slow machine and short enough that somebody watching a spinner finds out.
+   */
+  readTimeoutMs?: number;
+}
+
 export async function planImport(
   files: readonly IncomingFile[],
   readPdf?: ReadPdf,
+  options: PlanOptions = {},
 ): Promise<Plan> {
+  const readTimeoutMs = options.readTimeoutMs ?? DEFAULT_READ_TIMEOUT_MS;
   const sources: PlannedSource[] = [];
   const archives: string[] = [];
   const seen = new Map<string, string>();
@@ -118,7 +132,14 @@ export async function planImport(
     }
 
     if (detection.kind === "pdf" && readPdf) {
-      const pages = await readPdf(file.bytes);
+      const pages = await withinTime(readPdf(file.bytes), readTimeoutMs);
+      if (pages === TIMED_OUT) {
+        sources.push(await planned(
+          file, within, detection, [],
+          `Reading this PDF took longer than ${inSeconds(readTimeoutMs)} and was given up on. The rest of the upload is unaffected. It may be very long, or damaged.`,
+        ));
+        return;
+      }
       sources.push(await planned(
         file, within, detection, pages,
         pages.length === 0 ? "The PDF has no text layer, so it is probably a scan. Nothing has read what is in it." : null,
@@ -160,7 +181,20 @@ export async function planImport(
     };
   }
 
-  for (const file of files) await take(file, undefined, 0);
+  for (const file of files) {
+    // Each file on its own. A batch is a folder somebody dragged in, and one
+    // unreadable document among forty is a fact about that document -- not a
+    // reason to lose the other thirty-nine, which is what an unguarded await
+    // in this loop did.
+    try {
+      await take(file, undefined, 0);
+    } catch (error) {
+      sources.push(await planned(
+        file, undefined, detect(file.name, file.bytes), [],
+        `This file could not be read: ${error instanceof Error ? error.message : String(error)}. The rest of the upload is unaffected.`,
+      ));
+    }
+  }
 
   return {
     sources,

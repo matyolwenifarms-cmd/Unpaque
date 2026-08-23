@@ -170,6 +170,8 @@ export function ProposalReview({
     setSupervision(null);
     try {
       setSupervision(await superviseProposal(text, { check, search }));
+    } catch (error) {
+      setSays(`The reading did not finish: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setWorking(false);
     }
@@ -180,7 +182,17 @@ export function ProposalReview({
     setWorking(true);
     setSays(null);
     setSupervision(null);
-    const result = await readDocumentFile(files[0]!);
+    let result;
+    try {
+      result = await readDocumentFile(files[0]!);
+    } catch (error) {
+      // Reported, not swallowed, and the spinner comes down either way. A
+      // reader that throws and a reader that hangs look identical from here,
+      // and both used to leave "Reading it" on screen for good.
+      setSays(`That file could not be read: ${error instanceof Error ? error.message : String(error)}`);
+      setWorking(false);
+      return;
+    }
     if (result.text.trim() === "") {
       setSays(result.says);
       setWorking(false);

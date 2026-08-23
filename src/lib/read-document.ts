@@ -1,5 +1,6 @@
 import { detect } from "@shared/ingest/kind.ts";
 import { extractText, extractWord } from "@shared/ingest/extract.ts";
+import { DEFAULT_READ_TIMEOUT_MS, TIMED_OUT, inSeconds, withinTime } from "@shared/ingest/timeout.ts";
 import { readPdf } from "./read-pdf.ts";
 
 export interface ReadResult {
@@ -49,7 +50,17 @@ export async function readDocumentFile(file: File): Promise<ReadResult> {
   const detection = detect(file.name, bytes);
 
   if (detection.kind === "pdf") {
-    const text = textOf(await readPdf(bytes));
+    // Raced against a clock for the reason in `timeout.ts`: a misconfigured
+    // reader does not throw, it never returns, and a caught exception is no
+    // protection against that.
+    const pages = await withinTime(readPdf(bytes));
+    if (pages === TIMED_OUT) {
+      return {
+        text: "",
+        says: `Reading this PDF took longer than ${inSeconds(DEFAULT_READ_TIMEOUT_MS)} and was given up on. It may be very long, or damaged.`,
+      };
+    }
+    const text = textOf(pages);
     if (text.trim() !== "") return { text, says: null };
     return {
       text: "",

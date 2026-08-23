@@ -48,24 +48,34 @@ export function UploadPortal({ onImport }: { onImport: (sources: ConfirmedSource
   const [chosen, setChosen] = useState<Record<string, SourceKind>>({});
   const [dropped, setDropped] = useState<Set<string>>(new Set());
   const [reading, setReading] = useState(false);
+  const [failed, setFailed] = useState<string | null>(null);
   const [over, setOver] = useState(false);
   const input = useRef<HTMLInputElement>(null);
 
   async function read(files: FileList | null) {
     if (!files || files.length === 0) return;
     setReading(true);
-    const incoming: IncomingFile[] = [];
-    for (const file of Array.from(files)) {
-      incoming.push({ name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) });
+    setFailed(null);
+    try {
+      const incoming: IncomingFile[] = [];
+      for (const file of Array.from(files)) {
+        incoming.push({ name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) });
+      }
+      const made = await planImport(incoming, readPdf);
+      setPlan(made);
+      setChosen(Object.fromEntries(made.sources.map((source) => [source.id, source.reading.suggests])));
+      // Duplicates start unticked. They are almost always the same document
+      // reaching somebody twice, and importing both is how one source comes to
+      // look like two.
+      setDropped(new Set(made.sources.filter((source) => source.duplicateOf).map((source) => source.id)));
+    } catch (error) {
+      setFailed(error instanceof Error ? error.message : String(error));
+    } finally {
+      // In a finally, and that is the whole point. Without it a throw anywhere
+      // above leaves "Reading them" on screen with nothing behind it, and a
+      // spinner that never resolves tells somebody less than an error does.
+      setReading(false);
     }
-    const made = await planImport(incoming, readPdf);
-    setPlan(made);
-    setChosen(Object.fromEntries(made.sources.map((source) => [source.id, source.reading.suggests])));
-    // Duplicates start unticked. They are almost always the same document
-    // reaching somebody twice, and importing both is how one source comes to
-    // look like two.
-    setDropped(new Set(made.sources.filter((source) => source.duplicateOf).map((source) => source.id)));
-    setReading(false);
   }
 
   function confirm() {
@@ -131,6 +141,11 @@ export function UploadPortal({ onImport }: { onImport: (sources: ConfirmedSource
       </div>
 
       {reading && <p className="mt-3 text-sm text-muted">Reading them…</p>}
+      {failed !== null && (
+        <p className="mt-3 rounded-md bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-400">
+          Nothing could be read from that: {failed}. Nothing was imported.
+        </p>
+      )}
 
       {plan !== null && (
         <>

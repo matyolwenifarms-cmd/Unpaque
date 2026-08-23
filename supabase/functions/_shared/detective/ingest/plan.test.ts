@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { zipSync, strToU8 } from "fflate";
 import { MAX_ARCHIVE_DEPTH, planImport, summarise, type IncomingFile } from "./plan.ts";
+import type { ReadPdf } from "@shared/ingest/extract.ts";
 
 const file = (name: string, text: string): IncomingFile => ({ name, bytes: strToU8(text) });
 
@@ -155,5 +156,49 @@ describe("what the person is told before anything is imported", () => {
     ]);
     expect(plan.sources[1]!.duplicateOf).toBeUndefined();
     expect(plan.sources[0]!.contentHash).not.toBe(plan.sources[1]!.contentHash);
+  });
+});
+
+// The defect a user found, and the one that mattered more than its cause.
+//
+// A folder of forty documents with one unreadable PDF in it produced no plan
+// at all: the await in the loop rejected, the portal had no catch, and
+// "reading them" stayed on screen until the tab was closed. Word files in the
+// same batch were fine and never appeared either.
+describe("one file that cannot be read", () => {
+  const word = (name: string) => wordFile(name, ["Some text in a document."]);
+  const brokenPdf = (name: string): IncomingFile => ({ name, bytes: strToU8("%PDF-1.7\nbinary...") });
+
+  it("does not take the rest of the batch with it", async () => {
+    const angry: ReadPdf = () => Promise.reject(new Error("worker not found"));
+    const plan = await planImport(
+      [word("a.docx"), brokenPdf("broken.pdf"), word("b.docx")],
+      angry,
+    );
+    expect(plan.sources).toHaveLength(3);
+    expect(plan.sources.filter((source) => source.pages.length > 0)).toHaveLength(2);
+  });
+
+  it("says which one it was, and that the rest are unaffected", async () => {
+    const angry: ReadPdf = () => Promise.reject(new Error("worker not found"));
+    const plan = await planImport([brokenPdf("broken.pdf")], angry);
+    expect(plan.sources[0]!.says).toContain("worker not found");
+    expect(plan.sources[0]!.says).toContain("rest of the upload is unaffected");
+  });
+
+  // A reader that hangs is not a reader that throws, and the second is the
+  // only one a catch can see.
+  it("gives up on a reader that never returns, rather than waiting for ever", async () => {
+    const hanging: ReadPdf = () => new Promise(() => undefined);
+    const plan = await planImport(
+      [word("a.docx"), brokenPdf("hangs.pdf")],
+      hanging,
+      { readTimeoutMs: 50 },
+    );
+    expect(plan.sources).toHaveLength(2);
+    expect(plan.sources.find((source) => source.name === "hangs.pdf")!.says)
+      .toContain("was given up on");
+    expect(plan.sources.find((source) => source.name === "a.docx")!.pages.length)
+      .toBeGreaterThan(0);
   });
 });
