@@ -240,8 +240,34 @@ could be written into**.
 
 ---
 
+## Which specification a `§` refers to
+
+The two specifications number their sections independently, and the code cites
+both. `§6` and `§7` in `research/` are the Researcher's; `§4`, `§9`, `§10` and
+`§18` in `detective/` are the Detective's. There is no way to tell from the
+number alone — the directory is what disambiguates it, and a citation moved
+between the two would resolve to the wrong section without failing anything.
+
+Both are now in `docs/`. Until this commit neither was: 29 citations to `§4`
+and 14 to `§18` pointed at a document nobody reading the repository could open,
+which is the state in which a citation quietly becomes decoration.
+
+`docs/the-detective-master-system-build.md` is the 89-page source document the
+Detective spec consolidates. Its own audit note records it as "not provided" —
+it was provided, as a PDF in the project uploads, which for anybody reading the
+code is the same as absent. It is secondary to the consolidated spec by that
+spec's own instruction, and its section numbers are its own: its §3 is the
+epistemic model that the consolidated spec renumbers as §4.
+
+The second source document it names — the 44-page "Comprehensive Concept &
+Master Product Architecture" — is genuinely absent.
+
 ## Where the arguments live
 
+- `THE_DETECTIVE_SPEC.md` — the Detective's consolidated build specification.
+  Authoritative for that feature.
+- `the-detective-master-system-build.md` — its 89-page source, extracted from
+  a PDF. Secondary, and numbered differently. See above.
 - `ARCHITECTURE_ASSESSMENT.md` — the stack decision, the shared primitives, the
   known limits of the local test harness.
 - `DEPARTURES.md` — every deliberate divergence from a supplied specification,
