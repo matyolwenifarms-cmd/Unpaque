@@ -328,3 +328,131 @@ export async function unlinkHypothesisEvidence(id: string): Promise<Result<null>
   const { error } = await supabase().from("hypothesis_evidence").delete().eq("id", id);
   return wrap<null>(null, error);
 }
+
+// --- The case graph ---------------------------------------------------------
+//
+// Section 11. Nodes and the relationships between them.
+
+export interface EntityRow {
+  id: string;
+  kind: "person" | "organisation" | "location";
+  display_name: string;
+  aliases: string[];
+  role_in_case: string | null;
+  description: string | null;
+  sensitive: boolean;
+}
+
+export interface EdgeRow {
+  id: string;
+  relation: string;
+  status: EpistemicStatus;
+  established_by: string | null;
+  note: string | null;
+  source_entity_id: string | null;
+  source_event_id: string | null;
+  source_claim_id: string | null;
+  source_source_id: string | null;
+  target_entity_id: string | null;
+  target_event_id: string | null;
+  target_claim_id: string | null;
+  target_source_id: string | null;
+}
+
+export async function listEntities(caseId: string): Promise<Result<EntityRow[]>> {
+  const { data, error } = await supabase()
+    .from("case_entities")
+    .select("id, kind, display_name, aliases, role_in_case, description, sensitive")
+    .eq("case_id", caseId)
+    .order("created_at", { ascending: true });
+  return wrap<EntityRow[]>(data, error);
+}
+
+export async function createEntity(
+  caseId: string,
+  input: {
+    kind: EntityRow["kind"];
+    displayName: string;
+    aliases: string[];
+    roleInCase: string;
+    sensitive: boolean;
+  },
+): Promise<Result<EntityRow>> {
+  const { data, error } = await supabase()
+    .from("case_entities")
+    .insert({
+      case_id: caseId,
+      kind: input.kind,
+      display_name: input.displayName.trim(),
+      aliases: input.aliases.map((alias) => alias.trim()).filter(Boolean),
+      role_in_case: input.roleInCase.trim() || null,
+      sensitive: input.sensitive,
+    })
+    .select("id, kind, display_name, aliases, role_in_case, description, sensitive")
+    .single();
+  return wrap<EntityRow>(data, error);
+}
+
+export async function deleteEntity(id: string): Promise<Result<null>> {
+  const { error } = await supabase().from("case_entities").delete().eq("id", id);
+  return wrap<null>(null, error);
+}
+
+export async function listEdges(caseId: string): Promise<Result<EdgeRow[]>> {
+  const { data, error } = await supabase()
+    .from("case_edges")
+    .select("id, relation, status, established_by, note, source_entity_id, source_event_id, source_claim_id, source_source_id, target_entity_id, target_event_id, target_claim_id, target_source_id")
+    .eq("case_id", caseId)
+    .order("created_at", { ascending: true });
+  return wrap<EdgeRow[]>(data, error);
+}
+
+/**
+ * Draw a relationship.
+ *
+ * The endpoint columns are exclusive arcs, so exactly one of each set is sent.
+ * The database refuses anything else — including an edge asserted as fact
+ * with nothing establishing it, which is the rule the whole table is shaped
+ * around.
+ */
+export async function createEdge(
+  caseId: string,
+  input: {
+    relation: string;
+    from: { kind: string; id: string };
+    to: { kind: string; id: string };
+    status: EpistemicStatus;
+    establishedBy: string | null;
+    note: string;
+  },
+): Promise<Result<EdgeRow>> {
+  const endpoint = (side: "source" | "target", node: { kind: string; id: string }) => ({
+    [`${side}_entity_id`]: node.kind === "entity" ? node.id : null,
+    [`${side}_event_id`]: node.kind === "event" ? node.id : null,
+    [`${side}_claim_id`]: node.kind === "claim" ? node.id : null,
+    [`${side}_source_id`]: node.kind === "source" ? node.id : null,
+  });
+
+  const { data, error } = await supabase()
+    .from("case_edges")
+    .insert({
+      case_id: caseId,
+      relation: input.relation,
+      status: input.status,
+      established_by: input.establishedBy,
+      note: input.note.trim() || null,
+      ...endpoint("source", input.from),
+      ...endpoint("target", input.to),
+    })
+    .select("id, relation, status, established_by, note, source_entity_id, source_event_id, source_claim_id, source_source_id, target_entity_id, target_event_id, target_claim_id, target_source_id")
+    .single();
+  if (error && /duplicate key|unique constraint/i.test(error.message)) {
+    return { ok: false, message: "That relationship is already recorded." };
+  }
+  return wrap<EdgeRow>(data, error);
+}
+
+export async function deleteEdge(id: string): Promise<Result<null>> {
+  const { error } = await supabase().from("case_edges").delete().eq("id", id);
+  return wrap<null>(null, error);
+}

@@ -4,19 +4,29 @@ import { ArrowLeft } from "lucide-react";
 import { AddClaim } from "@/components/AddClaim.tsx";
 import { AddEvent } from "@/components/AddEvent.tsx";
 import { AddSource } from "@/components/AddSource.tsx";
+import { CaseGraph } from "@/components/CaseGraph.tsx";
 import { DossierView } from "@/components/DossierView.tsx";
 import { Hypotheses } from "@/components/Hypotheses.tsx";
 import { EpistemicBadge } from "@/components/EpistemicBadge.tsx";
 import { LinkEvidence } from "@/components/LinkEvidence.tsx";
 import { Timeline } from "@/components/Timeline.tsx";
 import { RequireSession } from "@/components/RequireSession.tsx";
+import type { Graph } from "@shared/detective/graph.ts";
 import {
+  createEdge,
+  createEntity,
   createHypothesis,
+  deleteEdge,
+  deleteEntity,
   deleteHypothesis,
   linkHypothesisEvidence,
+  listEdges,
+  listEntities,
   listHypotheses,
   listHypothesisEvidence,
   unlinkHypothesisEvidence,
+  type EdgeRow,
+  type EntityRow,
   type HypothesisEvidenceRow,
   type HypothesisRow,
   getCase,
@@ -40,6 +50,8 @@ function CaseDetail({ id }: { id: string }) {
   const [events, setEvents] = useState<EventRow[]>([]);
   const [hypotheses, setHypotheses] = useState<HypothesisRow[]>([]);
   const [hypothesisEvidence, setHypothesisEvidence] = useState<HypothesisEvidenceRow[]>([]);
+  const [entities, setEntities] = useState<EntityRow[]>([]);
+  const [edges, setEdges] = useState<EdgeRow[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -54,11 +66,13 @@ function CaseDetail({ id }: { id: string }) {
       setInvestigation(found.data);
       if (!found.data) return;
 
-      const [claimResult, sourceResult, evidenceResult, eventResult, hypothesisResult, linkResult] =
-        await Promise.all([
-          listClaims(id), listSources(id), listEvidence(id), listEvents(id),
-          listHypotheses(id), listHypothesisEvidence(id),
-        ]);
+      const [
+        claimResult, sourceResult, evidenceResult, eventResult,
+        hypothesisResult, linkResult, entityResult, edgeResult,
+      ] = await Promise.all([
+        listClaims(id), listSources(id), listEvidence(id), listEvents(id),
+        listHypotheses(id), listHypothesisEvidence(id), listEntities(id), listEdges(id),
+      ]);
       if (!active) return;
       if (claimResult.ok) setClaims(claimResult.data);
       if (sourceResult.ok) setSources(sourceResult.data);
@@ -66,6 +80,8 @@ function CaseDetail({ id }: { id: string }) {
       if (eventResult.ok) setEvents(eventResult.data);
       if (hypothesisResult.ok) setHypotheses(hypothesisResult.data);
       if (linkResult.ok) setHypothesisEvidence(linkResult.data);
+      if (entityResult.ok) setEntities(entityResult.data);
+      if (edgeResult.ok) setEdges(edgeResult.data);
     })();
     return () => {
       active = false;
@@ -81,6 +97,62 @@ function CaseDetail({ id }: { id: string }) {
   }
 
   if (investigation === undefined) return <p className="text-sm text-muted">Opening the case…</p>;
+
+  // Assembled from the four record types the graph can reach, so a node and
+  // the row it came from cannot drift apart. Built here rather than in the
+  // component because the component takes a graph, not eight lists — and a
+  // component that assembles its own data is one that cannot be tested without
+  // all eight.
+  const graph: Graph = {
+    nodes: [
+      ...entities.map((entity) => ({
+        kind: "entity" as const,
+        id: entity.id,
+        label: entity.display_name,
+        entityKind: entity.kind,
+        sensitive: entity.sensitive,
+      })),
+      ...events.map((event) => ({ kind: "event" as const, id: event.id, label: event.label })),
+      ...claims.map((claim) => ({ kind: "claim" as const, id: claim.id, label: claim.statement })),
+      ...sources.map((source) => ({ kind: "source" as const, id: source.id, label: source.title })),
+    ],
+    edges: edges.flatMap((edge) => {
+      const endpoint = (
+        entityId: string | null, eventId: string | null,
+        claimId: string | null, sourceId: string | null,
+      ) =>
+        entityId
+          ? { kind: "entity" as const, id: entityId }
+          : eventId
+            ? { kind: "event" as const, id: eventId }
+            : claimId
+              ? { kind: "claim" as const, id: claimId }
+              : sourceId
+                ? { kind: "source" as const, id: sourceId }
+                : null;
+      const from = endpoint(
+        edge.source_entity_id, edge.source_event_id, edge.source_claim_id, edge.source_source_id,
+      );
+      const to = endpoint(
+        edge.target_entity_id, edge.target_event_id, edge.target_claim_id, edge.target_source_id,
+      );
+      // The database refuses an edge with no endpoints, so this cannot happen;
+      // it is dropped rather than coerced because a half-endpointed edge drawn
+      // on a screen is a line to nowhere that still reads as a connection.
+      if (!from || !to) return [];
+      return [{
+        id: edge.id,
+        relation: edge.relation,
+        from,
+        to,
+        status: edge.status,
+        establishedBy: edge.established_by,
+        note: edge.note,
+      }];
+    }),
+  };
+
+
 
   // Row level security returns no row for a case somebody may not read, which is
   // indistinguishable from one that does not exist — and that is the intended
@@ -211,6 +283,48 @@ function CaseDetail({ id }: { id: string }) {
             onAdded={(event) => setEvents((current) => [...current, event])}
           />
         </div>
+      </section>
+
+      {/* The graph reads the records above it, so it sits after them and
+          before the explanations that are argued from it. */}
+      <section className="mt-8" aria-labelledby="graph-heading">
+        <h4 id="graph-heading" className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted">
+          The case graph
+        </h4>
+        <CaseGraph
+          graph={graph}
+          entities={entities}
+          sources={sources}
+          onAddEntity={(input) => {
+            void createEntity(id, input).then((result) => {
+              if (result.ok) setEntities((current) => [...current, result.data]);
+              else setError(result.message);
+            });
+          }}
+          onRemoveEntity={(entityId) => {
+            void deleteEntity(entityId).then((result) => {
+              if (!result.ok) return setError(result.message);
+              setEntities((current) => current.filter((row) => row.id !== entityId));
+              setEdges((current) =>
+                current.filter(
+                  (row) => row.source_entity_id !== entityId && row.target_entity_id !== entityId,
+                ),
+              );
+            });
+          }}
+          onAddEdge={(input) => {
+            void createEdge(id, input).then((result) => {
+              if (result.ok) setEdges((current) => [...current, result.data]);
+              else setError(result.message);
+            });
+          }}
+          onRemoveEdge={(edgeId) => {
+            void deleteEdge(edgeId).then((result) => {
+              if (!result.ok) return setError(result.message);
+              setEdges((current) => current.filter((row) => row.id !== edgeId));
+            });
+          }}
+        />
       </section>
 
       {/* Before the dossier and after the records, which is where it belongs:

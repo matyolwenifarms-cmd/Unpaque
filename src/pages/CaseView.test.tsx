@@ -10,6 +10,8 @@ const listEvidence = vi.fn();
 const listEvents = vi.fn();
 const listHypotheses = vi.fn();
 const listHypothesisEvidence = vi.fn();
+const listEntities = vi.fn();
+const listEdges = vi.fn();
 // Every export the page reaches for. A missing one is not a missing assertion:
 // the page calls them inside a Promise.all, so an undefined mock rejects and
 // nothing renders at all — which shows up as five unrelated "cannot find text"
@@ -28,6 +30,12 @@ vi.mock("@/lib/detective-api.ts", () => ({
   // missing them rejects the whole load and the page renders nothing at all.
   listHypotheses: () => listHypotheses(),
   listHypothesisEvidence: () => listHypothesisEvidence(),
+  listEntities: () => listEntities(),
+  listEdges: () => listEdges(),
+  createEntity: vi.fn(),
+  deleteEntity: vi.fn(),
+  createEdge: vi.fn(),
+  deleteEdge: vi.fn(),
   createHypothesis: vi.fn(),
   deleteHypothesis: vi.fn(),
   linkHypothesisEvidence: vi.fn(),
@@ -62,6 +70,8 @@ describe("opening a case", () => {
     listEvents.mockReset().mockResolvedValue({ ok: true, data: [] });
     listHypotheses.mockReset().mockResolvedValue({ ok: true, data: [] });
     listHypothesisEvidence.mockReset().mockResolvedValue({ ok: true, data: [] });
+    listEntities.mockReset().mockResolvedValue({ ok: true, data: [] });
+    listEdges.mockReset().mockResolvedValue({ ok: true, data: [] });
   });
 
   it("shows the title and the question", async () => {
@@ -142,6 +152,8 @@ describe("what the page will and will not do for you", () => {
     listEvents.mockReset().mockResolvedValue({ ok: true, data: [] });
     listHypotheses.mockReset().mockResolvedValue({ ok: true, data: [] });
     listHypothesisEvidence.mockReset().mockResolvedValue({ ok: true, data: [] });
+    listEntities.mockReset().mockResolvedValue({ ok: true, data: [] });
+    listEdges.mockReset().mockResolvedValue({ ok: true, data: [] });
   });
 
   it("lists the evidence bearing on a claim, with its excerpt", async () => {
@@ -219,6 +231,8 @@ describe("the dossier", () => {
     listEvents.mockReset().mockResolvedValue({ ok: true, data: [] });
     listHypotheses.mockReset().mockResolvedValue({ ok: true, data: [] });
     listHypothesisEvidence.mockReset().mockResolvedValue({ ok: true, data: [] });
+    listEntities.mockReset().mockResolvedValue({ ok: true, data: [] });
+    listEdges.mockReset().mockResolvedValue({ ok: true, data: [] });
   });
 
   it("appears at the foot of the case, after the records it reads", async () => {

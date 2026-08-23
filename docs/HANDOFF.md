@@ -33,7 +33,7 @@ what deliberately did not change with it, is `DEPARTURES.md` §6.
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
 | **Research** | Literature, method, analysis, coding, write-up | Five stages on screen — the whole lifecycle. §6 and §7, quantitative and qualitative, with a second coder and inter-coder agreement | **Nothing** |
-| **Detect** | Investigative intelligence — cases, evidence, timeline, dossier, competing explanations | Phase 0–1, plus §12's hypothesis, falsification and skeptic engines | Nothing |
+| **Detect** | Investigative intelligence — cases, evidence, timeline, dossier, explanations, case graph | Phase 0–1, plus §11's graph and §12's hypothesis, falsification and skeptic engines | Nothing |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
 Perloq was an earlier name for the feature, not a separate product. Nothing in
@@ -47,8 +47,8 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 1024 unit and component tests, four passing gates (typecheck, lint, test, build).
-- 199 SQL assertions across nine suites, run against a real Postgres 16, with
+- 1054 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 221 SQL assertions across ten suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
   responses. The recorded fixtures are committed.
@@ -214,6 +214,8 @@ and all three are built the same way:
 | Detect | State an allegation as fact | 11 epistemic classifications; the dossier concludes nothing |
 | Detect | Be forced into one theory | `assembleHypotheses` refuses a lone hypothesis; no column or field ranks one |
 | Detect | Hold a belief no evidence could touch | `falsifier` is `not null`, in the schema and the type |
+| Detect | Draw a connection stronger than its weakest link | `Path.weakest` is derived; no field takes a strength |
+| Detect | Assert a relationship as fact with nothing behind it | A check constraint, not a client rule |
 
 Research's passage engine is the strongest form: the model returns
 offsets, the server slices, and **the tool schema has no field a quotation
