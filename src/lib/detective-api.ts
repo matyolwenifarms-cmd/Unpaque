@@ -529,3 +529,63 @@ export async function withdrawLineage(id: string): Promise<Result<null>> {
   const { error } = await supabase().from("source_lineage").delete().eq("id", id);
   return wrap<null>(null, error);
 }
+
+/**
+ * Create a source from an uploaded file, with its content hash.
+ *
+ * Separate from `createSource` because an uploaded file carries two things a
+ * typed source does not: the hash, which is what stops the same document
+ * counting twice toward independent support, and the text, which is what makes
+ * a locator possible. `retrieved_from` is the file name and says so — a
+ * source whose provenance reads "https://" when nobody fetched anything would
+ * be a lie in the one field the whole epistemic model rests on.
+ */
+export async function createUploadedSource(
+  caseId: string,
+  input: { kind: SourceKind; title: string; within?: string; contentHash: string },
+): Promise<Result<SourceRow>> {
+  const { data, error } = await supabase()
+    .from("sources")
+    .insert({
+      case_id: caseId,
+      kind: input.kind,
+      title: input.title.trim(),
+      retrieved_from: input.within ? `uploaded: ${input.within}/${input.title}` : `uploaded: ${input.title}`,
+      content_hash: input.contentHash,
+    })
+    .select("id, kind, title, retrieved_from, retrieved_at, content_hash, reference")
+    .single();
+  return wrap<SourceRow>(data as SourceRow | null, error);
+}
+
+/** The pages read out of an uploaded document, so a locator can say "page 42". */
+export async function storeDocumentText(
+  caseId: string,
+  sourceId: string,
+  pages: ReadonlyArray<{ number: number; body: string }>,
+): Promise<Result<null>> {
+  if (pages.length === 0) return { ok: true, data: null };
+
+  const media = await supabase()
+    .from("media")
+    .insert({
+      case_id: caseId,
+      source_id: sourceId,
+      kind: "document",
+      located_at: "uploaded",
+      page_count: pages.length,
+    })
+    .select("id")
+    .single();
+  if (media.error) return { ok: false, message: media.error.message };
+
+  const { error } = await supabase().from("document_pages").insert(
+    pages.map((page) => ({
+      case_id: caseId,
+      media_id: media.data.id,
+      page_number: page.number,
+      body: page.body,
+    })),
+  );
+  return wrap<null>(null, error);
+}

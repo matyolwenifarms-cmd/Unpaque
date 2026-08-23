@@ -35,6 +35,8 @@ vi.mock("@/lib/detective-api.ts", () => ({
   listEdges: () => listEdges(),
   listLineage: () => listLineage(),
   declareLineage: vi.fn(),
+  createUploadedSource: vi.fn(),
+  storeDocumentText: vi.fn(),
   withdrawLineage: vi.fn(),
   createEntity: vi.fn(),
   deleteEntity: vi.fn(),

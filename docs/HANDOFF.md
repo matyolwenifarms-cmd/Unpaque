@@ -47,7 +47,7 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 1116 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 1182 unit and component tests, four passing gates (typecheck, lint, test, build).
 - 246 SQL assertions across eleven suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
@@ -98,6 +98,15 @@ The distinction matters more than the totals.
   were run on is named and not kept. Reopening a study shows the findings and
   the write-up assembles from them, but re-running anything needs the file
   again. A SQL assertion checks there is no column it could be hiding in.
+- **The upload portal reads, and never decides.** A folder or a zip goes in and
+  a review list comes out: what each file is by its bytes, what it appears to be
+  from its opening, what was read out of it. Nothing is imported until the
+  person confirms. A file that yields no text is kept and marked — most of a
+  real case file is photographs of paper, and dropping them would quietly
+  shrink the case to whatever was typed.
+- **Nothing extracts entities or claims from prose.** That is what "what do you
+  make of this?" needs and it needs a model. The portal gets the documents in
+  with their pages and locators; reading them is the next thing a key buys.
 - **Voice is a closed grammar, not a conversation.** §24's commands are
   navigation over records — "open source fourteen", "show the timeline" — and a
   deterministic parser handles them with no model, which is *better* here than
@@ -233,6 +242,7 @@ and all three are built the same way:
 | Detect | Assert a relationship as fact with nothing behind it | A check constraint, not a client rule |
 | Detect | Broadcast a claim without its classification | `lowerThird` returns both fields or neither |
 | Detect | Act on a command it may have misheard | A closed grammar; every refusal carries the transcript |
+| Detect | Decide what an uploaded file is | It suggests with its reason; the person confirms |
 
 Research's passage engine is the strongest form: the model returns
 offsets, the server slices, and **the tool schema has no field a quotation

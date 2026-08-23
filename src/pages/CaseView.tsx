@@ -8,6 +8,7 @@ import { CaseGraph } from "@/components/CaseGraph.tsx";
 import { DossierView } from "@/components/DossierView.tsx";
 import { Hypotheses } from "@/components/Hypotheses.tsx";
 import { Provenance } from "@/components/Provenance.tsx";
+import { UploadPortal } from "@/components/UploadPortal.tsx";
 import { EpistemicBadge } from "@/components/EpistemicBadge.tsx";
 import { LinkEvidence } from "@/components/LinkEvidence.tsx";
 import { Timeline } from "@/components/Timeline.tsx";
@@ -16,6 +17,7 @@ import type { Graph } from "@shared/detective/graph.ts";
 import {
   createEdge,
   createEntity,
+  createUploadedSource,
   declareLineage,
   createHypothesis,
   deleteEdge,
@@ -27,6 +29,7 @@ import {
   listHypotheses,
   listHypothesisEvidence,
   listLineage,
+  storeDocumentText,
   unlinkHypothesisEvidence,
   withdrawLineage,
   type EdgeRow,
@@ -274,6 +277,38 @@ function CaseDetail({ id }: { id: string }) {
             ))}
           </ul>
         )}
+        {/* Above the one-at-a-time form, because the ordinary case is a folder
+            and the exceptional one is a single URL. */}
+        <div className="mt-4">
+          <UploadPortal
+            onImport={(confirmed) => {
+              void (async () => {
+                for (const item of confirmed) {
+                  const made = await createUploadedSource(id, {
+                    kind: item.kind,
+                    title: item.name,
+                    ...(item.within === undefined ? {} : { within: item.within }),
+                    contentHash: item.contentHash,
+                  });
+                  if (!made.ok) {
+                    setError(made.message);
+                    return;
+                  }
+                  setSources((current) => [made.data, ...current]);
+                  if (item.pageCount > 0) {
+                    // The pages, so a locator can say "page 42". Sequential
+                    // rather than parallel: a folder of forty files fired at
+                    // once is forty concurrent inserts and a rate limit, and
+                    // the person is watching a list fill in either way.
+                    const stored = await storeDocumentText(id, made.data.id, item.pages);
+                    if (!stored.ok) setError(stored.message);
+                  }
+                }
+              })();
+            }}
+          />
+        </div>
+
         <div className="mt-4">
           <AddSource caseId={id} onAdded={(source) => setSources((current) => [source, ...current])} />
         </div>
