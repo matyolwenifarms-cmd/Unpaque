@@ -228,3 +228,103 @@ export async function listSources(caseId: string): Promise<Result<SourceRow[]>> 
     .order("retrieved_at", { ascending: false });
   return wrap<SourceRow[]>(data as SourceRow[] | null, error);
 }
+
+// --- Hypotheses -------------------------------------------------------------
+//
+// Section 12. Competing explanations, each carrying what would end it.
+
+export interface HypothesisRow {
+  id: string;
+  statement: string;
+  falsifier: string;
+  assumptions: string[];
+}
+
+export interface HypothesisEvidenceRow {
+  id: string;
+  hypothesis_id: string;
+  source_id: string;
+  classification: EvidenceClassification;
+  summary: string;
+}
+
+export async function listHypotheses(caseId: string): Promise<Result<HypothesisRow[]>> {
+  const { data, error } = await supabase()
+    .from("hypotheses")
+    .select("id, statement, falsifier, assumptions")
+    .eq("case_id", caseId)
+    .order("created_at", { ascending: true });
+  return wrap<HypothesisRow[]>(data, error);
+}
+
+export async function createHypothesis(
+  caseId: string,
+  input: { statement: string; falsifier: string; assumptions: string[] },
+): Promise<Result<HypothesisRow>> {
+  const { data, error } = await supabase()
+    .from("hypotheses")
+    .insert({
+      case_id: caseId,
+      statement: input.statement.trim(),
+      falsifier: input.falsifier.trim(),
+      assumptions: input.assumptions.map((entry) => entry.trim()).filter(Boolean),
+    })
+    .select("id, statement, falsifier, assumptions")
+    .single();
+  return wrap<HypothesisRow>(data, error);
+}
+
+export async function deleteHypothesis(id: string): Promise<Result<null>> {
+  const { error } = await supabase().from("hypotheses").delete().eq("id", id);
+  return wrap<null>(null, error);
+}
+
+export async function listHypothesisEvidence(
+  caseId: string,
+): Promise<Result<HypothesisEvidenceRow[]>> {
+  const { data, error } = await supabase()
+    .from("hypothesis_evidence")
+    .select("id, hypothesis_id, source_id, classification, summary")
+    .eq("case_id", caseId)
+    .order("created_at", { ascending: true });
+  return wrap<HypothesisEvidenceRow[]>(data, error);
+}
+
+/**
+ * Link a source to a hypothesis, with what it shows.
+ *
+ * The same source may be linked to several hypotheses with different
+ * classifications — that is the ordinary case, not an edge one. What it may
+ * not be is linked twice identically, and the database refuses that rather
+ * than this function checking for it.
+ */
+export async function linkHypothesisEvidence(
+  caseId: string,
+  input: {
+    hypothesisId: string;
+    sourceId: string;
+    classification: EvidenceClassification;
+    summary: string;
+  },
+): Promise<Result<HypothesisEvidenceRow>> {
+  const { data, error } = await supabase()
+    .from("hypothesis_evidence")
+    .insert({
+      case_id: caseId,
+      hypothesis_id: input.hypothesisId,
+      source_id: input.sourceId,
+      classification: input.classification,
+      summary: input.summary.trim(),
+    })
+    .select("id, hypothesis_id, source_id, classification, summary")
+    .single();
+  if (error && /duplicate key|unique constraint/i.test(error.message)) {
+    return { ok: false, message: "That record is already entered against this explanation." };
+  }
+  return wrap<HypothesisEvidenceRow>(data, error);
+}
+
+export async function unlinkHypothesisEvidence(id: string): Promise<Result<null>> {
+  const { error } = await supabase().from("hypothesis_evidence").delete().eq("id", id);
+  return wrap<null>(null, error);
+}

@@ -33,7 +33,7 @@ what deliberately did not change with it, is `DEPARTURES.md` §6.
 |---|---|---|---|
 | **Unpack** | Communication diagnostics — what is this communication doing? | Phase 1 complete, deployed | Model calls |
 | **Research** | Literature, method, analysis, coding, write-up | Five stages on screen — the whole lifecycle. §6 and §7, quantitative and qualitative, with a second coder and inter-coder agreement | **Nothing** |
-| **Detect** | Investigative intelligence — cases, evidence, timeline, dossier | Phase 0–1, case UI and the assembled document | Nothing |
+| **Detect** | Investigative intelligence — cases, evidence, timeline, dossier, competing explanations | Phase 0–1, plus §12's hypothesis, falsification and skeptic engines | Nothing |
 
 The naming: the document titled *Perloq* describes what is now **Unpack**.
 Perloq was an earlier name for the feature, not a separate product. Nothing in
@@ -47,8 +47,8 @@ The distinction matters more than the totals.
 
 **Verified against reality:**
 
-- 979 unit and component tests, four passing gates (typecheck, lint, test, build).
-- 180 SQL assertions across eight suites, run against a real Postgres 16, with
+- 1024 unit and component tests, four passing gates (typecheck, lint, test, build).
+- 199 SQL assertions across nine suites, run against a real Postgres 16, with
   every migration applied **three times** and negative controls in every suite.
 - Both bibliographic adapters checked against **live** OpenAlex and Crossref
   responses. The recorded fixtures are committed.
@@ -212,6 +212,8 @@ and all three are built the same way:
 | Research | Report a p-value alone, or a causal claim from a correlation | `Finding` has no p without n and an effect |
 | Research | Write the researcher's argument for them | A `yours` section has no field a body could go in |
 | Detect | State an allegation as fact | 11 epistemic classifications; the dossier concludes nothing |
+| Detect | Be forced into one theory | `assembleHypotheses` refuses a lone hypothesis; no column or field ranks one |
+| Detect | Hold a belief no evidence could touch | `falsifier` is `not null`, in the schema and the type |
 
 Research's passage engine is the strongest form: the model returns
 offsets, the server slices, and **the tool schema has no field a quotation

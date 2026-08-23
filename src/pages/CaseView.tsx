@@ -5,11 +5,20 @@ import { AddClaim } from "@/components/AddClaim.tsx";
 import { AddEvent } from "@/components/AddEvent.tsx";
 import { AddSource } from "@/components/AddSource.tsx";
 import { DossierView } from "@/components/DossierView.tsx";
+import { Hypotheses } from "@/components/Hypotheses.tsx";
 import { EpistemicBadge } from "@/components/EpistemicBadge.tsx";
 import { LinkEvidence } from "@/components/LinkEvidence.tsx";
 import { Timeline } from "@/components/Timeline.tsx";
 import { RequireSession } from "@/components/RequireSession.tsx";
 import {
+  createHypothesis,
+  deleteHypothesis,
+  linkHypothesisEvidence,
+  listHypotheses,
+  listHypothesisEvidence,
+  unlinkHypothesisEvidence,
+  type HypothesisEvidenceRow,
+  type HypothesisRow,
   getCase,
   listClaims,
   listEvents,
@@ -29,6 +38,8 @@ function CaseDetail({ id }: { id: string }) {
   const [sources, setSources] = useState<SourceRow[]>([]);
   const [evidence, setEvidence] = useState<EvidenceRow[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
+  const [hypotheses, setHypotheses] = useState<HypothesisRow[]>([]);
+  const [hypothesisEvidence, setHypothesisEvidence] = useState<HypothesisEvidenceRow[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,14 +54,18 @@ function CaseDetail({ id }: { id: string }) {
       setInvestigation(found.data);
       if (!found.data) return;
 
-      const [claimResult, sourceResult, evidenceResult, eventResult] = await Promise.all([
-        listClaims(id), listSources(id), listEvidence(id), listEvents(id),
-      ]);
+      const [claimResult, sourceResult, evidenceResult, eventResult, hypothesisResult, linkResult] =
+        await Promise.all([
+          listClaims(id), listSources(id), listEvidence(id), listEvents(id),
+          listHypotheses(id), listHypothesisEvidence(id),
+        ]);
       if (!active) return;
       if (claimResult.ok) setClaims(claimResult.data);
       if (sourceResult.ok) setSources(sourceResult.data);
       if (evidenceResult.ok) setEvidence(evidenceResult.data);
       if (eventResult.ok) setEvents(eventResult.data);
+      if (hypothesisResult.ok) setHypotheses(hypothesisResult.data);
+      if (linkResult.ok) setHypothesisEvidence(linkResult.data);
     })();
     return () => {
       active = false;
@@ -196,6 +211,56 @@ function CaseDetail({ id }: { id: string }) {
             onAdded={(event) => setEvents((current) => [...current, event])}
           />
         </div>
+      </section>
+
+      {/* Before the dossier and after the records, which is where it belongs:
+          the explanations are read from the records above and the dossier is
+          read from everything. */}
+      <section className="mt-8" aria-labelledby="hypotheses-heading">
+        <h4 id="hypotheses-heading" className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted">
+          Explanations
+        </h4>
+        <Hypotheses
+          drafts={hypotheses}
+          sources={sources}
+          evidence={hypothesisEvidence.map((link) => ({
+            id: link.id,
+            hypothesisId: link.hypothesis_id,
+            sourceId: link.source_id,
+            classification: link.classification,
+            summary: link.summary,
+            sourceTitle: sources.find((source) => source.id === link.source_id)?.title ?? "Unknown source",
+            // The hash is what makes a wire story printed twice count once.
+            contentHash: sources.find((source) => source.id === link.source_id)?.content_hash ?? null,
+          }))}
+          onAdd={(draft) => {
+            void createHypothesis(id, draft).then((result) => {
+              if (result.ok) setHypotheses((current) => [...current, result.data]);
+              else setError(result.message);
+            });
+          }}
+          onRemove={(hypothesisId) => {
+            void deleteHypothesis(hypothesisId).then((result) => {
+              if (!result.ok) return setError(result.message);
+              setHypotheses((current) => current.filter((row) => row.id !== hypothesisId));
+              setHypothesisEvidence((current) =>
+                current.filter((row) => row.hypothesis_id !== hypothesisId),
+              );
+            });
+          }}
+          onLink={(input) => {
+            void linkHypothesisEvidence(id, input).then((result) => {
+              if (result.ok) setHypothesisEvidence((current) => [...current, result.data]);
+              else setError(result.message);
+            });
+          }}
+          onUnlink={(linkId) => {
+            void unlinkHypothesisEvidence(linkId).then((result) => {
+              if (!result.ok) return setError(result.message);
+              setHypothesisEvidence((current) => current.filter((row) => row.id !== linkId));
+            });
+          }}
+        />
       </section>
 
       {/* Last on the page, because it is a reading of everything above it. A
