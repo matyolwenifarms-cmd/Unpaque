@@ -8,6 +8,7 @@ import { DataUpload } from "@/components/DataUpload.tsx";
 import { DatasetSummary } from "@/components/DatasetSummary.tsx";
 import { Papers } from "@/components/Papers.tsx";
 import { ProposalReview } from "@/components/ProposalReview.tsx";
+import { StudyStatus } from "@/components/StudyStatus.tsx";
 import { Screening } from "@/components/Screening.tsx";
 import { ReferenceList } from "@/components/ReferenceList.tsx";
 import { StudyBar } from "@/components/StudyBar.tsx";
@@ -44,6 +45,7 @@ async function storeFindings(
 }
 import { WriteUp } from "@/components/WriteUp.tsx";
 import { cn } from "@/lib/utils.ts";
+import { RESEARCH_STAGES, type ResearchStage } from "@shared/research/status/stages.ts";
 import type { Dataset } from "@shared/research/analytics/dataset.ts";
 import { resultsSection } from "@shared/research/analytics/apa.ts";
 import type { Descriptives } from "@shared/research/analytics/describe.ts";
@@ -73,23 +75,42 @@ import { searchReferences, type ResultOrder, type SearchedReference } from "@/li
  * them. Somebody who has never seen this product should be able to start
  * there and find out what the rest of it is for.
  */
-const STAGES = [
-  { id: "proposal", name: "Proposal", blurb: "Check its references and its design" },
-  { id: "literature", name: "Literature", blurb: "Find and verify references" },
-  { id: "papers", name: "Papers", blurb: "Hold the papers, and set them against each other" },
-  { id: "screening", name: "Screening", blurb: "Decide what is in the review, and count the flow" },
-  { id: "method", name: "Method", blurb: "Declare the paradigm and approach" },
-  { id: "analyse", name: "Analyse data", blurb: "Upload a file and run a test" },
-  { id: "code", name: "Code text", blurb: "Code transcripts and build themes" },
-  { id: "writeup", name: "Write up", blurb: "Assemble what is written, and what is not" },
-] as const;
-type Stage = (typeof STAGES)[number]["id"];
+// The list lives in `@shared/research/status/stages.ts`, because the status
+// panel names a stage and a second copy here is a second copy that can drift
+// into naming one that does not render.
+const STAGES = RESEARCH_STAGES;
+type Stage = ResearchStage;
 
-function ResearchHeader({ stage, onStage }: { stage: Stage; onStage: (stage: Stage) => void }) {
+function ResearchHeader() {
   return (
-    <header className="mb-8">
+    <header className="mb-6">
       <h1 className="text-2xl font-bold tracking-tight">Research</h1>
-      <nav aria-label="Stage" className="mt-3 flex flex-wrap gap-2">
+    </header>
+  );
+}
+
+/**
+ * The full list of stages, below the status panel rather than above it.
+ *
+ * Demoted, not removed. The panel above says what this study holds and is the
+ * short path for somebody who does not know the product; this is the complete
+ * one, and it stays complete — a stage that is never mentioned must not
+ * become a stage somebody believes does not exist.
+ */
+function StageNav({
+  stage,
+  onStage,
+  open,
+}: {
+  stage: Stage;
+  onStage: (stage: Stage) => void;
+  /** Open once the study has work in it; closed on a first visit. */
+  open: boolean;
+}) {
+  return (
+    <details open={open} className="mb-8">
+      <summary className="cursor-pointer text-sm text-muted">All eight stages</summary>
+    <nav aria-label="Stage" className="mt-3 flex flex-wrap gap-2">
         {STAGES.map((option) => (
           <button
             key={option.id}
@@ -107,8 +128,8 @@ function ResearchHeader({ stage, onStage }: { stage: Stage; onStage: (stage: Sta
             <span className="block text-xs text-muted">{option.blurb}</span>
           </button>
         ))}
-      </nav>
-    </header>
+    </nav>
+    </details>
   );
 }
 
@@ -250,8 +271,18 @@ export default function Research() {
   // Five copies of them was five places to forget one.
   const frame = (body: React.ReactNode) => (
     <div>
-      <ResearchHeader stage={stage} onStage={setStage} />
+      <ResearchHeader />
       <StudyBar studies={studies} />
+      {/* The status before the navigation. Eight tabs is eight questions a
+          researcher who has not used this cannot answer; the same eight things
+          described as facts about their own work is reading. Keyed on the
+          stage so that leaving one re-counts what it changed. */}
+      <StudyStatus studyId={studyId} onStage={setStage} reloadKey={stage} />
+      {/* Closed on a first visit and open once a study exists. Not hidden --
+          the summary is always there and always says how many stages there
+          are, because a stage somebody cannot find is a stage they conclude
+          does not exist. */}
+      <StageNav stage={stage} onStage={setStage} open={studyId !== null} />
       {dropped > 0 && (
         <p className="mb-4 rounded-lg border border-rule bg-raised p-3 text-sm text-muted">
           {dropped} stored {dropped === 1 ? "record" : "records"} could not be read back and{" "}

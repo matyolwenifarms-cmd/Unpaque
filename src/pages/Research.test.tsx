@@ -21,6 +21,8 @@ const { default: Research } = await import("./Research.tsx");
  */
 async function openLiterature(user: ReturnType<typeof userEvent.setup>) {
   render(<Research />);
+  // The stage list is a disclosure now, closed until a study is open. The
+  // buttons are in the DOM either way, so this only has to reach them.
   await user.click(screen.getByRole("button", { name: /^Literature/ }));
 }
 
